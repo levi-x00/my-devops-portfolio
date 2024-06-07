@@ -20,7 +20,7 @@ resource "aws_default_network_acl" "def-nacl" {
   }
 
   tags = {
-    Name = "${var.project_name}-default-nacl"
+    Name = "default-nacl"
   }
 }
 
@@ -51,7 +51,7 @@ resource "aws_network_acl" "public_nacl" {
   }
 
   tags = {
-    Name = "${var.project_name}-public-nacl"
+    Name = "public-nacl"
   }
 }
 
@@ -84,6 +84,6 @@ resource "aws_network_acl" "private_nacl" {
   }
 
   tags = {
-    Name = "${var.project_name}-private-nacl"
+    Name = "private-nacl"
   }
 }

@@ -6,6 +6,8 @@ data "aws_route53_zone" "selected" {
 resource "aws_acm_certificate" "acm" {
   domain_name       = var.public_domain
   validation_method = "DNS"
+
+  tags = {}
 }
 
 resource "aws_route53_record" "example" {

@@ -8,7 +8,7 @@ resource "aws_default_route_table" "def-pub-rt" {
   }
 
   tags = {
-    Name = "${var.project_name}-default-public-rt"
+    Name = "default-public-rt"
   }
 }
 
@@ -22,7 +22,7 @@ resource "aws_route_table" "private1" {
   }
 
   tags = {
-    Name = "${var.project_name}-private1-rt"
+    Name = "private1-rt"
   }
 }
 
@@ -35,7 +35,7 @@ resource "aws_route_table" "private2" {
   }
 
   tags = {
-    Name = "${var.project_name}-private2-rt"
+    Name = "private2-rt"
   }
 }
 
@@ -49,7 +49,7 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name = "${var.project_name}-public-rt"
+    Name = "public-rt"
   }
 }
 
@@ -61,16 +61,6 @@ resource "aws_route_table_association" "private-1a" {
 
 resource "aws_route_table_association" "private-1b" {
   subnet_id      = aws_subnet.private-1b.id
-  route_table_id = aws_route_table.private2.id
-}
-
-resource "aws_route_table_association" "db-1a" {
-  subnet_id      = aws_subnet.db-1a.id
-  route_table_id = aws_route_table.private1.id
-}
-
-resource "aws_route_table_association" "db-1b" {
-  subnet_id      = aws_subnet.db-1b.id
   route_table_id = aws_route_table.private2.id
 }
 

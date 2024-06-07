@@ -1,14 +1,14 @@
 resource "aws_kms_key" "kms" {
-  description             = "KMS key for devops blueprint"
+  description             = "KMS key for devops"
   deletion_window_in_days = 7
 
   tags = {
-    Name = "kms-lab"
+    Name = "${var.project_name}-kms"
   }
 }
 
 resource "aws_kms_alias" "kms" {
-  name          = "alias/kms-lab"
+  name          = "alias/${var.project_name}-kms"
   target_key_id = aws_kms_key.kms.key_id
 }
 
