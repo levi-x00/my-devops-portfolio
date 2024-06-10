@@ -14,18 +14,21 @@ Here I have two public subnets, two private subnets and two DB subnets, one publ
 | ----------- | ------ | --------------- |
 | 0.0.0.0/0   | igw-id | public subnet-a |
 |             |        | public subnet-b |
+| vpc-cidr    | local  |                 |
 
 <b>Private Route table 1</b>
 | Destination | Target | Subnets |
 | --- | --- | --- |
 |0.0.0.0/0|nat-gw-id2|private subnet-a|
 |||db subnet-a|
+|vpc-cidr|local||
 
 <b>Private Route table 2</b>
 | Destination | Target | Subnets |
 | --- | --- | --- |
 |0.0.0.0/0|nat-gw-id2|private subnet-b|
 |||db subnet-b|
+|vpc-cidr|local||
 
 ## VPC Setup
 
