@@ -33,6 +33,8 @@ module "lambda-test" {
   memory_size = 256
   handler     = "lambda_function.lambda_handler"
 
+  source_dir = "${path.module}/src"
+
 
   security_group_ids = []
   subnet_ids         = []
