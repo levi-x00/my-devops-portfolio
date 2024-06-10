@@ -2,7 +2,7 @@
 
 ## Network Architecture
 
-![Alt text](./network.drawio.png?raw=true "Network Architecture")
+![Alt text](./network.jpg?raw=true "Network Architecture")
 
 ## Network Description
 
