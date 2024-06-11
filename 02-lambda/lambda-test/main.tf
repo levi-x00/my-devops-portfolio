@@ -35,7 +35,6 @@ module "lambda-test" {
 
   source_dir = "${path.module}/src"
 
-
   security_group_ids = []
   subnet_ids         = []
 

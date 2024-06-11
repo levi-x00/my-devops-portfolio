@@ -18,10 +18,10 @@ data "external" "folder_hash" {
 data "archive_file" "lambda_src" {
   depends_on = [null_resource.lambda_zip]
   excludes = [
-    "__pycache__",
-    "venv",
-    "*.dist-info",
-    "*.zip",
+    "__pycache__/**",
+    "venv/**",
+    "*.dist-info/**",
+    "*.zip/**",
     "requirements.txt"
   ]
 

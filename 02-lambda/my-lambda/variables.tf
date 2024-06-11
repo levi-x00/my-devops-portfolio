@@ -54,12 +54,7 @@ variable "application" {
 }
 
 variable "lambda_inline_policy" {}
-variable "tags" {
-  default = {
-    Environment = var.environment
-    Application = var.application
-  }
-}
+variable "tags" {}
 
 variable "retention_in_days" {
   default = 90

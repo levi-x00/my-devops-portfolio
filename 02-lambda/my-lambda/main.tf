@@ -11,7 +11,7 @@ resource "null_resource" "lambda_zip" {
   provisioner "local-exec" {
     command = <<EOT
       pip install -r ${var.source_dir}/requirements.txt -t ${var.source_dir}
-      # rm -rf ${var.source_dir}/*.dist-info
+      rm -rf ${var.source_dir}/*.dist-info
     EOT
   }
 }
