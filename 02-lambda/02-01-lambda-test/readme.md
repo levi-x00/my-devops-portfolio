@@ -1,4 +1,4 @@
-# Example How to Use the Lambda Module
+# Test the Lambda Module
 
 ### Configure AWS Profile
 
@@ -24,3 +24,5 @@ terraform init
 terraform plan
 terraform apply -auto-approve
 ```
+
+Go to AWS console then click <b>Test</b>
