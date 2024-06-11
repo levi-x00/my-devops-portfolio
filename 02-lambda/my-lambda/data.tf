@@ -18,14 +18,14 @@ data "external" "folder_hash" {
 data "archive_file" "lambda_src" {
   depends_on = [null_resource.lambda_zip]
   excludes = [
-    "__pycache__/**",
-    "venv/**",
+    "__pycache__",
+    "venv",
     "*.dist-info/**",
-    "*.zip/**",
+    "*.zip",
     "requirements.txt"
   ]
 
   source_dir  = var.source_dir
-  output_path = "${var.source_dir}/${local.hash_source_dir}.zip"
+  output_path = "${var.output_dir}/${local.hash_source_dir}.zip"
   type        = "zip"
 }

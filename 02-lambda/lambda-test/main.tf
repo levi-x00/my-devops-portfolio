@@ -34,6 +34,7 @@ module "lambda-test" {
   handler     = "lambda_function.lambda_handler"
 
   source_dir = "${path.module}/src"
+  output_dir = "${path.module}/archived"
 
   security_group_ids = []
   subnet_ids         = []

@@ -49,6 +49,11 @@ variable "source_dir" {
   default     = ""
 }
 
+variable "output_dir" {
+  description = "output dir of zip file lambda function"
+  default     = ""
+}
+
 variable "application" {
   default = "devops-app"
 }
