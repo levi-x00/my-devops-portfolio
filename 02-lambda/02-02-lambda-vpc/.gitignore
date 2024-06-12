@@ -1,0 +1,4 @@
+src/*
+!src/*.py
+!src/*.txt
+archived/*

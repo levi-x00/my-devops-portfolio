@@ -62,5 +62,6 @@ variable "map_public_ip_on_launch" {
 }
 
 variable "public_domain" {
-  default = "767397880504.realhandsonlabs.net"
+  default = "713017167472.realhandsonlabs.net"
 }
+

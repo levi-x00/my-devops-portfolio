@@ -1,15 +1,4 @@
-##################### remote tfstate ##########################
-data "terraform_remote_state" "network" {
-  backend = "s3"
-  config = {
-    bucket = "s3-backend-tfstate-djnf2a8"
-    key    = "${var.environment}/network.tfstate"
-    region = "us-east-1"
-  }
-}
-
 ###################### provider section #######################
-
 terraform {
   required_providers {
     aws = {
@@ -21,6 +10,29 @@ terraform {
 }
 
 ######################## main section ########################
+
+resource "aws_security_group" "lambda_sg" {
+  vpc_id = local.vpc_id
+  name   = "${var.lambda_name}-sg"
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.lambda_name}-sg"
+  }
+}
 
 module "lambda-vpc-test" {
   source      = "../lambda-module"
@@ -34,8 +46,8 @@ module "lambda-vpc-test" {
   source_dir = "${path.module}/src"
   output_dir = "${path.module}/archived"
 
-  security_group_ids = []
-  subnet_ids         = []
+  security_group_ids = [aws_security_group.lambda_sg.id]
+  subnet_ids         = local.private_subnet_ids
 
   lambda_inline_policy = data.aws_iam_policy_document.inline_policy.json
 
