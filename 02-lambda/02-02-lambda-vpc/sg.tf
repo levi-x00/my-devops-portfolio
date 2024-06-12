@@ -1,4 +1,4 @@
-resource "aws_security_group" "codebuild" {
+resource "aws_security_group" "this" {
   vpc_id = local.vpc_id
 
   name = "${var.lambda_name}-sg"

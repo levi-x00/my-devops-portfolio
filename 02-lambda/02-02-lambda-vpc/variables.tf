@@ -3,7 +3,7 @@ variable "region" {
 }
 
 variable "lambda_name" {
-  default = "lambda-vpc-test1"
+  default = "lambda-vpc-test"
 }
 
 variable "environment" {

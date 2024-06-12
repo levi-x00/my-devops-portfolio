@@ -26,7 +26,7 @@ terraform {
 
 module "lambda-test" {
   source      = "../lambda-module"
-  lambda_name = "lambda-test"
+  lambda_name = "lambda-ctr-test"
 
   timeout     = 20
   memory_size = 512
