@@ -21,7 +21,7 @@ data "terraform_remote_state" "cluster" {
 terraform {
   backend "s3" {
     bucket         = "s3-backend-tfstate-djnf2a8"
-    key            = "dev/main-svc-stack.tfstate"
+    key            = "${var.environment}/main-svc-stack.tfstate"
     region         = "us-east-1"
     dynamodb_table = "dynamodb-lock-table-djnf2a8"
   }
