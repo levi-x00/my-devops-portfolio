@@ -50,7 +50,7 @@ provider "aws" {
 
 ############### main section ##################
 module "service" {
-  source = "../service"
+  source = "../../modules/ecs-task/fargate"
 
   service_name = var.service_name
   region       = var.region
