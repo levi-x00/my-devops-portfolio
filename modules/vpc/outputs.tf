@@ -6,10 +6,6 @@ output "igw_id" {
   value = aws_internet_gateway.igw.id
 }
 
-output "cluster_name" {
-  value = var.cluster_name
-}
-
 output "private_subnet_ids" {
   value = [aws_subnet.private-1a.id, aws_subnet.private-1b.id]
 }
@@ -24,24 +20,4 @@ output "default_sg_id" {
 
 output "account_id" {
   value = data.aws_caller_identity.current.account_id
-}
-
-output "kms_key_arn" {
-  value = aws_kms_key.kms.arn
-}
-
-output "kms_key_id" {
-  value = aws_kms_alias.kms.id
-}
-
-output "codebuild_sg_id" {
-  value = aws_security_group.codebuild.id
-}
-
-output "certificate_arn" {
-  value = aws_acm_certificate.acm.arn
-}
-
-output "public_domain" {
-  value = var.public_domain
 }

@@ -1,6 +1,6 @@
 # My DevOps Portofolio
 
-This repo showcases of my work and my experience working as Cloud/DevOps/Site Reliability Engineer and any related field while keeping all proprietary confidential.
+This repo showcases of my research and development (RnD) and my experience working as Cloud/DevOps/Site Reliability Engineer and any related field while keeping all proprietary confidential.
 
 The following some projects that I worked in the past.
 

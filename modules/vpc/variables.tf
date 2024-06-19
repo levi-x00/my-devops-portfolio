@@ -1,4 +1,9 @@
-variable "project_name" {
+variable "enable_nat" {
+  type    = bool
+  default = false
+}
+
+variable "vpc_name" {
   default = "devops-project"
 }
 
@@ -7,19 +12,16 @@ variable "region" {
   default = "us-east-1"
 }
 
-variable "cluster_name" {
-  default = "devops-blueprint-eks"
-}
-
 variable "profile" {
   type    = string
   default = "default"
 }
 
-variable "vpc_cidr_block" {
-  type    = string
-  default = "10.0.0.0/22"
-}
+variable "vpc_cidr_block" {}
+variable "private_subnet_cidra" {}
+variable "private_subnet_cidrb" {}
+variable "public_subnet_cidra" {}
+variable "public_subnet_cidrb" {}
 
 variable "enable_dns_hostnames" {
   type    = bool
@@ -60,8 +62,3 @@ variable "map_public_ip_on_launch" {
   type    = bool
   default = true
 }
-
-variable "public_domain" {
-  default = "713017167472.realhandsonlabs.net"
-}
-

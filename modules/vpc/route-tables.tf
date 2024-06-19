@@ -8,7 +8,7 @@ resource "aws_default_route_table" "def-pub-rt" {
   }
 
   tags = {
-    Name = "default-public-rt"
+    Name = "${var.vpc_name}-default-public-rt"
   }
 }
 
@@ -16,27 +16,33 @@ resource "aws_default_route_table" "def-pub-rt" {
 resource "aws_route_table" "private1" {
   vpc_id = aws_vpc.main.id
 
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat1.id
-  }
-
   tags = {
-    Name = "private1-rt"
+    Name = "${var.vpc_name}-private1-rt"
   }
+}
+
+resource "aws_route" "nat1" {
+  count          = var.enable_nat == true ? 1 : 0
+  route_table_id = aws_route_table.private1.id
+
+  destination_cidr_block = "0.0.0.0/0"
+  egress_only_gateway_id = aws_nat_gateway.nat1.id
 }
 
 resource "aws_route_table" "private2" {
   vpc_id = aws_vpc.main.id
 
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat2.id
-  }
-
   tags = {
-    Name = "private2-rt"
+    Name = "${var.vpc_name}-private2-rt"
   }
+}
+
+resource "aws_route" "nat2" {
+  count          = var.enable_nat == true ? 1 : 0
+  route_table_id = aws_route_table.private2.id
+
+  destination_cidr_block = "0.0.0.0/0"
+  egress_only_gateway_id = aws_nat_gateway.nat2.id
 }
 
 # ====================== custom public route table ==============================
@@ -49,7 +55,7 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name = "public-rt"
+    Name = "${var.vpc_name}-public-rt"
   }
 }
 
