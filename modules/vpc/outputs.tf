@@ -21,3 +21,19 @@ output "default_sg_id" {
 output "account_id" {
   value = data.aws_caller_identity.current.account_id
 }
+
+output "public_rt_id" {
+  value = aws_route_table.public.id
+}
+
+output "private_rt_id" {
+  value = var.enable_nat == true ? "" : aws_route_table.private.id
+}
+
+output "private1_rt_id" {
+  value = var.enable_nat == true ? aws_route_table.private1.id : ""
+}
+
+output "private2_rt_id" {
+  value = var.enable_nat == true ? aws_route_table.private2.id : ""
+}

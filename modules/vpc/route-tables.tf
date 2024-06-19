@@ -13,7 +13,17 @@ resource "aws_default_route_table" "def-pub-rt" {
 }
 
 # ========================= custom private route table ==============================
+resource "aws_route_table" "private" {
+  count  = var.enable_nat == true ? 0 : 1
+  vpc_id = aws_vpc.main.id
+
+  tags = {
+    Name = "${var.vpc_name}-private-rt"
+  }
+}
+
 resource "aws_route_table" "private1" {
+  count  = var.enable_nat == true ? 1 : 0
   vpc_id = aws_vpc.main.id
 
   tags = {
@@ -30,6 +40,7 @@ resource "aws_route" "nat1" {
 }
 
 resource "aws_route_table" "private2" {
+  count  = var.enable_nat == true ? 1 : 0
   vpc_id = aws_vpc.main.id
 
   tags = {
@@ -61,11 +72,13 @@ resource "aws_route_table" "public" {
 
 # ========================= associate the subnets to route table =======================
 resource "aws_route_table_association" "private-1a" {
+  count          = var.enable_nat == true ? 1 : 0
   subnet_id      = aws_subnet.private-1a.id
   route_table_id = aws_route_table.private1.id
 }
 
 resource "aws_route_table_association" "private-1b" {
+  count          = var.enable_nat == true ? 1 : 0
   subnet_id      = aws_subnet.private-1b.id
   route_table_id = aws_route_table.private2.id
 }
