@@ -1,4 +1,4 @@
-## Centralize VPC Endpoint Architecture
+## Centralized VPC Endpoint Architecture
 
 ![Alt text](../images/centralized-vpce.drawio.svg?raw=true "ECS Deployment Architecture")<br>
 
