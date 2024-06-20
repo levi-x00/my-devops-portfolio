@@ -36,6 +36,78 @@ resource "aws_security_group" "vpce_sg" {
   }
 }
 
+resource "aws_security_group" "spoke1_ec2_sg" {
+  name   = "spoke1-ec2-sg"
+  vpc_id = module.vpc_spoke1.vpc_id
+
+  ingress {
+    protocol  = -1
+    self      = true
+    from_port = 0
+    to_port   = 0
+  }
+
+  ingress {
+    from_port = 443
+    to_port   = 443
+    protocol  = "tcp"
+    cidr_blocks = [
+      var.vpc_vpce_cidr,
+      var.vpc_spoke1_cidr,
+    ]
+  }
+
+  egress {
+    from_port = 443
+    to_port   = 443
+    protocol  = "tcp"
+    cidr_blocks = [
+      var.vpc_vpce_cidr,
+      var.vpc_spoke1_cidr,
+    ]
+  }
+
+  tags = {
+    Name = "spoke1-ec2-sg"
+  }
+}
+
+resource "aws_security_group" "spoke2_ec2_sg" {
+  name   = "spoke2-ec2-sg"
+  vpc_id = module.vpc_spoke2.vpc_id
+
+  ingress {
+    protocol  = -1
+    self      = true
+    from_port = 0
+    to_port   = 0
+  }
+
+  ingress {
+    from_port = 443
+    to_port   = 443
+    protocol  = "tcp"
+    cidr_blocks = [
+      var.vpc_vpce_cidr,
+      var.vpc_spoke1_cidr,
+    ]
+  }
+
+  egress {
+    from_port = 443
+    to_port   = 443
+    protocol  = "tcp"
+    cidr_blocks = [
+      var.vpc_vpce_cidr,
+      var.vpc_spoke1_cidr,
+    ]
+  }
+
+  tags = {
+    Name = "spoke2-ec2-sg"
+  }
+}
+
 resource "aws_vpc_endpoint" "ssm" {
   vpc_id            = module.vpc_vpce.vpc_id
   service_name      = "com.amazonaws.${var.region}.ssm"
