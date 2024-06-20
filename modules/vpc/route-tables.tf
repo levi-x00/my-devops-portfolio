@@ -33,10 +33,10 @@ resource "aws_route_table" "private1" {
 
 resource "aws_route" "nat1" {
   count          = var.enable_nat == true ? 1 : 0
-  route_table_id = aws_route_table.private1.id
+  route_table_id = aws_route_table.private1[0].id
 
   destination_cidr_block = "0.0.0.0/0"
-  egress_only_gateway_id = aws_nat_gateway.nat1.id
+  nat_gateway_id         = aws_nat_gateway.nat1[0].id
 }
 
 resource "aws_route_table" "private2" {
@@ -50,10 +50,10 @@ resource "aws_route_table" "private2" {
 
 resource "aws_route" "nat2" {
   count          = var.enable_nat == true ? 1 : 0
-  route_table_id = aws_route_table.private2.id
+  route_table_id = aws_route_table.private2[0].id
 
   destination_cidr_block = "0.0.0.0/0"
-  egress_only_gateway_id = aws_nat_gateway.nat2.id
+  nat_gateway_id         = aws_nat_gateway.nat2[0].id
 }
 
 # ====================== custom public route table ==============================
@@ -74,13 +74,13 @@ resource "aws_route_table" "public" {
 resource "aws_route_table_association" "private-1a" {
   count          = var.enable_nat == true ? 1 : 0
   subnet_id      = aws_subnet.private-1a.id
-  route_table_id = aws_route_table.private1.id
+  route_table_id = aws_route_table.private1[0].id
 }
 
 resource "aws_route_table_association" "private-1b" {
   count          = var.enable_nat == true ? 1 : 0
   subnet_id      = aws_subnet.private-1b.id
-  route_table_id = aws_route_table.private2.id
+  route_table_id = aws_route_table.private2[0].id
 }
 
 resource "aws_route_table_association" "public-1a" {

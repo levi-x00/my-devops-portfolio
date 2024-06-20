@@ -20,7 +20,7 @@ resource "aws_default_network_acl" "def-nacl" {
   }
 
   tags = {
-    Name = "default-nacl"
+    Name = "${var.vpc_name}-default-nacl"
   }
 }
 
@@ -51,7 +51,7 @@ resource "aws_network_acl" "public_nacl" {
   }
 
   tags = {
-    Name = "public-nacl"
+    Name = "${var.vpc_name}-public-nacl"
   }
 }
 
@@ -61,8 +61,8 @@ resource "aws_network_acl" "private_nacl" {
   subnet_ids = [
     aws_subnet.private-1a.id,
     aws_subnet.private-1b.id,
-    aws_subnet.db-1a.id,
-    aws_subnet.db-1b.id
+    # aws_subnet.db-1a.id,
+    # aws_subnet.db-1b.id
   ]
 
   egress {
@@ -84,6 +84,6 @@ resource "aws_network_acl" "private_nacl" {
   }
 
   tags = {
-    Name = "private-nacl"
+    Name = "${var.vpc_name}-private-nacl"
   }
 }

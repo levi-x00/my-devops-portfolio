@@ -27,13 +27,13 @@ output "public_rt_id" {
 }
 
 output "private_rt_id" {
-  value = var.enable_nat == true ? "" : aws_route_table.private.id
+  value = var.enable_nat == true ? "" : aws_route_table.private[0].id
 }
 
 output "private1_rt_id" {
-  value = var.enable_nat == true ? aws_route_table.private1.id : ""
+  value = var.enable_nat == true ? aws_route_table.private1[0].id : ""
 }
 
 output "private2_rt_id" {
-  value = var.enable_nat == true ? aws_route_table.private2.id : ""
+  value = var.enable_nat == true ? aws_route_table.private2[0].id : ""
 }

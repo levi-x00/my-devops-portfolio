@@ -22,6 +22,7 @@ variable "private_subnet_cidra" {}
 variable "private_subnet_cidrb" {}
 variable "public_subnet_cidra" {}
 variable "public_subnet_cidrb" {}
+variable "tags" {}
 
 variable "enable_dns_hostnames" {
   type    = bool

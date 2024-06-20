@@ -16,6 +16,6 @@ resource "aws_default_security_group" "default-sg" {
   }
 
   tags = {
-    Name = "default-sg"
+    Name = "${var.vpc_name}-default-sg"
   }
 }

@@ -9,13 +9,9 @@ terraform {
 }
 
 provider "aws" {
-  profile = var.profile
-  region  = var.region
+  region = var.region
 
   default_tags {
-    tags = {
-      Environment = var.environment
-      Application = var.application
-    }
+    tags = var.tags
   }
 }

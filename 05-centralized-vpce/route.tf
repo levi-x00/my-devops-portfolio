@@ -6,7 +6,7 @@ resource "aws_route" "spoke1_vpce" {
 }
 
 resource "aws_route" "vpce_spoke1" {
-  route_table_id         = module.vpce.private_rt_id
+  route_table_id         = module.vpc_vpce.private_rt_id
   destination_cidr_block = var.vpc_spoke1_cidr
   transit_gateway_id     = aws_ec2_transit_gateway.mytgw.id
 }
@@ -19,7 +19,7 @@ resource "aws_route" "spoke2_vpce" {
 }
 
 resource "aws_route" "vpce_spoke2" {
-  route_table_id         = module.vpce.private_rt_id
+  route_table_id         = module.vpc_vpce.private_rt_id
   destination_cidr_block = var.vpc_spoke2_cidr
   transit_gateway_id     = aws_ec2_transit_gateway.mytgw.id
 }
