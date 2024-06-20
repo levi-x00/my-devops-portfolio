@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2024-06-20T03:25:00.743Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36" etag="qI_bDNScVeAUlVJTorPm" version="24.5.4" type="device">
+<mxfile host="app.diagrams.net" modified="2024-06-20T03:30:09.072Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36" etag="1p2d_dAyMwXww5qshzHD" version="24.5.4" type="device">
   <diagram name="Page-1" id="ul6zBzR5WAIRFWwK2bY9">
     <mxGraphModel dx="2537" dy="2018" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -48,8 +48,8 @@
         <mxCell id="y-Bydzuhx3JRvpqglerQ-56" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;strokeWidth=2;flowAnimation=1;" edge="1" parent="y-Bydzuhx3JRvpqglerQ-36" source="y-Bydzuhx3JRvpqglerQ-40" target="y-Bydzuhx3JRvpqglerQ-45">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="y-Bydzuhx3JRvpqglerQ-61" value="&lt;b&gt;email: m.r.pahlevi00@gmail.com&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;" vertex="1" parent="y-Bydzuhx3JRvpqglerQ-36">
-          <mxGeometry x="810" y="520" width="190" height="15" as="geometry" />
+        <mxCell id="y-Bydzuhx3JRvpqglerQ-61" value="&lt;b&gt;&lt;font color=&quot;#cccccc&quot;&gt;email: m.r.pahlevi00@gmail.com&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="y-Bydzuhx3JRvpqglerQ-36">
+          <mxGeometry x="818" y="525" width="190" height="15" as="geometry" />
         </mxCell>
         <mxCell id="y-Bydzuhx3JRvpqglerQ-43" value="AWS Systems Manager" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;fillColor=#232F3E;dashed=0;verticalLabelPosition=middle;verticalAlign=bottom;align=center;html=1;whiteSpace=wrap;fontSize=10;fontStyle=1;spacing=3;shape=mxgraph.aws4.productIcon;prIcon=mxgraph.aws4.systems_manager;" vertex="1" parent="y-Bydzuhx3JRvpqglerQ-36">
           <mxGeometry x="890" y="235" width="80" height="120" as="geometry" />
