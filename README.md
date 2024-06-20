@@ -1,4 +1,4 @@
-# My DevOps Portofolio
+# My DevOps Portfolio
 
 This repo showcases of my research and development (RnD) and my experience working as Cloud/DevOps/Site Reliability Engineer and any related field while keeping all proprietary confidential.
 
