@@ -92,3 +92,13 @@ resource "aws_route_table_association" "public-1b" {
   subnet_id      = aws_subnet.public-1b.id
   route_table_id = aws_route_table.public.id
 }
+
+resource "aws_route_table_association" "private-1a-nonat" {
+  subnet_id      = aws_subnet.private-1a.id
+  route_table_id = aws_route_table.private[0].id
+}
+
+resource "aws_route_table_association" "private-1b-nonat" {
+  subnet_id      = aws_subnet.private-1b.id
+  route_table_id = aws_route_table.private[0].id
+}

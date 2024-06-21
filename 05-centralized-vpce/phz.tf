@@ -3,6 +3,10 @@ resource "aws_route53_zone" "ssm" {
   vpc { vpc_id = module.vpc_vpce.vpc_id }
   vpc { vpc_id = module.vpc_spoke1.vpc_id }
   vpc { vpc_id = module.vpc_spoke2.vpc_id }
+
+  lifecycle {
+    ignore_changes = [vpc]
+  }
 }
 
 resource "aws_route53_zone" "ssmmessages" {
@@ -10,6 +14,10 @@ resource "aws_route53_zone" "ssmmessages" {
   vpc { vpc_id = module.vpc_vpce.vpc_id }
   vpc { vpc_id = module.vpc_spoke1.vpc_id }
   vpc { vpc_id = module.vpc_spoke2.vpc_id }
+
+  lifecycle {
+    ignore_changes = [vpc]
+  }
 }
 
 resource "aws_route53_zone" "ec2messages" {
@@ -17,6 +25,10 @@ resource "aws_route53_zone" "ec2messages" {
   vpc { vpc_id = module.vpc_vpce.vpc_id }
   vpc { vpc_id = module.vpc_spoke1.vpc_id }
   vpc { vpc_id = module.vpc_spoke2.vpc_id }
+
+  lifecycle {
+    ignore_changes = [vpc]
+  }
 }
 
 resource "aws_route53_record" "ssm" {

@@ -40,12 +40,12 @@ resource "aws_security_group" "spoke1_ec2_sg" {
   name   = "spoke1-ec2-sg"
   vpc_id = module.vpc_spoke1.vpc_id
 
-  ingress {
-    protocol  = -1
-    self      = true
-    from_port = 0
-    to_port   = 0
-  }
+  # ingress {
+  #   protocol  = -1
+  #   self      = true
+  #   from_port = 0
+  #   to_port   = 0
+  # }
 
   ingress {
     from_port = 443
@@ -119,7 +119,7 @@ resource "aws_vpc_endpoint" "ssm" {
     aws_security_group.vpce_sg.id,
   ]
 
-  private_dns_enabled = true
+  private_dns_enabled = false
 
   tags = {
     Name = "ssm-vpce"
@@ -137,7 +137,7 @@ resource "aws_vpc_endpoint" "ssmmessages" {
     aws_security_group.vpce_sg.id,
   ]
 
-  private_dns_enabled = true
+  private_dns_enabled = false
 
   tags = {
     Name = "ssmmessages-vpce"
@@ -155,7 +155,7 @@ resource "aws_vpc_endpoint" "ec2messages" {
     aws_security_group.vpce_sg.id,
   ]
 
-  private_dns_enabled = true
+  private_dns_enabled = false
 
   tags = {
     Name = "ec2messages-vpce"

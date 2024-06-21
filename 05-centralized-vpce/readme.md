@@ -28,4 +28,4 @@ $ terraform apply -auto-approve
 
 ## Testing
 
-Try to connect in both EC2 instances using session manager and try to access s3
+Try to connect in both EC2 instances using session manager
