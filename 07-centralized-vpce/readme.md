@@ -2,8 +2,8 @@
 
 ![Alt text](../images/centralized-vpce.drawio.svg?raw=true "ECS Deployment Architecture")<br>
 
-1. Spoke VPC 1 & 2 connected with the central VPC with some endpoints setup
-2. Spoke VPC 1, spoke VPC 2, and the central VPC need to be associated with Route 53 private hosted zone
+1. Spoke VPC 1, 2 and the central VPC are peered with transit gateway
+2. Spoke VPC 1, 2, and the central VPC need to be associated with Route 53 private hosted zone, make sure the private DNS resolution endpoint creation disabled
 3. The spoke VPC 1 & 2 will resolve the VPC endpoints in Route 53 private hosted zone
 4. Some consideration for endpoint policy is limited with 20480 characters, let's say if you have a lot VPCs need to use this central endpoints
 5. Make sure you have enough a pool of IP addresses, when there are spikes of network traffic, the VPC endpoints nodes will scale out (automatically)
