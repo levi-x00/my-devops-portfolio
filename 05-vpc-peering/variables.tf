@@ -1,9 +1,17 @@
+variable "vpc1_cidr_block" {
+  default = "10.0.0.0/24"
+}
+
+variable "vpc2_cidr_block" {
+  default = "10.1.0.0/24"
+}
+
 variable "endpoint_services" {
   type = list(string)
   default = [
-    "com.amazonaws.region.ssm",
-    "com.amazonaws.region.ec2messages",
-    "com.amazonaws.region.ssmmessages"
+    "ssm",
+    "ec2messages",
+    "ssmmessages"
   ]
 }
 

@@ -20,12 +20,13 @@ resource "aws_iam_role" "ec2_role" {
   }, local.default_tags)
 }
 
+# this is just a demo purpose, the real case is least privileges 
 resource "aws_iam_role_policy_attachment" "ssm_managed_policy_attachment" {
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
   role       = aws_iam_role.ec2_role.name
 }
 
 resource "aws_iam_instance_profile" "ec2_instance_profile" {
-  name = "ec2_instance_profile"
+  name = "ec2-instance-profile"
   role = aws_iam_role.ec2_role.name
 }
