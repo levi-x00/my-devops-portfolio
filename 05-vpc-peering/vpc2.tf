@@ -49,6 +49,7 @@ resource "aws_route_table_association" "association02" {
   route_table_id = aws_route_table.private_rt_vpc02.id
 }
 
+# the security group is open to all, only for demo purpose
 resource "aws_security_group" "ec2_sg02" {
   name   = "ec2-${var.environment}-sg-02"
   vpc_id = aws_vpc.vpc_02.id
@@ -86,6 +87,7 @@ resource "aws_security_group" "ec2_sg02" {
   }
 }
 
+# the security group is open to all, only for demo purpose
 resource "aws_security_group" "ep_sg02" {
   name   = "ep-${var.environment}-sg-02"
   vpc_id = aws_vpc.vpc_02.id

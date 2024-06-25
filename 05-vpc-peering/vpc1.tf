@@ -29,7 +29,7 @@ resource "aws_route_table" "private_rt_vpc01" {
   ]
 
   route {
-    cidr_block                = "10.1.0.0/24"
+    cidr_block                = var.vpc2_cidr_block
     vpc_peering_connection_id = aws_vpc_peering_connection.vpc_peering.id
   }
 
@@ -48,6 +48,7 @@ resource "aws_route_table_association" "association01" {
   route_table_id = aws_route_table.private_rt_vpc01.id
 }
 
+# the security group is open to all, only for demo purpose
 resource "aws_security_group" "ec2_sg01" {
   name   = "ec2-${var.environment}-sg-01"
   vpc_id = aws_vpc.vpc_01.id
