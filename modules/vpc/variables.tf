@@ -3,6 +3,11 @@ variable "enable_nat" {
   default = false
 }
 
+variable "create_igw" {
+  type    = bool
+  default = true
+}
+
 variable "vpc_name" {
   default = "devops-project"
 }

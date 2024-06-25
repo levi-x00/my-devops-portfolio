@@ -11,6 +11,7 @@ resource "aws_vpc" "main" {
 }
 
 resource "aws_internet_gateway" "igw" {
+  count  = var.create_igw == true ? 1 : 0
   vpc_id = aws_vpc.main.id
 
   tags = {

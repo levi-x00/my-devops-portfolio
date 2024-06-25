@@ -60,14 +60,22 @@ resource "aws_route" "nat2" {
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
 
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.igw.id
-  }
+  # route {
+  #   cidr_block = "0.0.0.0/0"
+  #   gateway_id = aws_internet_gateway.igw.id
+  # }
 
   tags = {
     Name = "${var.vpc_name}-public-rt"
   }
+}
+
+resource "aws_route" "igw" {
+  count          = var.create_igw == true ? 1 : 0
+  route_table_id = aws_route_table.public.id
+
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.igw[0].id
 }
 
 # ========================= associate the subnets to route table =======================
