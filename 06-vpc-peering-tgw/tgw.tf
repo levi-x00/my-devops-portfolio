@@ -1,8 +1,8 @@
 resource "aws_ec2_transit_gateway" "my_tgw" {
   description = "demo tgw"
-  tags = merge({
+  tags = {
     Name = "my-${var.environment}-tgw"
-  }, local.default_tags)
+  }
 }
 
 resource "aws_ec2_transit_gateway_vpc_attachment" "tgw_vpc_attachment01" {
@@ -11,9 +11,9 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "tgw_vpc_attachment01" {
   subnet_ids = [for subnet in aws_subnet.subnets_vpc01 : subnet.id]
   vpc_id     = aws_vpc.vpc_01.id
 
-  tags = merge({
+  tags = {
     Name = "tgw-vpc01-attachment"
-  }, local.default_tags)
+  }
 }
 
 resource "aws_ec2_transit_gateway_vpc_attachment" "tgw_vpc_attachment02" {
@@ -22,7 +22,7 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "tgw_vpc_attachment02" {
   subnet_ids = [for subnet in aws_subnet.subnets_vpc02 : subnet.id]
   vpc_id     = aws_vpc.vpc_02.id
 
-  tags = merge({
+  tags = {
     Name = "tgw-vpc02-attachment"
-  }, local.default_tags)
+  }
 }

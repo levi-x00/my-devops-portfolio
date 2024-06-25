@@ -21,5 +21,4 @@ data "aws_ami" "amzlinux2" {
 
 data "aws_availability_zones" "azs" {
   state = "available"
-  # region = var.region
 }
