@@ -80,10 +80,7 @@ resource "aws_security_group" "ec2_sg01" {
     create_before_destroy = false
   }
 
-  tags = merge(
-    { Name = "ec2-${var.environment}-sg-01" },
-    local.default_tags
-  )
+  tags = { Name = "ec2-${var.environment}-sg-01" }
 }
 
 resource "aws_security_group" "ep_sg01" {
@@ -111,10 +108,7 @@ resource "aws_security_group" "ep_sg01" {
     create_before_destroy = false
   }
 
-  tags = merge(
-    { Name = "ep-${var.environment}-sg-01" },
-    local.default_tags
-  )
+  tags = { Name = "ep-${var.environment}-sg-01" }
 }
 
 resource "aws_vpc_endpoint" "eps_01" {
@@ -131,7 +125,7 @@ resource "aws_vpc_endpoint" "eps_01" {
 
   private_dns_enabled = true
 
-  tags = merge({
-    Name = "ep-${split(".", each.value)[3]}-01",
-  }, local.default_tags)
+  tags = {
+    Name = "ep-${each.value}-01"
+  }
 }

@@ -111,7 +111,9 @@ resource "aws_security_group" "ep_sg02" {
     create_before_destroy = true
   }
 
-  tags = { Name = "ep-${var.environment}-sg-02" }
+  tags = {
+    Name = "ep-${var.environment}-sg-02"
+  }
 }
 
 resource "aws_vpc_endpoint" "eps_02" {

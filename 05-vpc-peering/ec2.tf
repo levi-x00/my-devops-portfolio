@@ -4,7 +4,7 @@ module "ec2_instance01" {
   source = "terraform-aws-modules/ec2-instance/aws"
 
   name = "instance-01"
-  ami  = data.aws_ami.amzlinux2.id
+  ami  = var.ami_id
 
   instance_type = var.instance_type
   subnet_id     = aws_subnet.subnets_vpc01[0].id
@@ -24,7 +24,7 @@ module "ec2_instance02" {
   source = "terraform-aws-modules/ec2-instance/aws"
 
   name = "instance-02"
-  ami  = data.aws_ami.amzlinux2.id
+  ami  = var.ami_id
 
   instance_type = var.instance_type
   subnet_id     = aws_subnet.subnets_vpc02[0].id
@@ -32,7 +32,7 @@ module "ec2_instance02" {
   iam_instance_profile   = aws_iam_instance_profile.ec2_instance_profile.name
   vpc_security_group_ids = [aws_security_group.ec2_sg02.id]
 
-  tags = merge({
+  tags = {
     Name = "instance-02"
-  }, local.default_tags)
+  }
 }

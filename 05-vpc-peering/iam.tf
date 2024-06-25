@@ -15,9 +15,9 @@ resource "aws_iam_role" "ec2_role" {
     ]
   })
 
-  tags = merge({
+  tags = {
     Name = "ec2-${var.environment}-role"
-  }, local.default_tags)
+  }
 }
 
 # this is just a demo purpose, the real case is least privileges 

@@ -22,7 +22,7 @@ variable "environment" {
 
 variable "region" {
   type    = string
-  default = "us-east-2"
+  default = "us-east-1"
 }
 
 variable "subnets_vpc01" {
@@ -62,4 +62,8 @@ variable "subnets_vpc02" {
 variable "instance_type" {
   type    = string
   default = "t3.micro"
+}
+
+variable "ami_id" {
+  default = "ami-01b799c439fd5516a"
 }
