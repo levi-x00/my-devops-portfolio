@@ -35,7 +35,9 @@ module "vpc_vpce" {
   public_subnet_cidrb = "10.1.1.128/25"
 
   enable_nat = false
-  tags       = var.tags
+  create_igw = true
+
+  tags = var.tags
 }
 
 module "vpc_spoke1" {
@@ -51,7 +53,9 @@ module "vpc_spoke1" {
   public_subnet_cidrb = "10.2.1.128/25"
 
   enable_nat = false
-  tags       = var.tags
+  create_igw = true
+
+  tags = var.tags
 }
 
 module "vpc_spoke2" {
@@ -67,5 +71,7 @@ module "vpc_spoke2" {
   public_subnet_cidrb = "10.3.1.128/25"
 
   enable_nat = false
-  tags       = var.tags
+  create_igw = true
+
+  tags = var.tags
 }

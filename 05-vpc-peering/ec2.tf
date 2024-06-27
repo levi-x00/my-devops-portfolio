@@ -1,7 +1,7 @@
 module "ec2_instance01" {
   depends_on = [aws_vpc_endpoint.eps_01]
-
-  source = "terraform-aws-modules/ec2-instance/aws"
+  version    = "5.6.1"
+  source     = "terraform-aws-modules/ec2-instance/aws"
 
   name = "instance-01"
   ami  = data.aws_ami.amzlinux2.id
@@ -20,8 +20,8 @@ module "ec2_instance01" {
 
 module "ec2_instance02" {
   depends_on = [aws_vpc_endpoint.eps_02]
-
-  source = "terraform-aws-modules/ec2-instance/aws"
+  version    = "5.6.1"
+  source     = "terraform-aws-modules/ec2-instance/aws"
 
   name = "instance-02"
   ami  = data.aws_ami.amzlinux2.id

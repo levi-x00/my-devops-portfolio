@@ -3,7 +3,7 @@ output "vpc_id" {
 }
 
 output "igw_id" {
-  value = aws_internet_gateway.igw.id
+  value = var.create_igw == true ? aws_internet_gateway.igw[0].id : ""
 }
 
 output "private_subnet_ids" {

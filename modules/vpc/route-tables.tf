@@ -1,12 +1,6 @@
 # ========================= mark default route table ================================
 resource "aws_default_route_table" "def-pub-rt" {
   default_route_table_id = aws_vpc.main.default_route_table_id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.igw.id
-  }
-
   tags = {
     Name = "${var.vpc_name}-default-public-rt"
   }
@@ -60,11 +54,6 @@ resource "aws_route" "nat2" {
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
 
-  # route {
-  #   cidr_block = "0.0.0.0/0"
-  #   gateway_id = aws_internet_gateway.igw.id
-  # }
-
   tags = {
     Name = "${var.vpc_name}-public-rt"
   }
@@ -102,11 +91,13 @@ resource "aws_route_table_association" "public-1b" {
 }
 
 resource "aws_route_table_association" "private-1a-nonat" {
+  count          = var.enable_nat == true ? 0 : 1
   subnet_id      = aws_subnet.private-1a.id
   route_table_id = aws_route_table.private[0].id
 }
 
 resource "aws_route_table_association" "private-1b-nonat" {
+  count          = var.enable_nat == true ? 0 : 1
   subnet_id      = aws_subnet.private-1b.id
   route_table_id = aws_route_table.private[0].id
 }
