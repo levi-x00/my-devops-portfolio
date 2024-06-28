@@ -2,7 +2,7 @@
 
 This repo showcases of my research and development (RnD) and my experience working as Cloud/DevOps/Site Reliability Engineer and any related field while keeping all proprietary confidential.
 
-The following some projects that I worked in the past.
+<!-- The following some projects that I worked in the past.
 
 ## ELK Stacks
 
@@ -16,4 +16,4 @@ The following some projects that I worked in the past.
 ## Automate CloudFormation Ingestion Amazon Managed Services with Jenkins
 
 ![Alt text](./images/aws-ms-jenkins.drawio.svg?raw=true "Cfn Ingestion")
-Engineers push changes to gitlab, then gitlab will trigger jenkins pipeline, in jenkins pipeline will send the cloudformation template to s3 then generate it's presign url then calling AMS api to ingest the cloudformation template and deploy it
+Engineers push changes to gitlab, then gitlab will trigger jenkins pipeline, in jenkins pipeline will send the cloudformation template to s3 then generate it's presign url then calling AMS api to ingest the cloudformation template and deploy it -->
