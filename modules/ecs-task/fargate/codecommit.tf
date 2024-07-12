@@ -1,36 +1,40 @@
-# resource "aws_codecommit_repository" "service_repo" {
-#   repository_name = "${var.service_name}-repo"
-#   tags = {
-#     Name = "${var.service_name}-repo"
-#   }
-# }
+resource "aws_codecommit_repository" "service_repo" {
+  repository_name = "${var.service_name}-repo"
+  tags = {
+    Name = "${var.service_name}-repo"
+  }
+}
 
-# resource "null_resource" "upload_files" {
-#   triggers = {
-#     dockerfile = md5(var.docker_file_path)
-#   }
+resource "null_resource" "upload_files" {
+  depends_on = [
+    aws_ecr_repository.this
+  ]
 
-#   provisioner "local-exec" {
-#     command = <<-EOT
-#     cd ${var.docker_file_path}
+  triggers = {
+    files_hash = data.external.folder_hash.result.hash
+  }
 
-#     git config --global credential.helper "!aws codecommit credential-helper $@"
-#     git config --global credential.UseHttpPath true
+  provisioner "local-exec" {
+    command = <<-EOT
+    cd ${var.docker_file_path}
 
-#     git init
-#     git branch -m master
+    git config --global credential.helper "!aws codecommit credential-helper $@"
+    git config --global credential.UseHttpPath true
 
-#     git config user.name ${var.service_name}
-#     git config user.email ${var.service_name}
+    git init
+    git branch -m master
 
-#     git remote add origin ${aws_codecommit_repository.service_repo.clone_url_http}
-#     git add .
-#     git commit -m "Initial commit/update"
-#     git push origin master
+    git config user.name ${var.service_name}
+    git config user.email ${var.service_name}
 
-#     rm -rf .git
+    git remote add origin ${aws_codecommit_repository.service_repo.clone_url_http}
+    git add .
+    git commit -m "Initial commit/update"
+    git push origin master
 
-#     cd -
-#     EOT
-#   }
-# }
+    rm -rf .git
+
+    cd -
+    EOT
+  }
+}
