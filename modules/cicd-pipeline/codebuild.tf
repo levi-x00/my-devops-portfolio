@@ -62,11 +62,11 @@ resource "aws_codebuild_project" "codebuild" {
     }
   }
 
-  # vpc_config {
-  #   vpc_id             = var.vpc_id == null ? null : local.vpc_id
-  #   subnets            = var.vpc_id == null ? null : local.private_subnets
-  #   security_group_ids = var.vpc_id == null ? null : [local.codebuild_sg_id]
-  # }
+  vpc_config {
+    vpc_id             = local.vpc_id
+    subnets            = local.private_subnets
+    security_group_ids = [local.codebuild_sg_id]
+  }
 
   source {
     buildspec           = "buildspec.yml"

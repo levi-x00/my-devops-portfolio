@@ -19,14 +19,13 @@ resource "null_resource" "push_image" {
   ]
 
   triggers = {
-    # dockerfile = md5("${var.docker_file_path}/*")
     files_hash = data.external.folder_hash.result.hash
   }
 
   provisioner "local-exec" {
     command = <<EOT
     cd ${var.docker_file_path}
-    aws ecr get-login-password --region ${var.region} | docker login --username AWS --password-stdin ${local.account_id}.dkr.ecr.${var.region}.amazonaws.com
+    aws ecr get-login-password --region ${local.region} | docker login --username AWS --password-stdin ${local.account_id}.dkr.ecr.${local.region}.amazonaws.com
     docker build -t ${var.service_name} .
     docker tag ${var.service_name}:latest ${aws_ecr_repository.this.repository_url}:latest
     docker push ${aws_ecr_repository.this.repository_url}:latest

@@ -88,7 +88,7 @@ resource "aws_ecs_task_definition" "task_def" {
         "options" : {
           "awslogs-create-group" : "true",
           "awslogs-group" : "/aws/ecs/${var.service_name}-logs",
-          "awslogs-region" : "${var.region}",
+          "awslogs-region" : "${local.region}",
           "awslogs-stream-prefix" : "${var.service_name}"
         },
         "secretOptions" : []
@@ -121,7 +121,7 @@ resource "aws_ecs_task_definition" "task_def" {
         "options" : {
           "awslogs-create-group" : "true",
           "awslogs-group" : "/aws/ecs/${var.service_name}-otel-logs",
-          "awslogs-region" : "${var.region}",
+          "awslogs-region" : "${local.region}",
           "awslogs-stream-prefix" : "${var.service_name}"
         }
       },

@@ -8,10 +8,13 @@ data "aws_ecr_image" "service_image" {
 }
 
 data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
 
 locals {
   account_id = data.aws_caller_identity.current.account_id
-  image_uri  = "${aws_ecr_repository.this.repository_url}@${data.aws_ecr_image.service_image.id}"
+  region     = data.aws_region.current.name
+
+  image_uri = "${aws_ecr_repository.this.repository_url}@${data.aws_ecr_image.service_image.id}"
 
   cluster_info = var.cluster_info
   network_info = var.network_info
