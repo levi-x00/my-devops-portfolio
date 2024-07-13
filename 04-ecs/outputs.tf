@@ -27,5 +27,5 @@ output "https_listener_arn" {
 }
 
 output "ecs_svc_linked_role_name" {
-  value = element(tolist(data.aws_iam_roles.ecs.names), 0)
+  value = aws_iam_service_linked_role.ecs.name
 }

@@ -14,7 +14,6 @@ COPY . .
 RUN chown -R flask:flask /app
 USER flask
 
-# generate changes
 CMD ["python", "app.py"]
 
 EXPOSE 5000

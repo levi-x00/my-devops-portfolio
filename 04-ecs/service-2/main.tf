@@ -2,8 +2,8 @@
 data "terraform_remote_state" "network" {
   backend = "s3"
   config = {
-    bucket = "s3-backend-tfstate-djnf2a8"
-    key    = "${var.environment}/network.tfstate"
+    bucket = "s3-backend-tfstate-cr2krz3"
+    key    = "dev/network.tfstate"
     region = "us-east-1"
   }
 }
@@ -11,8 +11,8 @@ data "terraform_remote_state" "network" {
 data "terraform_remote_state" "cluster" {
   backend = "s3"
   config = {
-    bucket = "s3-backend-tfstate-djnf2a8"
-    key    = "${var.environment}/ecs-stack.tfstate"
+    bucket = "s3-backend-tfstate-cr2krz3"
+    key    = "dev/ecs-stack.tfstate"
     region = "us-east-1"
   }
 }
@@ -21,10 +21,10 @@ data "terraform_remote_state" "cluster" {
 
 terraform {
   backend "s3" {
-    bucket         = "s3-backend-tfstate-djnf2a8"
-    key            = "${var.environment}/ecs-service2-stack.tfstate"
+    bucket         = "s3-backend-tfstate-cr2krz3"
+    key            = "dev/ecs-service2-stack.tfstate"
     region         = "us-east-1"
-    dynamodb_table = "dynamodb-lock-table-djnf2a8"
+    dynamodb_table = "dynamodb-lock-table-cr2krz3"
   }
 
   required_providers {
@@ -52,18 +52,13 @@ provider "aws" {
 module "service" {
   source = "../../modules/ecs-task/fargate"
 
-  service_name = var.service_name
-  region       = var.region
-  environment  = var.environment
-  application  = var.application
-
+  service_name     = var.service_name
   docker_file_path = "${path.module}/src"
 
-  retention_days = var.cw_logs_retention_days
-  cpu            = var.cpu
-  memory         = var.memory
-  port           = var.port
-  path_pattern   = "/${var.service_name}"
+  cpu          = var.cpu
+  memory       = var.memory
+  port         = var.port
+  path_pattern = "/${var.service_name}"
 
   cluster_info = data.terraform_remote_state.cluster.outputs
   network_info = data.terraform_remote_state.network.outputs

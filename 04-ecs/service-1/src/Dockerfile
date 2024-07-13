@@ -13,7 +13,7 @@ COPY . .
 
 RUN chown -R flask:flask /app
 USER flask
-
+# test
 CMD ["python", "app.py"]
 
 EXPOSE 5001

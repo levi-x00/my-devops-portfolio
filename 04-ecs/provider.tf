@@ -1,10 +1,10 @@
 terraform {
 
   backend "s3" {
-    bucket         = "s3-backend-tfstate-djnf2a8"
+    bucket         = "s3-backend-tfstate-cr2krz3"
     key            = "dev/ecs-stack.tfstate"
     region         = "us-east-1"
-    dynamodb_table = "dynamodb-lock-table-djnf2a8"
+    dynamodb_table = "dynamodb-lock-table-cr2krz3"
   }
 
   required_providers {
