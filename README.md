@@ -4,7 +4,7 @@ This repo showcases of my research and development (RnD) and my experience worki
 
 ## Disclaimer
 
-This is just a demo what I've been done, I can't say this is best practice, it's all depend on requirements
+This is just a demo what I've been done, I can't say this is best practice, it's all depend on your requirements
 
 <!-- The following some projects that I worked in the past.
 
