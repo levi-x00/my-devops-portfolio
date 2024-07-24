@@ -34,10 +34,6 @@ output "kms_key_id" {
   value = aws_kms_alias.kms.id
 }
 
-output "codebuild_sg_id" {
-  value = aws_security_group.codebuild.id
-}
-
 output "certificate_arn" {
   value = aws_acm_certificate.acm.arn
 }
