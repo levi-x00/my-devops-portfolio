@@ -46,7 +46,8 @@ resource "aws_iam_role" "codebuild_role" {
     "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess",
     "arn:aws:iam::aws:policy/AmazonVPCFullAccess",
     "arn:aws:iam::aws:policy/AWSCodeBuildDeveloperAccess",
-    "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+    "arn:aws:iam::aws:policy/AmazonS3FullAccess",
+    "arn:aws:iam::aws:policy/EC2InstanceProfileForImageBuilderECRContainerBuilds"
   ]
 
   inline_policy {

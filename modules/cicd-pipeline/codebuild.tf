@@ -9,6 +9,32 @@ resource "aws_cloudwatch_log_group" "cb_logs" {
   }
 }
 
+resource "aws_security_group" "codebuild" {
+  vpc_id = local.vpc_id
+
+  name = "${var.service_name}-codebuild-sg"
+
+  egress {
+    from_port        = 80
+    to_port          = 80
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  egress {
+    from_port        = 443
+    to_port          = 443
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  tags = {
+    Name = "${var.service_name}-codebuild-sg"
+  }
+}
+
 resource "aws_codebuild_project" "codebuild" {
   badge_enabled  = false
   build_timeout  = var.build_timeout
@@ -51,7 +77,7 @@ resource "aws_codebuild_project" "codebuild" {
     environment_variable {
       name  = "ACCOUNT_ID"
       type  = "PLAINTEXT"
-      value = data.aws_caller_identity.current.account_id
+      value = local.account_id
     }
   }
 
@@ -65,7 +91,7 @@ resource "aws_codebuild_project" "codebuild" {
   vpc_config {
     vpc_id             = local.vpc_id
     subnets            = local.private_subnets
-    security_group_ids = [local.codebuild_sg_id]
+    security_group_ids = [aws_security_group.codebuild.id]
   }
 
   source {
