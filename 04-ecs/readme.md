@@ -1,6 +1,6 @@
 ## ECS Deployment Architecture
 
-![Alt text](../images/ecs-cluster.drawio.svg?raw=true "ECS Deployment Architecture")<br>
+![Alt text](../images/ecs-cluster.drawio.png?raw=true "ECS Deployment Architecture")<br>
 Here I deploy the ECS cluster first, the services will come later
 
 ## ECS Configuration
