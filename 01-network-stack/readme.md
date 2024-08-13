@@ -58,3 +58,12 @@ $ terraform init
 $ terraform plan
 $ terraform approve -auto-approve
 ```
+
+for OpenTofu
+for OpenTofu
+
+```sh
+$ tofu init
+$ tofu plan
+$ tofu apply -auto-approve
+```
