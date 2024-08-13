@@ -10,4 +10,12 @@ $ terraform plan
 $ terraform apply -auto-approve
 ```
 
+for OpenTofu
+
+```sh
+$ tofu init
+$ tofu plan
+$ tofu apply -auto-approve
+```
+
 copy the `s3_bucket_name` and `dynamodb_table_name` from the output
