@@ -32,10 +32,18 @@ variables "profile" {
 
 ### Apply The Terraform
 
+```sh
+$ terraform init
+$ terraform plan
+$ terraform apply -auto-approve
 ```
-terraform init
-terraform plan
-terraform apply -auto-approve
+
+for OpenTofu
+
+```sh
+$ tofu init
+$ tofu plan
+$ tofu apply -auto-approve
 ```
 
 Go to AWS console then click <b>Test</b>

@@ -10,7 +10,7 @@ This is the example how to use the lambda module, you can check the `lambda-test
 
 ```terraform
 module "lambda-test" {
-  source      = "../my-lambda"
+  source      = "../modules/lambda"
   lambda_name = "lambda-test"
 
   runtime     = "python3.9"

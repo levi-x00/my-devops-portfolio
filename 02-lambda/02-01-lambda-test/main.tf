@@ -16,16 +16,16 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0.0"
+      version = "~> 5.60.0"
     }
   }
-  required_version = ">=1.5.0"
+  required_version = ">=1.6.0"
 }
 
 ######################## main section ########################
 
 module "lambda-test" {
-  source      = "../my-lambda"
+  source      = "../modules/lambda"
   lambda_name = "lambda-test"
 
   runtime     = "python3.9"
