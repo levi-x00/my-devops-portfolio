@@ -5,7 +5,35 @@
 </head>
 <body>
     <h2>Welcome to the Base Service</h2>
-    <button onclick="location.href='https://533267139655.realhandsonlabs.net/service-1'">Service 1</button>
-    <button onclick="location.href='https://533267139655.realhandsonlabs.net/service-2'">Service 2</button>
+
+    <!-- Service 1 Button -->
+    <button id="service1Button">Service 1</button>
+    <!-- Display the response from service-1 -->
+    <div id="service1Response"></div>
+
+    <!-- Service 2 Button -->
+    <button id="service2Button">Service 2</button>
+    <!-- Display the response from service-2 -->
+    <div id="service2Response"></div>
+
+    <script>
+        // When Service 1 button is clicked, fetch data from /get-service1-data
+        document.getElementById('service1Button').addEventListener('click', function() {
+            fetch('/get-service1-data')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('service1Response').innerHTML = data;
+                });
+        });
+
+        // When Service 2 button is clicked, fetch data from /get-service2-data (assuming you create it)
+        document.getElementById('service2Button').addEventListener('click', function() {
+            fetch('/get-service2-data')  // Replace with your actual endpoint for service-2
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('service2Response').innerHTML = data;
+                });
+        });
+    </script>
 </body>
 </html>

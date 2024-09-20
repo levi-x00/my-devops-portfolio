@@ -69,6 +69,7 @@ module "cicd" {
   service_name    = var.service_name
   repository_name = "${var.service_name}-repo"
   cluster_name    = data.terraform_remote_state.cluster.outputs.cluster_name
+  s3_bucket_artf  = data.terraform_remote_state.cluster.outputs.s3_artifact_bucket
   network_info    = data.terraform_remote_state.network.outputs
 }
 
