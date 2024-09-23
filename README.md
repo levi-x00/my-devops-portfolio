@@ -40,7 +40,7 @@ Project purposes:
 Project Descriptions:
 
 - Engineers push changes to gitlab, then gitlab will trigger jenkins pipeline, in jenkins pipeline will send the cloudformation template to s3 then generate it's url then calling AMS api to ingest the cloudformation template and deploy it
-- The purpose of this project to automate the RFC CloudFormatino ingestion creation when using Amazon Managed Service with jenkins, so the engineers only need to fill the s3 url of the cloudformatin template before running the jenkins pipeline
+- The purpose of this project to automate the RFC CloudFormation ingestion creation when using Amazon Managed Service with jenkins, so the engineers only need to fill the s3 url of the cloudformation template before running the jenkins pipeline
 
 ### Centralized VPC Endpoint
 
