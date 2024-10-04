@@ -17,5 +17,6 @@ variable "path_pattern" {
   default = "/"
 }
 
+# variable "registry_arn" {}
 variable "cluster_info" {}
 variable "network_info" {}

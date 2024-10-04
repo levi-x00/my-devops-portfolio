@@ -23,6 +23,10 @@ resource "aws_ecs_service" "ecs_service" {
   triggers              = {}
   wait_for_steady_state = null
 
+  # service_registries {
+  #   registry_arn = var.registry_arn
+  # }
+
   # alarms {
   #   alarm_names = []
   #   enable      = false

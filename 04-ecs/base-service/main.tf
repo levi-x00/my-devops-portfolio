@@ -2,7 +2,7 @@
 data "terraform_remote_state" "network" {
   backend = "s3"
   config = {
-    bucket = "s3-backend-tfstate-cr2krz3"
+    bucket = "s3-backend-tfstate-lnic1rx"
     key    = "dev/network.tfstate"
     region = "us-east-1"
   }
@@ -11,7 +11,7 @@ data "terraform_remote_state" "network" {
 data "terraform_remote_state" "cluster" {
   backend = "s3"
   config = {
-    bucket = "s3-backend-tfstate-cr2krz3"
+    bucket = "s3-backend-tfstate-lnic1rx"
     key    = "dev/ecs-stack.tfstate"
     region = "us-east-1"
   }
@@ -20,10 +20,10 @@ data "terraform_remote_state" "cluster" {
 ############### provider section ##################
 terraform {
   backend "s3" {
-    bucket         = "s3-backend-tfstate-cr2krz3"
+    bucket         = "s3-backend-tfstate-lnic1rx"
     key            = "dev/main-svc-stack.tfstate"
     region         = "us-east-1"
-    dynamodb_table = "dynamodb-lock-table-cr2krz3"
+    dynamodb_table = "dynamodb-lock-table-lnic1rx"
   }
 
   required_providers {
