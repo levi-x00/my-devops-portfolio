@@ -31,11 +31,15 @@ output "ecs_svc_linked_role_name" {
 }
 
 output "service_discovery_id" {
-  value = aws_service_discovery_http_namespace.internal.id
+  value = aws_service_discovery_private_dns_namespace.internal.id
 }
 
 output "service_discovery_http" {
-  value = aws_service_discovery_http_namespace.internal.http_name
+  value = aws_service_discovery_private_dns_namespace.internal.hosted_zone
+}
+
+output "service_discovery_arn" {
+  value = aws_service_discovery_private_dns_namespace.internal.arn
 }
 
 output "s3_artifact_bucket" {

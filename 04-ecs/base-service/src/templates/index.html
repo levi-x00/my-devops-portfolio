@@ -17,23 +17,17 @@
     <div id="service2Response"></div>
 
     <script>
-        // When Service 1 button is clicked, fetch data from /get-service1-data
-        document.getElementById('service1Button').addEventListener('click', function() {
-            fetch('/get-service1-data')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('service1Response').innerHTML = data;
-                });
+        // When Service 1 button is clicked, redirect to /service-1
+        document.getElementById('service1Button').addEventListener('click', function () {
+            window.location.href = '/service-1';
         });
 
-        // When Service 2 button is clicked, fetch data from /get-service2-data (assuming you create it)
-        document.getElementById('service2Button').addEventListener('click', function() {
-            fetch('/get-service2-data')  // Replace with your actual endpoint for service-2
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('service2Response').innerHTML = data;
-                });
+        // When Service 1 button is clicked, redirect to /service-1
+        document.getElementById('service2Button').addEventListener('click', function () {
+            window.location.href = '/service-2';
         });
+
+        
     </script>
 </body>
 </html>

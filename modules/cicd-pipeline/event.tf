@@ -44,7 +44,7 @@ data "aws_iam_policy_document" "event_iam_policy" {
 }
 
 resource "aws_iam_role" "event_iam_role" {
-  name               = "event-iam-role"
+  name               = "${var.service_name}-event-iam-role"
   assume_role_policy = data.aws_iam_policy_document.event_assume_role.json
 
   inline_policy {
