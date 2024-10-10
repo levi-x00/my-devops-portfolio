@@ -42,6 +42,7 @@ data "aws_iam_policy_document" "kms_policy" {
         "codedeploy.amazonaws.com",
         "events.amazonaws.com",
         "ecs.amazonaws.com",
+        "ec2.amazonaws.com",
         "eks.amazonaws.com",
         "s3.amazonaws.com",
         "ssm.amazonaws.com",
