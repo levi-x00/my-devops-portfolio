@@ -29,6 +29,33 @@ data "aws_iam_policy_document" "kms_policy" {
   }
 
   statement {
+    sid = "Allow attachment of persistent resources"
+
+    principals {
+      type = "Service"
+      identifiers = [
+        "logs.amazonaws.com",
+        "ec2.amazonaws.com",
+        "s3.amazonaws.com"
+      ]
+    }
+
+    actions = [
+      "kms:CreateGrant",
+      "kms:ListGrants",
+      "kms:RevokeGrant"
+    ]
+
+    condition {
+      test     = "Bool"
+      variable = "kms:GrantIsForAWSResource"
+      values   = ["true"]
+    }
+
+    resources = ["*"]
+  }
+
+  statement {
     sid = "Allow services to use KMS"
 
     principals {
