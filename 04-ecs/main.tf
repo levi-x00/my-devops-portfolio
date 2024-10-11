@@ -54,11 +54,6 @@ resource "aws_ecs_cluster" "cluster" {
   }
 }
 
-# resource "aws_service_discovery_http_namespace" "internal" {
-#   name        = "devops-portfolio.internal"
-#   description = "service discovery internal access"
-# }
-
 resource "aws_service_discovery_private_dns_namespace" "internal" {
   name        = "devops-portfolio.internal"
   description = "service discovery internal access"
