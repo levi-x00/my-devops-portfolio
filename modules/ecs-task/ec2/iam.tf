@@ -77,7 +77,7 @@ resource "aws_iam_role" "task_role" {
 
   inline_policy {
     name   = "ecs-svc-inline-policy"
-    policy = data.aws_iam_policy_document.ecs_svc_policy
+    policy = data.aws_iam_policy_document.ecs_svc_policy.json
   }
 
   tags = {
