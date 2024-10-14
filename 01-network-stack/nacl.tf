@@ -4,7 +4,7 @@ resource "aws_default_network_acl" "def-nacl" {
   ingress {
     protocol   = -1
     rule_no    = 100
-    action     = "allow"
+    action     = "deny"
     cidr_block = "0.0.0.0/0"
     from_port  = 0
     to_port    = 0
@@ -13,7 +13,7 @@ resource "aws_default_network_acl" "def-nacl" {
   egress {
     protocol   = -1
     rule_no    = 100
-    action     = "allow"
+    action     = "deny"
     cidr_block = "0.0.0.0/0"
     from_port  = 0
     to_port    = 0
@@ -32,22 +32,40 @@ resource "aws_network_acl" "public_nacl" {
     aws_subnet.public-1b.id
   ]
 
-  egress {
-    protocol   = "-1"
+  ingress {
+    protocol   = "tcp"
     rule_no    = 100
     action     = "allow"
     cidr_block = "0.0.0.0/0"
-    from_port  = 0
-    to_port    = 0
+    from_port  = 443
+    to_port    = 443
   }
 
   ingress {
-    protocol   = "-1"
+    protocol   = "tcp"
+    rule_no    = 101
+    action     = "allow"
+    cidr_block = var.vpc_cidr_block
+    from_port  = 1024
+    to_port    = 65535
+  }
+
+  egress {
+    protocol   = "tcp"
     rule_no    = 100
     action     = "allow"
+    cidr_block = "10.0.0.0/23"
+    from_port  = 443
+    to_port    = 443
+  }
+
+  egress {
+    protocol   = "tcp"
+    rule_no    = 101
+    action     = "allow"
     cidr_block = "0.0.0.0/0"
-    from_port  = 0
-    to_port    = 0
+    from_port  = 1024
+    to_port    = 65535
   }
 
   tags = {
@@ -60,30 +78,104 @@ resource "aws_network_acl" "private_nacl" {
 
   subnet_ids = [
     aws_subnet.private-1a.id,
-    aws_subnet.private-1b.id,
-    aws_subnet.db-1a.id,
-    aws_subnet.db-1b.id
+    aws_subnet.private-1b.id
   ]
 
-  egress {
-    protocol   = "-1"
+  ingress {
+    protocol   = "tcp"
     rule_no    = 100
     action     = "allow"
     cidr_block = "0.0.0.0/0"
-    from_port  = 0
-    to_port    = 0
+    from_port  = 443
+    to_port    = 443
   }
 
   ingress {
-    protocol   = "-1"
+    protocol   = "tcp"
+    rule_no    = 101
+    action     = "allow"
+    cidr_block = var.vpc_cidr_block
+    from_port  = 1024
+    to_port    = 65535
+  }
+
+  egress {
+    protocol   = "tcp"
     rule_no    = 100
     action     = "allow"
     cidr_block = "0.0.0.0/0"
-    from_port  = 0
-    to_port    = 0
+    from_port  = 1024
+    to_port    = 65535
+  }
+
+  egress {
+    protocol   = "-1"
+    rule_no    = 101
+    action     = "allow"
+    cidr_block = "10.0.3.0/24"
+    from_port  = 3306
+    to_port    = 3306
+  }
+
+  egress {
+    protocol   = "-1"
+    rule_no    = 102
+    action     = "allow"
+    cidr_block = "10.0.3.0/24"
+    from_port  = 5432
+    to_port    = 5432
   }
 
   tags = {
     Name = "${var.project_name}-private-nacl"
+  }
+}
+
+resource "aws_network_acl" "db_nacl" {
+  vpc_id = aws_vpc.main.id
+
+  subnet_ids = [
+    aws_subnet.db-1a.id,
+    aws_subnet.db-1b.id
+  ]
+
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 100
+    action     = "allow"
+    cidr_block = "10.0.2.0/24"
+    from_port  = 3306
+    to_port    = 3306
+  }
+
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 101
+    action     = "allow"
+    cidr_block = "10.0.2.0/24"
+    from_port  = 5432
+    to_port    = 5432
+  }
+
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 102
+    action     = "allow"
+    cidr_block = var.vpc_cidr_block
+    from_port  = 1024
+    to_port    = 65535
+  }
+
+  egress {
+    protocol   = "tcp"
+    rule_no    = 100
+    action     = "allow"
+    cidr_block = "10.0.2.0/24"
+    from_port  = 1024
+    to_port    = 65535
+  }
+
+  tags = {
+    Name = "${var.project_name}-db-nacl"
   }
 }
