@@ -23,7 +23,7 @@ output "default_sg_id" {
 }
 
 output "account_id" {
-  value = data.aws_caller_identity.current.account_id
+  value = local.account_id
 }
 
 output "kms_key_arn" {
@@ -32,12 +32,4 @@ output "kms_key_arn" {
 
 output "kms_key_id" {
   value = aws_kms_alias.kms.id
-}
-
-output "certificate_arn" {
-  value = aws_acm_certificate.acm.arn
-}
-
-output "public_domain" {
-  value = var.public_domain
 }

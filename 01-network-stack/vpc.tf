@@ -6,7 +6,7 @@ resource "aws_vpc" "main" {
   enable_dns_support   = var.enable_dns_support
 
   tags = {
-    Name = "vpc-lab"
+    Name = "${var.project_name}-vpc"
   }
 }
 
@@ -14,6 +14,6 @@ resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "${var.environment}-igw"
+    Name = "${var.project_name}-igw"
   }
 }
