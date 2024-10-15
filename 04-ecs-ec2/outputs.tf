@@ -6,8 +6,12 @@ output "cluster_arn" {
   value = aws_ecs_cluster.cluster.arn
 }
 
-output "alb_arn" {
-  value = aws_lb.cluster.arn
+output "public_lb_arn" {
+  value = aws_lb.public_lb.arn
+}
+
+output "internal_lb_arn" {
+  value = aws_lb.internal_lb.arn
 }
 
 output "lb_sg_id" {
@@ -19,27 +23,15 @@ output "svc_sg_id" {
 }
 
 output "http_listener_arn" {
-  value = aws_lb_listener.ecs_listener.arn
+  value = aws_lb_listener.pub_ecs_listener.arn
 }
 
 output "https_listener_arn" {
-  value = aws_lb_listener.ecs_listener_443.arn
+  value = aws_lb_listener.pub_ecs_listener_443.arn
 }
 
 output "ecs_svc_linked_role_name" {
   value = aws_iam_service_linked_role.ecs.name
-}
-
-output "service_discovery_id" {
-  value = aws_service_discovery_private_dns_namespace.internal.id
-}
-
-output "service_discovery_http" {
-  value = aws_service_discovery_private_dns_namespace.internal.hosted_zone
-}
-
-output "service_discovery_arn" {
-  value = aws_service_discovery_private_dns_namespace.internal.arn
 }
 
 output "s3_artifact_bucket" {

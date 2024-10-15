@@ -1,5 +1,11 @@
-resource "aws_lb" "cluster" {
-  name               = "${var.cluster_name}-alb"
+#---------------------------------------------------------------------------------------
+# public LB section
+#---------------------------------------------------------------------------------------
+resource "aws_lb" "public_lb" {
+  depends_on = [
+    aws_s3_bucket_policy.s3_lb_logs
+  ]
+  name               = "${var.cluster_name}-public-alb"
   internal           = false
   load_balancer_type = "application"
 
@@ -8,19 +14,19 @@ resource "aws_lb" "cluster" {
 
   enable_deletion_protection = false
 
-  #   access_logs {
-  #     bucket  = aws_s3_bucket.lb_logs.id
-  #     prefix  = "test-lb"
-  #     enabled = true
-  #   }
+  access_logs {
+    bucket  = aws_s3_bucket.s3_lb_logs.id
+    prefix  = "${var.cluster_name}-public-alb"
+    enabled = true
+  }
 
   tags = {
-    Environment = "${var.cluster_name}-alb"
+    Environment = "${var.cluster_name}-public-alb"
   }
 }
 
-resource "aws_lb_listener" "ecs_listener" {
-  load_balancer_arn = aws_lb.cluster.arn
+resource "aws_lb_listener" "pub_ecs_listener" {
+  load_balancer_arn = aws_lb.public_lb.arn
 
   port     = "80"
   protocol = "HTTP"
@@ -40,22 +46,22 @@ resource "aws_lb_listener" "ecs_listener" {
   }
 }
 
-resource "aws_lb_listener" "ecs_listener_443" {
-  load_balancer_arn = aws_lb.cluster.arn
+resource "aws_lb_listener" "pub_ecs_listener_443" {
+  load_balancer_arn = aws_lb.public_lb.arn
 
   port     = "443"
   protocol = "HTTPS"
 
   ssl_policy      = "ELBSecurityPolicy-2016-08"
-  certificate_arn = local.certificate_arn
+  certificate_arn = aws_acm_certificate.acm.arn
 
   default_action {
     order = 1
     type  = "fixed-response"
     fixed_response {
       content_type = "application/json"
-      message_body = "{\"message\": \"hello devops!!\"}"
-      status_code  = "200"
+      message_body = "{\"message\": \"Forbidden!\"}"
+      status_code  = "403"
     }
   }
 
@@ -64,14 +70,60 @@ resource "aws_lb_listener" "ecs_listener_443" {
   }
 }
 
-resource "aws_route53_record" "alb_record" {
+resource "aws_route53_record" "pub_alb_record" {
   zone_id = data.aws_route53_zone.selected.zone_id
-  name    = local.public_domain
+  name    = var.service_domain
   type    = "A"
 
   alias {
-    name                   = aws_lb.cluster.dns_name
-    zone_id                = aws_lb.cluster.zone_id
+    name                   = aws_lb.public_lb.dns_name
+    zone_id                = aws_lb.public_lb.zone_id
+    evaluate_target_health = true
+  }
+}
+
+#---------------------------------------------------------------------------------------
+# internal LB section
+#---------------------------------------------------------------------------------------
+resource "aws_lb" "internal_lb" {
+  depends_on = [
+    aws_s3_bucket_policy.s3_lb_logs
+  ]
+  name               = "${var.cluster_name}-internal-alb"
+  internal           = false
+  load_balancer_type = "application"
+
+  security_groups = [aws_security_group.lb_sg.id]
+  subnets         = local.prv_subnets
+
+  enable_deletion_protection = false
+
+  access_logs {
+    bucket  = aws_s3_bucket.s3_lb_logs.id
+    prefix  = "${var.cluster_name}-internal-alb"
+    enabled = true
+  }
+
+  tags = {
+    Environment = "${var.cluster_name}-internal-alb"
+  }
+}
+
+resource "aws_route53_zone" "phz" {
+  name = var.service_domain
+  vpc {
+    vpc_id = local.vpc_id
+  }
+}
+
+resource "aws_route53_record" "internal_alb_record" {
+  zone_id = aws_route53_zone.phz.zone_id
+  name    = var.service_domain
+  type    = "A"
+
+  alias {
+    name                   = aws_lb.internal_lb.dns_name
+    zone_id                = aws_lb.internal_lb.zone_id
     evaluate_target_health = true
   }
 }

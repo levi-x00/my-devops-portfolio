@@ -22,6 +22,11 @@ variable "retention_days" {
   default = 90
 }
 
+variable "volume_size" {
+  default = 16
+}
+
+variable "service_domain" { default = "590184080325.realhandsonlabs.net" }
 variable "min_size" { default = 1 }
 variable "max_size" { default = 1 }
 variable "desired_capacity" { default = 1 }

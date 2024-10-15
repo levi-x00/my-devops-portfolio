@@ -71,6 +71,6 @@ resource "aws_wafv2_web_acl_logging_configuration" "waf_log_conf" {
 }
 
 resource "aws_wafv2_web_acl_association" "waf-alb" {
-  resource_arn = aws_lb.cluster.arn
+  resource_arn = aws_lb.public_lb.arn
   web_acl_arn  = aws_wafv2_web_acl.ecs_lb_waf.arn
 }

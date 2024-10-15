@@ -12,10 +12,9 @@ resource "aws_launch_template" "lt" {
   ]
 
   block_device_mappings {
-    # device_name = "/dev/sdf"
     device_name = "/dev/xvda"
     ebs {
-      volume_size = 16
+      volume_size = var.volume_size
       volume_type = "gp3"
       kms_key_id  = local.kms_key_arn
       encrypted   = true

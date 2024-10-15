@@ -28,9 +28,5 @@ data "aws_ami" "amzlinux2" {
   }
 }
 
+data "aws_elb_service_account" "lb" {}
 data "aws_caller_identity" "current" {}
-
-data "aws_route53_zone" "selected" {
-  name         = local.public_domain
-  private_zone = false
-}
