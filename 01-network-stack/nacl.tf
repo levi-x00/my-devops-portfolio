@@ -109,7 +109,7 @@ resource "aws_network_acl" "private_nacl" {
   }
 
   egress {
-    protocol   = "-1"
+    protocol   = "tcp"
     rule_no    = 101
     action     = "allow"
     cidr_block = "10.0.3.0/24"
@@ -118,7 +118,7 @@ resource "aws_network_acl" "private_nacl" {
   }
 
   egress {
-    protocol   = "-1"
+    protocol   = "tcp"
     rule_no    = 102
     action     = "allow"
     cidr_block = "10.0.3.0/24"

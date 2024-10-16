@@ -29,7 +29,7 @@ data "aws_iam_policy_document" "kms_policy" {
   }
 
   statement {
-    sid = "Allow attachment of persistent resources"
+    sid = "Allow attachment of persistent resources (services)"
 
     principals {
       type = "Service"
@@ -56,7 +56,7 @@ data "aws_iam_policy_document" "kms_policy" {
   }
 
   statement {
-    sid = "Allow attachment of persistent resources"
+    sid = "Allow attachment of persistent resources (services role)"
 
     principals {
       type = "AWS"
