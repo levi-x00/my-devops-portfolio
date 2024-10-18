@@ -4,15 +4,14 @@ data "aws_route53_zone" "selected" {
 }
 
 resource "aws_acm_certificate" "acm" {
-  domain_name       = "*.${var.service_domain}"
+  domain_name       = var.service_domain
   validation_method = "DNS"
 
   tags = {}
 }
 
-
 #------------------------------------------------------------------------------------------------------
-# Create ACM record in route53
+# Create ACM record in route53 for validation
 #------------------------------------------------------------------------------------------------------
 resource "aws_route53_record" "r53_record" {
   for_each = {
@@ -33,6 +32,9 @@ resource "aws_route53_record" "r53_record" {
 }
 
 resource "time_sleep" "wait_60_seconds" {
-  depends_on      = [aws_acm_certificate.acm]
-  create_duration = "30s"
+  depends_on = [
+    aws_acm_certificate.acm,
+    aws_route53_record.r53_record
+  ]
+  create_duration = "60s"
 }

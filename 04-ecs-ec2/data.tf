@@ -1,7 +1,7 @@
 data "terraform_remote_state" "network" {
   backend = "s3"
   config = {
-    bucket = "s3-backend-tfstate-lnic1rx"
+    bucket = "s3-backend-tfstate-822xx2w"
     key    = "dev/network.tfstate"
     region = "us-east-1"
   }
@@ -9,23 +9,23 @@ data "terraform_remote_state" "network" {
 
 data "aws_ami" "amzlinux2" {
   most_recent = true
-  owners      = ["amazon"]
-  filter {
-    name   = "name"
-    values = ["amzn2-ami-hvm-*-gp2"]
-  }
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
+
   filter {
     name   = "virtualization-type"
     values = ["hvm"]
   }
+
   filter {
-    name   = "architecture"
-    values = ["x86_64"]
+    name   = "owner-alias"
+    values = ["amazon"]
   }
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-ecs-hvm-*-x86_64-ebs"]
+  }
+
+  owners = ["amazon"]
 }
 
 data "aws_elb_service_account" "lb" {}

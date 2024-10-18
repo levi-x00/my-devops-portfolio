@@ -5,7 +5,7 @@ data "aws_iam_policy_document" "node_doc" {
 
     principals {
       type        = "Service"
-      identifiers = ["ec2.amazonaws.com"]
+      identifiers = ["ec2.amazonaws.com", "ecs.amazonaws.com"]
     }
   }
 }
@@ -67,7 +67,8 @@ data "aws_iam_policy_document" "inline_policy" {
 }
 
 resource "aws_iam_role" "node_role" {
-  name_prefix        = "${var.cluster_name}-node-role"
+  name = "${var.cluster_name}-node-role"
+
   assume_role_policy = data.aws_iam_policy_document.node_doc.json
 
   inline_policy {
@@ -92,7 +93,6 @@ resource "aws_iam_role_policy_attachment" "SSMFullAccess" {
 }
 
 resource "aws_iam_instance_profile" "node_iam_profile" {
-  name_prefix = "${var.cluster_name}-node-profile"
-  path        = "/ecs/instance/"
-  role        = aws_iam_role.node_role.name
+  name = "${var.cluster_name}-node-profile"
+  role = aws_iam_role.node_role.name
 }

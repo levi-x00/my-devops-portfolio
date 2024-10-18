@@ -30,6 +30,10 @@ output "https_listener_arn" {
   value = aws_lb_listener.pub_ecs_listener_443.arn
 }
 
+output "int_https_listener_arn" {
+  value = aws_lb_listener.int_ecs_listener_443.arn
+}
+
 output "ecs_svc_linked_role_name" {
   value = aws_iam_service_linked_role.ecs.name
 }

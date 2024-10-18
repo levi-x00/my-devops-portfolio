@@ -2,6 +2,13 @@ resource "aws_security_group" "node_sg" {
   name   = "node-${var.environment}-sg"
   vpc_id = local.vpc_id
 
+  ingress {
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port   = 0
     to_port     = 65535

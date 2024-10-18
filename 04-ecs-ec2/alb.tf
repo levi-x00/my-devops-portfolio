@@ -47,6 +47,9 @@ resource "aws_lb_listener" "pub_ecs_listener" {
 }
 
 resource "aws_lb_listener" "pub_ecs_listener_443" {
+  depends_on = [
+    time_sleep.wait_60_seconds
+  ]
   load_balancer_arn = aws_lb.public_lb.arn
 
   port     = "443"
@@ -66,7 +69,34 @@ resource "aws_lb_listener" "pub_ecs_listener_443" {
   }
 
   tags = {
-    Name = "ecs-https-listener"
+    Name = "ecs-pub-https-listener"
+  }
+}
+
+resource "aws_lb_listener" "int_ecs_listener_443" {
+  depends_on = [
+    time_sleep.wait_60_seconds
+  ]
+  load_balancer_arn = aws_lb.internal_lb.arn
+
+  port     = "443"
+  protocol = "HTTPS"
+
+  ssl_policy      = "ELBSecurityPolicy-2016-08"
+  certificate_arn = aws_acm_certificate.acm.arn
+
+  default_action {
+    order = 1
+    type  = "fixed-response"
+    fixed_response {
+      content_type = "application/json"
+      message_body = "{\"message\": \"Not Found!\"}"
+      status_code  = "404"
+    }
+  }
+
+  tags = {
+    Name = "ecs-int-https-listener"
   }
 }
 

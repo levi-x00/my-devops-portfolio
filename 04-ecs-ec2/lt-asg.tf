@@ -31,9 +31,23 @@ resource "aws_launch_template" "lt" {
 
   user_data = base64encode(<<-EOF
     #!/bin/bash
-    echo ECS_CLUSTER=${var.cluster_name} >> /etc/ecs/ecs.config;
+    echo ECS_CLUSTER=${var.cluster_name} >> /etc/ecs/ecs.config
     EOF
   )
+
+  tag_specifications {
+    resource_type = "instance"
+    tags = merge({
+      Name = "ecs-ec2-${var.environment}"
+    }, local.default_tags)
+  }
+
+  tag_specifications {
+    resource_type = "volume"
+    tags = merge({
+      Name = "ecs-ec2-${var.environment}"
+    }, local.default_tags)
+  }
 
   tags = {
     Name = "ecs-ec2-${var.environment}-lt"
@@ -51,9 +65,10 @@ resource "aws_autoscaling_group" "asg" {
   max_size         = var.max_size
   desired_capacity = var.desired_capacity
 
-  vpc_zone_identifier  = local.prv_subnets
-  health_check_type    = "EC2"
-  termination_policies = ["OldestInstance"]
+  vpc_zone_identifier = local.prv_subnets
+  health_check_type   = "EC2"
+
+  protect_from_scale_in = true
 
   launch_template {
     id      = aws_launch_template.lt.id
@@ -102,7 +117,7 @@ resource "aws_ecs_capacity_provider" "ecs_cp" {
 
   auto_scaling_group_provider {
     auto_scaling_group_arn         = aws_autoscaling_group.asg.arn
-    managed_termination_protection = "DISABLED"
+    managed_termination_protection = "ENABLED"
 
     managed_scaling {
       maximum_scaling_step_size = 1

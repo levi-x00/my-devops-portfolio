@@ -7,4 +7,9 @@ locals {
   lb_subnets  = data.terraform_remote_state.network.outputs.public_subnet_ids
   prv_subnets = data.terraform_remote_state.network.outputs.private_subnet_ids
   account_id  = data.aws_caller_identity.current.account_id
+
+  default_tags = {
+    Environment = var.environment
+    Application = var.application
+  }
 }
