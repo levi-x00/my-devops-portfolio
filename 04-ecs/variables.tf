@@ -14,6 +14,10 @@ variable "application" {
   default = "devops-blueprint-app"
 }
 
+variable "service_domain" {
+
+}
+
 variable "retention_days" {
   default = 90
 }

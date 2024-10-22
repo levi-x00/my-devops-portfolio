@@ -10,6 +10,6 @@ data "terraform_remote_state" "network" {
 data "aws_caller_identity" "current" {}
 
 data "aws_route53_zone" "selected" {
-  name         = local.public_domain
+  name         = var.service_domain
   private_zone = false
 }

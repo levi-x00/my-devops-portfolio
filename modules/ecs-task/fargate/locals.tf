@@ -26,6 +26,7 @@ locals {
 
   http_listener_arn  = local.cluster_info.http_listener_arn
   https_listener_arn = local.cluster_info.https_listener_arn
+  registry_arn       = local.cluster_info.registry_arn
 
   vpc_id  = local.network_info.vpc_id
   subnets = local.network_info.private_subnet_ids

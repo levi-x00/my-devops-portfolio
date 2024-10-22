@@ -6,8 +6,6 @@ resource "aws_ecs_service" "ecs_service" {
   deployment_minimum_healthy_percent = 100
   health_check_grace_period_seconds  = 0
 
-  # iam_role = local.ecs_svc_linked_role_name
-
   desired_count           = 1
   enable_ecs_managed_tags = true
   enable_execute_command  = true
@@ -23,9 +21,9 @@ resource "aws_ecs_service" "ecs_service" {
   triggers              = {}
   wait_for_steady_state = null
 
-  # service_registries {
-  #   registry_arn = var.registry_arn
-  # }
+  service_registries {
+    registry_arn = local.registry_arn
+  }
 
   # alarms {
   #   alarm_names = []

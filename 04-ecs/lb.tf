@@ -149,7 +149,7 @@ resource "aws_lb_listener" "ecs_listener_443" {
   protocol = "HTTPS"
 
   ssl_policy      = "ELBSecurityPolicy-2016-08"
-  certificate_arn = local.certificate_arn
+  certificate_arn = aws_acm_certificate.acm.arn
 
   default_action {
     order = 1
@@ -168,7 +168,7 @@ resource "aws_lb_listener" "ecs_listener_443" {
 
 resource "aws_route53_record" "alb_record" {
   zone_id = data.aws_route53_zone.selected.zone_id
-  name    = local.public_domain
+  name    = var.service_domain
   type    = "A"
 
   alias {

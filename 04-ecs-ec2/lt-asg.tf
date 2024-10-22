@@ -1,11 +1,50 @@
+# ------------------------------------------------------------------------------------------
+# bastion host section
+# ------------------------------------------------------------------------------------------
+resource "null_resource" "generate_key" {
+  provisioner "local-exec" {
+    command = <<EOT
+    ssh-keygen -t rsa -b 4096 -f ${path.module}/ecs-kp
+    EOT
+  }
+}
+
+resource "aws_key_pair" "ecs_kp" {
+  key_name   = "ecs-kp"
+  public_key = file("${path.module}/ecs-kp.pub")
+}
+
+resource "aws_instance" "jumphost" {
+  depends_on = [
+    aws_iam_instance_profile.node_iam_profile
+  ]
+
+  ami           = data.aws_ami.amzn-linux-2023-ami.id
+  instance_type = "t3.micro"
+
+  subnet_id = local.lb_subnets[0]
+
+  iam_instance_profile = "${var.cluster_name}-node-profile"
+
+  tags = {
+    Name = "jumphost"
+  }
+}
+
+# ------------------------------------------------------------------------------------------
+# ecs worker nodes section
+# ------------------------------------------------------------------------------------------
 resource "aws_launch_template" "lt" {
   depends_on = [
-    aws_ecs_cluster.cluster
+    aws_ecs_cluster.cluster,
+    aws_key_pair.ecs_kp
   ]
 
   name          = "ecs-ec2-${var.environment}-lt"
   image_id      = data.aws_ami.amzlinux2.id
   instance_type = var.instance_type
+
+  key_name = "ecs-kp"
 
   vpc_security_group_ids = [
     aws_security_group.node_sg.id
@@ -97,7 +136,7 @@ resource "aws_autoscaling_group" "asg" {
 
   tag {
     key                 = "AmazonECSManaged"
-    value               = "true"
+    value               = true
     propagate_at_launch = true
   }
 
@@ -108,7 +147,9 @@ resource "aws_autoscaling_group" "asg" {
   }
 }
 
-#################################### ECS Capacity Provider ###################################
+# ------------------------------------------------------------------------------------------
+# ecs capacity provder section
+# ------------------------------------------------------------------------------------------
 resource "aws_ecs_capacity_provider" "ecs_cp" {
   depends_on = [
     aws_ecs_cluster.cluster

@@ -36,17 +36,17 @@ resource "aws_lb_target_group" "service_tg" {
   }
 }
 
-# resource "aws_lb_listener_rule" "this" {
-#   listener_arn = local.https_listener_arn
+resource "aws_lb_listener_rule" "this" {
+  listener_arn = var.listener_arn
 
-#   action {
-#     type             = "forward"
-#     target_group_arn = aws_lb_target_group.service_tg.arn
-#   }
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.service_tg.arn
+  }
 
-#   condition {
-#     path_pattern {
-#       values = [var.path_pattern]
-#     }
-#   }
-# }
+  condition {
+    path_pattern {
+      values = [var.path_pattern]
+    }
+  }
+}

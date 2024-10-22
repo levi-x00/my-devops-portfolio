@@ -17,6 +17,7 @@ resource "aws_vpc_security_group_egress_rule" "egress_lb" {
 }
 
 resource "aws_lb_target_group" "service_tg" {
+  count    = var.create_listener == true ? 1 : 0
   name     = "${var.service_name}-tg"
   port     = 80
   protocol = "HTTP"
@@ -37,17 +38,17 @@ resource "aws_lb_target_group" "service_tg" {
 }
 
 resource "aws_lb_listener_rule" "this" {
+  count        = var.create_listener == true ? 1 : 0
   listener_arn = local.https_listener_arn
-  # priority     = 100
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.service_tg.arn
+    target_group_arn = aws_lb_target_group.service_tg[0].arn
   }
 
   condition {
     path_pattern {
-      values = [var.path_pattern]
+      values = ["/"]
     }
   }
 }

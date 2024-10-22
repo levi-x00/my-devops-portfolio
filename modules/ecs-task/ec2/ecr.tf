@@ -1,3 +1,6 @@
+#-------------------------------------------------------------------------------------------
+# create ecr
+#-------------------------------------------------------------------------------------------
 resource "aws_ecr_repository" "this" {
   name = "${var.service_name}-ecr"
 
@@ -25,6 +28,10 @@ resource "null_resource" "push_image" {
   depends_on = [
     aws_ecr_repository.this
   ]
+
+  triggers = {
+    files_hash = data.external.folder_hash.result.hash
+  }
 
   provisioner "local-exec" {
     command = <<EOT

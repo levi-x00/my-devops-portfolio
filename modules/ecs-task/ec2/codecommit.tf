@@ -1,3 +1,6 @@
+#------------------------------------------------------------------------------------------------
+# create service codecommit repository
+#------------------------------------------------------------------------------------------------
 resource "aws_codecommit_repository" "service_repo" {
   repository_name = "${var.service_name}-repo"
   tags = {
@@ -5,6 +8,9 @@ resource "aws_codecommit_repository" "service_repo" {
   }
 }
 
+#------------------------------------------------------------------------------------------------
+# upload application files to codecommit
+#------------------------------------------------------------------------------------------------
 resource "null_resource" "upload_files" {
   depends_on = [
     aws_ecr_repository.this

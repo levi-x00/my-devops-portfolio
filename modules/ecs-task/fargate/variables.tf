@@ -17,6 +17,8 @@ variable "path_pattern" {
   default = "/"
 }
 
-# variable "registry_arn" {}
+variable "create_listener" {
+  default = true
+}
 variable "cluster_info" {}
 variable "network_info" {}

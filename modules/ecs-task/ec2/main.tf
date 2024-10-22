@@ -1,7 +1,8 @@
 resource "aws_ecs_service" "ecs_service" {
-  name          = var.service_name
-  cluster       = local.cluster_name
-  desired_count = 2
+  name    = var.service_name
+  cluster = local.cluster_name
+
+  desired_count = var.desired_count
 
   deployment_maximum_percent         = 200
   deployment_minimum_healthy_percent = 100
@@ -10,10 +11,6 @@ resource "aws_ecs_service" "ecs_service" {
 
   launch_type     = "EC2"
   task_definition = aws_ecs_task_definition.task_def.arn
-
-  service_registries {
-    registry_arn = local.registry_arn
-  }
 
   # alarms {
   #   alarm_names = []

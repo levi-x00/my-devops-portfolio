@@ -130,7 +130,57 @@ data "aws_iam_policy_document" "kms_policy" {
       "kms:GenerateDataKey*",
       "kms:Describe*"
     ]
+    resources = ["*"]
+  }
 
+  statement {
+    sid    = "Allow generate data key access for Fargate tasks."
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["fargate.amazonaws.com"]
+    }
+    actions = [
+      "kms:GenerateDataKeyWithoutPlaintext"
+    ]
+    condition {
+      test     = "StringEquals"
+      variable = "kms:EncryptionContext:aws:ecs:clusterAccount"
+      values   = [local.account_id]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "kms:EncryptionContext:aws:ecs:clusterName"
+      values   = ["devops-blueprint"]
+    }
+    resources = ["*"]
+  }
+
+  statement {
+    sid    = "Allow grant creation permission for Fargate tasks."
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["fargate.amazonaws.com"]
+    }
+    actions = [
+      "kms:CreateGrant"
+    ]
+    condition {
+      test     = "StringEquals"
+      variable = "kms:EncryptionContext:aws:ecs:clusterAccount"
+      values   = [local.account_id]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "kms:EncryptionContext:aws:ecs:clusterName"
+      values   = ["devops-blueprint"]
+    }
+    condition {
+      test     = "ForAllValues:StringEquals"
+      variable = "kms:GrantOperations"
+      values   = ["Decrypt"]
+    }
     resources = ["*"]
   }
 }

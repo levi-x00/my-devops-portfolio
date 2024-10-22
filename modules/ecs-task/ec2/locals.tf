@@ -20,10 +20,9 @@ locals {
   network_info = var.network_info
 
   cluster_name = local.cluster_info.cluster_name
-  alb_arn      = local.cluster_info.alb_arn
-  lb_sg_id     = local.cluster_info.lb_sg_id
-  svc_sg_id    = local.cluster_info.svc_sg_id
-  registry_arn = local.cluster_info.registry_arn
+
+  lb_sg_id  = local.cluster_info.lb_sg_id
+  svc_sg_id = local.cluster_info.svc_sg_id
 
   http_listener_arn  = local.cluster_info.http_listener_arn
   https_listener_arn = local.cluster_info.https_listener_arn
