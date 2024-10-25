@@ -15,22 +15,18 @@ resource "aws_kms_alias" "kms" {
 data "aws_iam_policy_document" "kms_policy" {
   statement {
     sid = "Enable IAM User Permissions"
-
     principals {
       type = "AWS"
       identifiers = [
         "arn:aws:iam::${local.account_id}:root"
       ]
     }
-
-    actions = ["kms:*"]
-
+    actions   = ["kms:*"]
     resources = ["*"]
   }
 
   statement {
     sid = "Allow attachment of persistent resources (services)"
-
     principals {
       type = "Service"
       identifiers = [
@@ -39,57 +35,48 @@ data "aws_iam_policy_document" "kms_policy" {
         "s3.amazonaws.com"
       ]
     }
-
     actions = [
       "kms:CreateGrant",
       "kms:ListGrants",
       "kms:RevokeGrant"
     ]
-
     condition {
       test     = "Bool"
       variable = "kms:GrantIsForAWSResource"
       values   = ["true"]
     }
-
     resources = ["*"]
   }
 
   statement {
     sid = "Allow attachment of persistent resources (services role)"
-
     principals {
       type = "AWS"
       identifiers = [
         "arn:aws:iam::${local.account_id}:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"
       ]
     }
-
     actions = [
       "kms:CreateGrant",
       "kms:ListGrants",
       "kms:RevokeGrant"
     ]
-
     condition {
       test     = "Bool"
       variable = "kms:GrantIsForAWSResource"
       values   = ["true"]
     }
-
     resources = ["*"]
   }
 
   statement {
     sid = "Allow attachment of persistent resources"
-
     principals {
       type = "AWS"
       identifiers = [
         "arn:aws:iam::${local.account_id}:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"
       ]
     }
-
     actions = [
       "kms:Encrypt*",
       "kms:Decrypt*",
@@ -97,13 +84,11 @@ data "aws_iam_policy_document" "kms_policy" {
       "kms:GenerateDataKey*",
       "kms:Describe*"
     ]
-
     resources = ["*"]
   }
 
   statement {
     sid = "Allow services to use KMS"
-
     principals {
       type = "Service"
       identifiers = [
@@ -122,7 +107,6 @@ data "aws_iam_policy_document" "kms_policy" {
         "lambda.amazonaws.com"
       ]
     }
-
     actions = [
       "kms:Encrypt*",
       "kms:Decrypt*",
