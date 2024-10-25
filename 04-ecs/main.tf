@@ -1,3 +1,6 @@
+#------------------------------------------------------------------------------------------------------
+# create log group for ecs & session manager
+#------------------------------------------------------------------------------------------------------
 resource "aws_cloudwatch_log_group" "cluster" {
   name       = "${var.cluster_name}-logs"
   kms_key_id = local.kms_key_arn
@@ -22,6 +25,9 @@ resource "aws_iam_service_linked_role" "ecs" {
   aws_service_name = "ecs.amazonaws.com"
 }
 
+#------------------------------------------------------------------------------------------------------
+# create ECS cluster
+#------------------------------------------------------------------------------------------------------
 resource "aws_ecs_cluster" "cluster" {
   depends_on = [
     aws_s3_bucket.s3_sess_manager,
@@ -41,6 +47,10 @@ resource "aws_ecs_cluster" "cluster" {
         s3_bucket_name             = aws_s3_bucket.s3_sess_manager.id
         s3_key_prefix              = "exec-output"
       }
+    }
+
+    managed_storage_configuration {
+      fargate_ephemeral_storage_kms_key_id = local.kms_key_arn
     }
   }
 

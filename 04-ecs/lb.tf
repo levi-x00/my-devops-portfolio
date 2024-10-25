@@ -109,12 +109,11 @@ resource "aws_lb" "cluster" {
   subnets         = local.lb_subnets
 
   enable_deletion_protection = false
-
-  #   access_logs {
-  #     bucket  = aws_s3_bucket.lb_logs.id
-  #     prefix  = "test-lb"
-  #     enabled = true
-  #   }
+  access_logs {
+    bucket  = aws_s3_bucket_policy.s3_lb_logs.id
+    prefix  = "${var.cluster_name}-public-alb"
+    enabled = true
+  }
 
   tags = {
     Environment = "${var.cluster_name}-alb"
