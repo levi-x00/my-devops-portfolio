@@ -21,31 +21,38 @@ resource "aws_security_group" "service_sg" {
   vpc_id = local.vpc_id
 
   ingress {
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = [local.vpc_cidr_block]
+  }
+
+  ingress {
     from_port       = 80
     to_port         = 80
     protocol        = "tcp"
-    security_groups = [local.lb_sg_id]
+    security_groups = [var.lb_sg_id]
   }
 
   ingress {
     from_port       = var.port
     to_port         = var.port
     protocol        = "tcp"
-    security_groups = [local.lb_sg_id]
+    security_groups = [var.lb_sg_id]
   }
 
   egress {
     from_port       = var.port
     to_port         = var.port
     protocol        = "tcp"
-    security_groups = [local.lb_sg_id]
+    security_groups = [var.lb_sg_id]
   }
 
   egress {
     from_port       = 80
     to_port         = 80
     protocol        = "tcp"
-    security_groups = [local.lb_sg_id]
+    security_groups = [var.lb_sg_id]
   }
 
   egress {
@@ -137,14 +144,10 @@ resource "aws_ecs_task_definition" "task_def" {
 
   cpu          = var.cpu
   family       = "${var.service_name}-task-def"
-  ipc_mode     = null
   memory       = var.memory
   network_mode = "awsvpc"
 
-  pid_mode      = null
-  skip_destroy  = null
-  task_role_arn = aws_iam_role.task_role.arn
-
+  task_role_arn      = aws_iam_role.task_role.arn
   execution_role_arn = aws_iam_role.task_role.arn
 
   runtime_platform {

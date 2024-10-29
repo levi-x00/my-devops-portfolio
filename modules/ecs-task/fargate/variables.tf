@@ -16,9 +16,7 @@ variable "port" {
 variable "path_pattern" {
   default = "/"
 }
-
-variable "create_listener" {
-  default = true
-}
 variable "cluster_info" {}
 variable "network_info" {}
+variable "listener_arn" {}
+variable "lb_sg_id" {}
