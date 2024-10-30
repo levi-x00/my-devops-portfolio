@@ -33,3 +33,7 @@ output "kms_key_arn" {
 output "kms_key_id" {
   value = aws_kms_alias.kms.id
 }
+
+output "vpc_cidr_block" {
+  value = var.vpc_cidr_block
+}

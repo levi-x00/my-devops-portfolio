@@ -33,103 +33,121 @@ resource "aws_network_acl" "public_nacl" {
   ]
 
   ingress {
-    protocol   = "tcp"
+    protocol   = -1
     rule_no    = 100
     action     = "allow"
     cidr_block = "0.0.0.0/0"
-    from_port  = 80
-    to_port    = 80
-  }
-
-  ingress {
-    protocol   = "tcp"
-    rule_no    = 101
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 443
-    to_port    = 443
-  }
-
-  ingress {
-    protocol   = "tcp"
-    rule_no    = 102
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 1024
-    to_port    = 65535
-  }
-
-  ingress {
-    protocol   = "tcp"
-    rule_no    = 103
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 53
-    to_port    = 53
-  }
-
-  ingress {
-    protocol   = "udp"
-    rule_no    = 104
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 53
-    to_port    = 53
+    from_port  = 0
+    to_port    = 0
   }
 
   egress {
-    protocol   = "tcp"
+    protocol   = -1
     rule_no    = 100
     action     = "allow"
     cidr_block = "0.0.0.0/0"
-    from_port  = 80
-    to_port    = 80
+    from_port  = 0
+    to_port    = 0
   }
 
-  egress {
-    protocol   = "tcp"
-    rule_no    = 101
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 443
-    to_port    = 443
-  }
+  # ingress {
+  #   protocol   = "tcp"
+  #   rule_no    = 100
+  #   action     = "allow"
+  #   cidr_block = "0.0.0.0/0"
+  #   from_port  = 80
+  #   to_port    = 80
+  # }
 
-  egress {
-    protocol   = "tcp"
-    rule_no    = 102
-    action     = "allow"
-    cidr_block = "10.0.0.0/23"
-    from_port  = 443
-    to_port    = 443
-  }
+  # ingress {
+  #   protocol   = "tcp"
+  #   rule_no    = 101
+  #   action     = "allow"
+  #   cidr_block = "0.0.0.0/0"
+  #   from_port  = 443
+  #   to_port    = 443
+  # }
 
-  egress {
-    protocol   = "tcp"
-    rule_no    = 103
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 1024
-    to_port    = 65535
-  }
+  # ingress {
+  #   protocol   = "tcp"
+  #   rule_no    = 102
+  #   action     = "allow"
+  #   cidr_block = "0.0.0.0/0"
+  #   from_port  = 1024
+  #   to_port    = 65535
+  # }
 
-  egress {
-    protocol   = "tcp"
-    rule_no    = 104
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 53
-    to_port    = 53
-  }
+  # ingress {
+  #   protocol   = "tcp"
+  #   rule_no    = 103
+  #   action     = "allow"
+  #   cidr_block = "0.0.0.0/0"
+  #   from_port  = 53
+  #   to_port    = 53
+  # }
 
-  egress {
-    protocol   = "udp"
-    rule_no    = 105
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 53
-    to_port    = 53
-  }
+  # ingress {
+  #   protocol   = "udp"
+  #   rule_no    = 104
+  #   action     = "allow"
+  #   cidr_block = "0.0.0.0/0"
+  #   from_port  = 53
+  #   to_port    = 53
+  # }
+
+  # egress {
+  #   protocol   = "tcp"
+  #   rule_no    = 100
+  #   action     = "allow"
+  #   cidr_block = "0.0.0.0/0"
+  #   from_port  = 80
+  #   to_port    = 80
+  # }
+
+  # egress {
+  #   protocol   = "tcp"
+  #   rule_no    = 101
+  #   action     = "allow"
+  #   cidr_block = "0.0.0.0/0"
+  #   from_port  = 443
+  #   to_port    = 443
+  # }
+
+  # egress {
+  #   protocol   = "tcp"
+  #   rule_no    = 102
+  #   action     = "allow"
+  #   cidr_block = "10.0.0.0/23"
+  #   from_port  = 443
+  #   to_port    = 443
+  # }
+
+  # egress {
+  #   protocol   = "tcp"
+  #   rule_no    = 103
+  #   action     = "allow"
+  #   cidr_block = "0.0.0.0/0"
+  #   from_port  = 1024
+  #   to_port    = 65535
+  # }
+
+  # egress {
+  #   protocol   = "tcp"
+  #   rule_no    = 104
+  #   action     = "allow"
+  #   cidr_block = "0.0.0.0/0"
+  #   from_port  = 53
+  #   to_port    = 53
+  # }
+
+  # egress {
+  #   protocol   = "udp"
+  #   rule_no    = 105
+  #   action     = "allow"
+  #   cidr_block = "0.0.0.0/0"
+  #   from_port  = 53
+  #   to_port    = 53
+  # }
 
   tags = {
     Name = "${var.project_name}-public-nacl"
@@ -145,112 +163,130 @@ resource "aws_network_acl" "private_nacl" {
   ]
 
   ingress {
-    protocol   = "tcp"
+    protocol   = -1
     rule_no    = 100
     action     = "allow"
     cidr_block = "0.0.0.0/0"
-    from_port  = 80
-    to_port    = 80
-  }
-
-  ingress {
-    protocol   = "tcp"
-    rule_no    = 101
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 443
-    to_port    = 443
-  }
-
-  ingress {
-    protocol   = "tcp"
-    rule_no    = 102
-    action     = "allow"
-    cidr_block = var.vpc_cidr_block
-    from_port  = 1024
-    to_port    = 65535
-  }
-
-  ingress {
-    protocol   = "tcp"
-    rule_no    = 103
-    action     = "allow"
-    cidr_block = var.vpc_cidr_block
-    from_port  = 53
-    to_port    = 53
-  }
-
-  ingress {
-    protocol   = "udp"
-    rule_no    = 104
-    action     = "allow"
-    cidr_block = var.vpc_cidr_block
-    from_port  = 53
-    to_port    = 53
+    from_port  = 0
+    to_port    = 0
   }
 
   egress {
-    protocol   = "tcp"
+    protocol   = -1
     rule_no    = 100
     action     = "allow"
     cidr_block = "0.0.0.0/0"
-    from_port  = 80
-    to_port    = 80
+    from_port  = 0
+    to_port    = 0
   }
 
-  egress {
-    protocol   = "tcp"
-    rule_no    = 101
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 443
-    to_port    = 443
-  }
+  # ingress {
+  #   protocol   = "tcp"
+  #   rule_no    = 100
+  #   action     = "allow"
+  #   cidr_block = "0.0.0.0/0"
+  #   from_port  = 80
+  #   to_port    = 80
+  # }
 
-  egress {
-    protocol   = "tcp"
-    rule_no    = 102
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 1024
-    to_port    = 65535
-  }
+  # ingress {
+  #   protocol   = "tcp"
+  #   rule_no    = 101
+  #   action     = "allow"
+  #   cidr_block = "0.0.0.0/0"
+  #   from_port  = 443
+  #   to_port    = 443
+  # }
 
-  egress {
-    protocol   = "tcp"
-    rule_no    = 103
-    action     = "allow"
-    cidr_block = "10.0.3.0/24"
-    from_port  = 3306
-    to_port    = 3306
-  }
+  # ingress {
+  #   protocol   = "tcp"
+  #   rule_no    = 102
+  #   action     = "allow"
+  #   cidr_block = var.vpc_cidr_block
+  #   from_port  = 1024
+  #   to_port    = 65535
+  # }
 
-  egress {
-    protocol   = "tcp"
-    rule_no    = 104
-    action     = "allow"
-    cidr_block = "10.0.3.0/24"
-    from_port  = 5432
-    to_port    = 5432
-  }
+  # ingress {
+  #   protocol   = "tcp"
+  #   rule_no    = 103
+  #   action     = "allow"
+  #   cidr_block = var.vpc_cidr_block
+  #   from_port  = 53
+  #   to_port    = 53
+  # }
 
-  egress {
-    protocol   = "tcp"
-    rule_no    = 105
-    action     = "allow"
-    cidr_block = var.vpc_cidr_block
-    from_port  = 53
-    to_port    = 53
-  }
+  # ingress {
+  #   protocol   = "udp"
+  #   rule_no    = 104
+  #   action     = "allow"
+  #   cidr_block = var.vpc_cidr_block
+  #   from_port  = 53
+  #   to_port    = 53
+  # }
 
-  egress {
-    protocol   = "udp"
-    rule_no    = 106
-    action     = "allow"
-    cidr_block = var.vpc_cidr_block
-    from_port  = 53
-    to_port    = 53
-  }
+  # egress {
+  #   protocol   = "tcp"
+  #   rule_no    = 100
+  #   action     = "allow"
+  #   cidr_block = "0.0.0.0/0"
+  #   from_port  = 80
+  #   to_port    = 80
+  # }
+
+  # egress {
+  #   protocol   = "tcp"
+  #   rule_no    = 101
+  #   action     = "allow"
+  #   cidr_block = "0.0.0.0/0"
+  #   from_port  = 443
+  #   to_port    = 443
+  # }
+
+  # egress {
+  #   protocol   = "tcp"
+  #   rule_no    = 102
+  #   action     = "allow"
+  #   cidr_block = "0.0.0.0/0"
+  #   from_port  = 1024
+  #   to_port    = 65535
+  # }
+
+  # egress {
+  #   protocol   = "tcp"
+  #   rule_no    = 103
+  #   action     = "allow"
+  #   cidr_block = "10.0.3.0/24"
+  #   from_port  = 3306
+  #   to_port    = 3306
+  # }
+
+  # egress {
+  #   protocol   = "tcp"
+  #   rule_no    = 104
+  #   action     = "allow"
+  #   cidr_block = "10.0.3.0/24"
+  #   from_port  = 5432
+  #   to_port    = 5432
+  # }
+
+  # egress {
+  #   protocol   = "tcp"
+  #   rule_no    = 105
+  #   action     = "allow"
+  #   cidr_block = var.vpc_cidr_block
+  #   from_port  = 53
+  #   to_port    = 53
+  # }
+
+  # egress {
+  #   protocol   = "udp"
+  #   rule_no    = 106
+  #   action     = "allow"
+  #   cidr_block = var.vpc_cidr_block
+  #   from_port  = 53
+  #   to_port    = 53
+  # }
 
   tags = {
     Name = "${var.project_name}-private-nacl"

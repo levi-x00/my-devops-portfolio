@@ -19,3 +19,26 @@ resource "aws_default_security_group" "default-sg" {
     Name = "default-sg"
   }
 }
+
+resource "aws_security_group" "vpce" {
+  vpc_id = aws_vpc.main.id
+  name   = "vpce-${var.environment}-sg"
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [var.vpc_cidr_block]
+  }
+
+  egress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [var.vpc_cidr_block]
+  }
+
+  tags = {
+    Name = "vpce-${var.environment}-sg"
+  }
+}
