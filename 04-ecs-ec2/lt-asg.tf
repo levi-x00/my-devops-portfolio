@@ -1,50 +1,63 @@
 # ------------------------------------------------------------------------------------------
 # bastion host section
 # ------------------------------------------------------------------------------------------
-resource "null_resource" "generate_key" {
-  provisioner "local-exec" {
-    command = <<EOT
-    ssh-keygen -t rsa -b 4096 -f ${path.module}/ecs-kp
-    EOT
-  }
-}
+# resource "tls_private_key" "ecs_kp" {
+#   algorithm = "RSA"
+#   rsa_bits  = 4096
+# }
 
-resource "aws_key_pair" "ecs_kp" {
-  key_name   = "ecs-kp"
-  public_key = file("${path.module}/ecs-kp.pub")
-}
+# resource "aws_key_pair" "ecs_kp" {
+#   key_name   = "ecs-kp"
+#   public_key = tls_private_key.ecs_kp.public_key_openssh
 
-resource "aws_instance" "jumphost" {
-  depends_on = [
-    aws_iam_instance_profile.node_iam_profile
-  ]
+#   provisioner "local-exec" {
+#     command = "echo '${tls_private_key.ecs_kp.private_key_pem}' > ${path.module}/ecs-kp.pem"
+#   }
+# }
 
-  ami           = data.aws_ami.amzn-linux-2023-ami.id
-  instance_type = "t3.micro"
+# resource "null_resource" "delete_keypair" {
+#   provisioner "local-exec" {
+#     when    = "destroy"
+#     command = "rm -f ${path.module}/ecs-kp.pem"
+#   }
+# }
 
-  subnet_id = local.lb_subnets[0]
+# resource "aws_instance" "jumphost" {
+#   depends_on = [
+#     aws_iam_instance_profile.node_iam_profile,
+#     aws_key_pair.ecs_kp
+#   ]
 
-  iam_instance_profile = "${var.cluster_name}-node-profile"
+#   ami           = data.aws_ami.amzn-linux-2023-ami.id
+#   instance_type = "t3.micro"
 
-  tags = {
-    Name = "jumphost"
-  }
-}
+#   subnet_id = local.lb_subnets[0]
+#   key_name  = "ecs-kp"
+
+#   security_groups = [
+#     aws_security_group.node_sg.id
+#   ]
+
+#   iam_instance_profile = "${var.cluster_name}-node-profile"
+
+#   tags = {
+#     Name = "jumphost"
+#   }
+# }
 
 # ------------------------------------------------------------------------------------------
 # ecs worker nodes section
 # ------------------------------------------------------------------------------------------
 resource "aws_launch_template" "lt" {
   depends_on = [
-    aws_ecs_cluster.cluster,
-    aws_key_pair.ecs_kp
+    aws_ecs_cluster.cluster
   ]
 
   name          = "ecs-ec2-${var.environment}-lt"
   image_id      = data.aws_ami.amzlinux2.id
   instance_type = var.instance_type
 
-  key_name = "ecs-kp"
+  # key_name = "ecs-kp"
 
   vpc_security_group_ids = [
     aws_security_group.node_sg.id
@@ -68,11 +81,13 @@ resource "aws_launch_template" "lt" {
     enabled = true
   }
 
-  user_data = base64encode(<<-EOF
-    #!/bin/bash
-    echo ECS_CLUSTER=${var.cluster_name} >> /etc/ecs/ecs.config
-    EOF
-  )
+  # user_data = base64encode(<<-EOF
+  #   #!/bin/bash
+  #   echo ECS_CLUSTER=${var.cluster_name} >> /etc/ecs/ecs.config
+  #   EOF
+  # )
+
+  user_data = base64encode(templatefile("${path.module}/userdata.sh", { ECS_CLUSTER = var.cluster_name }))
 
   tag_specifications {
     resource_type = "instance"
@@ -83,6 +98,13 @@ resource "aws_launch_template" "lt" {
 
   tag_specifications {
     resource_type = "volume"
+    tags = merge({
+      Name = "ecs-ec2-${var.environment}"
+    }, local.default_tags)
+  }
+
+  tag_specifications {
+    resource_type = "network-interface"
     tags = merge({
       Name = "ecs-ec2-${var.environment}"
     }, local.default_tags)
