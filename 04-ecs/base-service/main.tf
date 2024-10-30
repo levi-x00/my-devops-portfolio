@@ -41,6 +41,8 @@ module "service" {
   memory = var.memory
   port   = var.port
 
+  path_pattern = "/*"
+
   listener_arn = local.listener_arn
 
   lb_sg_id     = local.cluster_info.lb_sg_id
