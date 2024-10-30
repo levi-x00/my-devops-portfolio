@@ -149,7 +149,8 @@ data "aws_iam_policy_document" "s3_lb_logs" {
     ]
     resources = [
       "arn:aws:s3:::s3-lb-logs-${random_string.random.id}/*",
-      "arn:aws:s3:::s3-lb-logs-${random_string.random.id}/${var.cluster_name}-public-alb/AWSLogs/${local.account_id}/*"
+      "arn:aws:s3:::s3-lb-logs-${random_string.random.id}/${var.cluster_name}-public-alb/AWSLogs/${local.account_id}/*",
+      "arn:aws:s3:::s3-lb-logs-${random_string.random.id}/${var.cluster_name}-internal-alb/AWSLogs/${local.account_id}/*"
     ]
     condition {
       test     = "StringEquals"

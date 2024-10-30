@@ -14,6 +14,9 @@ COPY . .
 RUN chown -R flask:flask /app
 USER flask
 
+ENV SERVICE1_URL=http://internal-devops-blueprint-internal-alb-336731420.us-east-1.elb.amazonaws.com/service-1
+ENV SERVICE2_URL=http://internal-devops-blueprint-internal-alb-336731420.us-east-1.elb.amazonaws.com/service-2
+
 CMD ["python", "app.py"]
 
 EXPOSE 5000

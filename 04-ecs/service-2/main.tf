@@ -1,30 +1,12 @@
-############### remote tfstate ####################
-data "terraform_remote_state" "network" {
-  backend = "s3"
-  config = {
-    bucket = "s3-backend-tfstate-lnic1rx"
-    key    = "dev/network.tfstate"
-    region = "us-east-1"
-  }
-}
-
-data "terraform_remote_state" "cluster" {
-  backend = "s3"
-  config = {
-    bucket = "s3-backend-tfstate-lnic1rx"
-    key    = "dev/ecs-stack.tfstate"
-    region = "us-east-1"
-  }
-}
-
-############### provider section ##################
-
+#-----------------------------------------------------------------------------------
+# provider section
+#-----------------------------------------------------------------------------------
 terraform {
   backend "s3" {
-    bucket         = "s3-backend-tfstate-lnic1rx"
+    bucket         = "s3-backend-tfstate-822xx2w"
     key            = "dev/ecs-service2-stack.tfstate"
     region         = "us-east-1"
-    dynamodb_table = "dynamodb-lock-table-lnic1rx"
+    dynamodb_table = "dynamodb-lock-table-822xx2w"
   }
 
   required_providers {
@@ -48,22 +30,32 @@ provider "aws" {
 }
 
 
-############### main section ##################
+#-----------------------------------------------------------------------------------
+# main section
+#-----------------------------------------------------------------------------------
 module "service" {
   source = "../../modules/ecs-task/fargate"
 
   service_name     = var.service_name
   docker_file_path = "${path.module}/src"
 
-  cpu          = var.cpu
-  memory       = var.memory
-  port         = var.port
+  cpu    = var.cpu
+  memory = var.memory
+  port   = var.port
+
   path_pattern = "/${var.service_name}"
 
-  cluster_info = data.terraform_remote_state.cluster.outputs
-  network_info = data.terraform_remote_state.network.outputs
+  listener_arn = local.http_listener_arn
+
+  lb_sg_id     = local.cluster_info.internal_lb_sg_id
+  cluster_info = local.cluster_info
+  network_info = local.network_info
 }
 
+
+#-----------------------------------------------------------------------------------
+# CI/CD section
+#-----------------------------------------------------------------------------------
 module "cicd" {
   source = "../../modules/cicd-pipeline"
 

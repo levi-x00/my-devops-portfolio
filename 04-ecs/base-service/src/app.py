@@ -2,9 +2,10 @@ from flask import Flask, render_template
 import requests
 import os
 
+
 app = Flask(__name__)
-SERVICE1_URL = "http://service-1.devops-portfolio.internal"
-SERVICE2_URL = "http://service-2.devops-portfolio.internal"
+SERVICE1_URL = os.environ['SERVICE1_URL']
+SERVICE2_URL = os.environ['SERVICE2_URL']
 
 @app.route('/')
 def home():

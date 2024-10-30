@@ -1,29 +1,10 @@
-############### remote tfstate ####################
-data "terraform_remote_state" "network" {
-  backend = "s3"
-  config = {
-    bucket = "s3-backend-tfstate-lnic1rx"
-    key    = "dev/network.tfstate"
-    region = "us-east-1"
-  }
-}
-
-data "terraform_remote_state" "cluster" {
-  backend = "s3"
-  config = {
-    bucket = "s3-backend-tfstate-lnic1rx"
-    key    = "dev/ecs-stack.tfstate"
-    region = "us-east-1"
-  }
-}
-
 ############### provider section ##################
 terraform {
   backend "s3" {
-    bucket         = "s3-backend-tfstate-lnic1rx"
+    bucket         = "s3-backend-tfstate-822xx2w"
     key            = "dev/main-svc-stack.tfstate"
     region         = "us-east-1"
-    dynamodb_table = "dynamodb-lock-table-lnic1rx"
+    dynamodb_table = "dynamodb-lock-table-822xx2w"
   }
 
   required_providers {
@@ -47,7 +28,9 @@ provider "aws" {
   }
 }
 
-############### main section ##################
+#-----------------------------------------------------------------------------------
+# main service section
+#-----------------------------------------------------------------------------------
 module "service" {
   source = "../../modules/ecs-task/fargate"
 
@@ -56,11 +39,13 @@ module "service" {
 
   cpu    = var.cpu
   memory = var.memory
-  port   = 5000
+  port   = var.port
 
-  cluster_info = data.terraform_remote_state.cluster.outputs
-  network_info = data.terraform_remote_state.network.outputs
+  listener_arn = local.listener_arn
 
+  lb_sg_id     = local.cluster_info.lb_sg_id
+  cluster_info = local.cluster_info
+  network_info = local.network_info
 }
 
 module "cicd" {
