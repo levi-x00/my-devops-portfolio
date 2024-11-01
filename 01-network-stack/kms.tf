@@ -99,6 +99,7 @@ data "aws_iam_policy_document" "kms_policy" {
         "codecommit.amazonaws.com",
         "codedeploy.amazonaws.com",
         "events.amazonaws.com",
+        "sns.amazonaws.com",
         "ecs.amazonaws.com",
         "ec2.amazonaws.com",
         "eks.amazonaws.com",
