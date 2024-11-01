@@ -15,11 +15,11 @@ variable "service_name" {
 }
 
 variable "cpu" {
-  default = 512
+  default = 256
 }
 
 variable "memory" {
-  default = 1024
+  default = 512
 }
 
 variable "port" {

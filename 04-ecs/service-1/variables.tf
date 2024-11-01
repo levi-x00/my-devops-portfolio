@@ -15,11 +15,11 @@ variable "service_name" {
 }
 
 variable "cpu" {
-  default = 1024
+  default = 256
 }
 
 variable "memory" {
-  default = 2048
+  default = 512
 }
 
 variable "cw_logs_retention_days" {
