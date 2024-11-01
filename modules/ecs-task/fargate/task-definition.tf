@@ -63,6 +63,13 @@ resource "aws_security_group" "service_sg" {
     ipv6_cidr_blocks = ["::/0"]
   }
 
+  egress {
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = [local.vpc_cidr_block]
+  }
+
   tags = {
     Name = "${var.service_name}-svc-sg"
   }
