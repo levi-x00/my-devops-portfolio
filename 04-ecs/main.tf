@@ -64,8 +64,8 @@ resource "aws_ecs_cluster" "cluster" {
   }
 }
 
-resource "aws_service_discovery_private_dns_namespace" "internal" {
-  name        = "devops-portfolio.internal"
-  description = "service discovery internal access"
-  vpc         = local.vpc_id
-}
+# resource "aws_service_discovery_private_dns_namespace" "internal" {
+#   name        = "devops-portfolio.internal"
+#   description = "service discovery internal access"
+#   vpc         = local.vpc_id
+# }
