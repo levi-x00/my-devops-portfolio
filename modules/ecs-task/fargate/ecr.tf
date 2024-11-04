@@ -31,8 +31,8 @@ resource "null_resource" "push_image" {
     cd ${var.docker_file_path}
     aws ecr get-login-password --region ${local.region} | docker login --username AWS --password-stdin ${local.account_id}.dkr.ecr.${local.region}.amazonaws.com
     docker build -t ${var.service_name} .
-    docker tag ${var.service_name}:latest ${aws_ecr_repository.this.repository_url}:first
-    docker push ${aws_ecr_repository.this.repository_url}:first
+    docker tag ${var.service_name}:latest ${aws_ecr_repository.this.repository_url}:latest
+    docker push ${aws_ecr_repository.this.repository_url}:latest
     cd -
     EOT
   }
