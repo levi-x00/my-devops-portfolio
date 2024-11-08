@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+</head>
+<body>
+    <h2>Welcome to the Base Service</h2>
+
+    <!-- Service 1 Button -->
+    <button id="service1Button">Service 1</button>
+    <!-- Display the response from service-1 -->
+    <div id="service1Response"></div>
+
+    <!-- Service 2 Button -->
+    <button id="service2Button">Service 2</button>
+    <!-- Display the response from service-2 -->
+    <div id="service2Response"></div>
+
+    <script>
+        // When Service 1 button is clicked, redirect to /service-1
+        document.getElementById('service1Button').addEventListener('click', function () {
+            window.location.href = '/service-1';
+        });
+
+        // When Service 2 button is clicked, redirect to /service-2
+        document.getElementById('service2Button').addEventListener('click', function () {
+            window.location.href = '/service-2';
+        });
+
+        
+    </script>
+</body>
+</html>
