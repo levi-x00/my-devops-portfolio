@@ -11,7 +11,20 @@ Here I deploy the ECS cluster first, the services will come later
 
 ## Deploy ECS Cluster
 
-- Configure the data remote tfstate and backend code from the output of `00-infra-backend` in `provider.tf` and `01-network-stack`in `data.tf`, change the bucket and dynamodb table name and the region based on your needs
+- Apply the infra backend for the network infrastructure in `00-infra-backend`, once it's done copy the s3 backend & dynamodb table
+
+- In `01-network-stack`, update `provider.tf` for the s3 backend and dynamodb table, then apply the network stack
+
+```
+backend "s3" {
+  bucket         = "s3-backend-tfstate-xxxxxxx"
+  key            = "dev/network.tfstate"
+  region         = "us-east-1"
+  dynamodb_table = "dynamodb-lock-table-xxxxxxx"
+}
+```
+
+- Now in `04-ecs`, configure the data remote tfstate and backend code from the output of `00-infra-backend` in `provider.tf` and `01-network-stack`in `data.tf`, change the bucket and dynamodb table name and the region based on your needs
 
 ```
 backend "s3" {
@@ -45,56 +58,35 @@ $ terraform apply -auto-approve
 
 ## Deploy ECS Services
 
-1. Go to `base-service` folder, in `src/templates/index.html` update the `location.href` based on your public domain, example
-
-```html
-<body>
-  <h2>Welcome to the Base Service</h2>
-  <button onclick="location.href='https://example.com/service-1'">
-    Service 1
-  </button>
-  <button onclick="location.href='https://example.com/service-2'">
-    Service 2
-  </button>
-</body>
-```
-
-2. Change the bucket name and the region each for cluster and network remote state in `main.tf`
+1. In `service-1` and `service-2`, configure the backend and the remote tfstate in `data.tf` and `main.tf` based on your bucket name and region
 
 ```
 data "terraform_remote_state" "network" {
   backend = "s3"
   config = {
     bucket = "s3-backend-tfstate-xxxxxxx"
-    key    = "${var.environment}/network.tfstate"
+    key    = "dev/network.tfstate"
     region = "us-east-1"
   }
 }
-```
 
-```
 data "terraform_remote_state" "cluster" {
   backend = "s3"
   config = {
     bucket = "s3-backend-tfstate-xxxxxxx"
-    key    = "${var.environment}/ecs-stack.tfstate"
+    key    = "dev/ecs-stack.tfstate"
     region = "us-east-1"
   }
 }
 ```
 
-3. Change the bucket name, dynamodb table name and the region for the service backend in `main.tf`
+2. Once done make sure you have docker service running on your current environment
 
-```
-backend "s3" {
-  bucket         = "s3-backend-tfstate-xxxxxxx"
-  key            = "dev/main-svc-stack.tfstate"
-  region         = "us-east-1"
-  dynamodb_table = "dynamodb-lock-table-xxxxxxx"
-}
+```bash
+$ docker --version
 ```
 
-4. Once everything is set, as usual run the these commands to deploy
+3. Apply the service 1 and 2
 
 ```bash
 $ terraform init
@@ -102,7 +94,7 @@ $ terraform plan
 $ terraform apply -auto-approve
 ```
 
-5. Repeat the step 1-4 for `service-1` and `service-2`
+4. Once the service 1 and 2 setup copy the cloud map domain from Route53 into `base-service` dockerfile
 
 ## Testing
 
