@@ -22,7 +22,7 @@ locals {
   cluster_name = local.cluster_info.cluster_name
   alb_arn      = local.cluster_info.alb_arn
   svc_sg_id    = local.cluster_info.svc_sg_id
-  registry_arn = local.cluster_info.registry_arn
+  registry_arn = local.cluster_info.service_discovery_arn
 
   vpc_cidr_block = local.network_info.vpc_cidr_block
   vpc_id         = local.network_info.vpc_id
