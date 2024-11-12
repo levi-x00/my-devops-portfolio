@@ -9,7 +9,7 @@ phases:
       - REPOSITORY_URI=$ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/service-2-ecr
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=${COMMIT_HASH:=latest}
-      - pip install pytest
+      - pip install pytest flask
   build:
     commands:
       - echo Running test...
@@ -19,6 +19,7 @@ phases:
       - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
       - echo Start scanning image using trivy...
       - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.18.3
+      # - trivy image --exit-code 1 --severity HIGH,CRITICAL $REPOSITORY_URI:$IMAGE_TAG
       - trivy image --exit-code 1 --severity HIGH,CRITICAL $REPOSITORY_URI:$IMAGE_TAG
   post_build:
     commands:

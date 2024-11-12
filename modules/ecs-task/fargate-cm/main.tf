@@ -17,13 +17,11 @@ resource "aws_ecs_service" "ecs_service" {
   propagate_tags      = "NONE"
   scheduling_strategy = "REPLICA"
 
-  task_definition       = aws_ecs_task_definition.task_def.arn
-  triggers              = {}
-  wait_for_steady_state = null
+  task_definition = aws_ecs_task_definition.task_def.arn
 
-  # service_registries {
-  #   registry_arn = local.registry_arn
-  # }
+  service_registries {
+    registry_arn = local.registry_arn
+  }
 
   # alarms {
   #   alarm_names = []
