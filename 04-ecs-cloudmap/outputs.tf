@@ -14,10 +14,6 @@ output "lb_sg_id" {
   value = aws_security_group.lb_sg.id
 }
 
-output "svc_sg_id" {
-  value = aws_security_group.service_sg.id
-}
-
 output "http_listener_arn" {
   value = aws_lb_listener.ecs_listener.arn
 }
