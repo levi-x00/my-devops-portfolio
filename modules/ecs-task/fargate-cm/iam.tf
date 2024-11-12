@@ -27,7 +27,7 @@ data "aws_iam_policy_document" "ssm_policy" {
       "kms:GenerateDataKey*",
       "kms:Describe*"
     ]
-    resources = ["*"]
+    resources = [local.kms_key_arn]
   }
 
   statement {

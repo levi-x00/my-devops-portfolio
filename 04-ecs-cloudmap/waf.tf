@@ -62,7 +62,11 @@ resource "aws_wafv2_web_acl" "ecs_lb_waf" {
 }
 
 resource "aws_cloudwatch_log_group" "waf_logs" {
-  name = "aws-waf-logs-some-uniq-suffix"
+  name              = "aws-waf-logs-some-uniq-suffix"
+  retention_in_days = var.retention_days
+  tags = {
+    Name = "aws-waf-logs-some-uniq-suffix"
+  }
 }
 
 resource "aws_wafv2_web_acl_logging_configuration" "waf_log_conf" {
