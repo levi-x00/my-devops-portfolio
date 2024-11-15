@@ -50,13 +50,14 @@ resource "aws_iam_role" "codebuild_role" {
     "arn:aws:iam::aws:policy/EC2InstanceProfileForImageBuilderECRContainerBuilds"
   ]
 
-  inline_policy {
-    policy = data.aws_iam_policy_document.codebuild_inline_policy.json
-    name   = "codebuild-inline-policy"
-  }
-
   name = "${var.service_name}-codebuild-role"
   path = "/service-role/"
+}
+
+resource "aws_iam_role_policy" "codebuild_policy" {
+  name   = "codebuild-inline-policy"
+  role   = aws_iam_role.codebuild_role.name
+  policy = data.aws_iam_policy_document.codebuild_inline_policy.json
 }
 
 data "aws_iam_policy_document" "codepipeline_assume_role_policy" {
@@ -237,13 +238,14 @@ data "aws_iam_policy_document" "pipeline_inline_policy" {
 
 resource "aws_iam_role" "codepipeline_role" {
   assume_role_policy = data.aws_iam_policy_document.codepipeline_assume_role_policy.json
-  description        = "IAM role for codepipeline"
 
-  inline_policy {
-    policy = data.aws_iam_policy_document.pipeline_inline_policy.json
-    name   = "codepipeline-inline-policy1"
-  }
+  description = "IAM role for codepipeline"
+  name        = "${var.service_name}-pipeline-role"
+  path        = "/service-role/"
+}
 
-  name = "${var.service_name}-pipeline-role"
-  path = "/service-role/"
+resource "aws_iam_role_policy" "codepipeline_policy" {
+  name   = "codepipeline-inline-policy"
+  role   = aws_iam_role.codepipeline_role.name
+  policy = data.aws_iam_policy_document.pipeline_inline_policy.json
 }
