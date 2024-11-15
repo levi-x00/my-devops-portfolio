@@ -43,14 +43,6 @@ backend "s3" {
 }
 ```
 
-In `variables.tf` make sure you have `Route53` public domain registered then replace this variable
-
-```terraform
-variable "public_domain" {
-  default = "example.com"
-}
-```
-
 After that run these commands to setup, for this case I'm using the default value in the `variables.tf` or you can create your own `.tfvars`
 
 ```sh
