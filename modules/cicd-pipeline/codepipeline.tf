@@ -51,6 +51,25 @@ resource "aws_codepipeline" "pipeline" {
   }
 
   stage {
+    name = "Approval"
+    action {
+      category = "Approval"
+      configuration = {
+        CustomData      = "Dear reviewer please check"
+        NotificationArn = local.sns_arn
+      }
+      input_artifacts  = []
+      name             = "Checking"
+      output_artifacts = []
+      owner            = "AWS"
+      provider         = "Manual"
+      region           = local.region
+      run_order        = 1
+      version          = jsonencode(1)
+    }
+  }
+
+  stage {
     name = "Deploy"
     action {
       category = "Deploy"

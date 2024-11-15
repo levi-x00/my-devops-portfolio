@@ -46,11 +46,12 @@ data "aws_iam_policy_document" "event_iam_policy" {
 resource "aws_iam_role" "event_iam_role" {
   name               = "${var.service_name}-event-iam-role"
   assume_role_policy = data.aws_iam_policy_document.event_assume_role.json
+}
 
-  inline_policy {
-    name   = "pipeline-invocation-policy"
-    policy = data.aws_iam_policy_document.event_iam_policy.json
-  }
+resource "aws_iam_role_policy" "event_iam_policy" {
+  name   = "pipeline-invocation-policy"
+  role   = aws_iam_role.event_iam_role.name
+  policy = data.aws_iam_policy_document.event_iam_policy.json
 }
 
 resource "aws_cloudwatch_event_target" "pipeline_trigger" {
