@@ -94,7 +94,14 @@ $ terraform plan
 $ terraform apply -auto-approve
 ```
 
-4. Once the service 1 and 2 setup copy the cloud map domain from Route53 into `base-service` dockerfile
+4. Once the service 1 and 2 setup done, copy the internal load balancer DNS domain into `base-service` dockerfile, replace the existing DNS here
+
+```
+ENV SERVICE1_URL=http://internal-devops-blueprint-internal-alb-1584092313.us-east-1.elb.amazonaws.com/service-1
+ENV SERVICE2_URL=http://internal-devops-blueprint-internal-alb-1584092313.us-east-1.elb.amazonaws.com/service-2
+```
+
+5. Repeat step 1 and 3 to setup the `base-service`
 
 ## Testing
 
@@ -114,15 +121,4 @@ $ curl https://example.com/service-1
 
 ```bash
 $ curl https://example.com/service-2
-```
-
-- Try to session manager for each service with this command (e.g service-1)
-
-```bash
-aws ecs execute-command \
-    --cluster devops-blueprint \
-    --task d789e94343414c25b9f6bd59eEXAMPLE \
-    --container service-1 \
-    --interactive \
-    --command "/bin/sh"
 ```
