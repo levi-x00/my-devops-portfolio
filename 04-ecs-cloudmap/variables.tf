@@ -14,8 +14,8 @@ variable "application" {
   default = "devops-blueprint-app"
 }
 
-variable "service_domain" {}
-
+variable "public_domain" {}
+variable "enable_lb_ssl" {}
 variable "retention_days" {
   default = 90
 }

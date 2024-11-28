@@ -1,3 +1,6 @@
+#------------------------------------------------------------------------------------------------------
+# load balancer and security group section
+#------------------------------------------------------------------------------------------------------
 resource "aws_security_group" "lb_sg" {
   name   = "${var.cluster_name}-alb-sg"
   vpc_id = local.vpc_id
@@ -74,7 +77,35 @@ resource "aws_lb" "cluster" {
   }
 }
 
+#------------------------------------------------------------------------------------------------------
+# create if acm can't be verified with the DNS service e.g route53
+#------------------------------------------------------------------------------------------------------
 resource "aws_lb_listener" "ecs_listener" {
+  count = var.enable_lb_ssl == true ? 0 : 1
+
+  load_balancer_arn = aws_lb.cluster.arn
+
+  default_action {
+    order = 1
+    type  = "fixed-response"
+    fixed_response {
+      content_type = "application/json"
+      message_body = "{\"message\": \"Not Found!!\"}"
+      status_code  = "404"
+    }
+  }
+
+  tags = {
+    Name = "ecs-listener"
+  }
+}
+
+#------------------------------------------------------------------------------------------------------
+# https configuration section, create only if acm can be verified with route53
+#------------------------------------------------------------------------------------------------------
+resource "aws_lb_listener" "ecs_listener" {
+  count = var.enable_lb_ssl == true ? 1 : 0
+
   load_balancer_arn = aws_lb.cluster.arn
 
   port     = "80"
@@ -96,6 +127,8 @@ resource "aws_lb_listener" "ecs_listener" {
 }
 
 resource "aws_lb_listener" "ecs_listener_443" {
+  count = var.enable_lb_ssl == true ? 1 : 0
+
   load_balancer_arn = aws_lb.cluster.arn
 
   port     = "443"
@@ -119,9 +152,12 @@ resource "aws_lb_listener" "ecs_listener_443" {
   }
 }
 
+#------------------------------------------------------------------------------------------------------
+# register load balancer to route53
+#------------------------------------------------------------------------------------------------------
 resource "aws_route53_record" "alb_record" {
   zone_id = data.aws_route53_zone.selected.zone_id
-  name    = var.service_domain
+  name    = var.public_domain
   type    = "A"
 
   alias {
