@@ -1,7 +1,8 @@
-name: Terraform Network Stack Automation
+name: Terraform Create Backend
 
 # Controls when the action will run. Triggers only when merging into the master branch
 # and pull request from base master branch
+
 on:
   push:
     branches:
@@ -9,6 +10,7 @@ on:
   pull_request:
     branches:
       - master
+  workflow_dispatch:
 
 env:
   DESTROY_RESOURCE: $$ {{ vars.DESTROY_RESOURCE }}
