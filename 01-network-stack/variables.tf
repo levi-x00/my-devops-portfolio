@@ -11,11 +11,6 @@ variable "cluster_name" {
   default = "devops-blueprint-eks"
 }
 
-variable "profile" {
-  type    = string
-  default = "default"
-}
-
 variable "vpc_cidr_block" {
   type    = string
   default = "10.0.0.0/22"
