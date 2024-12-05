@@ -4,7 +4,7 @@
 data "terraform_remote_state" "network" {
   backend = "s3"
   config = {
-    bucket = "s3-backend-tfstate-3vmnj35"
+    bucket = "s3-backend-tfstate-rldtvg7"
     key    = "dev/network.tfstate"
     region = "us-east-1"
   }
@@ -13,7 +13,7 @@ data "terraform_remote_state" "network" {
 data "terraform_remote_state" "cluster" {
   backend = "s3"
   config = {
-    bucket = "s3-backend-tfstate-3vmnj35"
+    bucket = "s3-backend-tfstate-rldtvg7"
     key    = "dev/ecs-stack.tfstate"
     region = "us-east-1"
   }

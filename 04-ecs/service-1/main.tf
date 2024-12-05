@@ -3,10 +3,10 @@
 #-----------------------------------------------------------------------------------
 terraform {
   backend "s3" {
-    bucket         = "s3-backend-tfstate-822xx2w"
+    bucket         = "s3-backend-tfstate-3vmnj35"
     key            = "dev/ecs-service1-stack.tfstate"
     region         = "us-east-1"
-    dynamodb_table = "dynamodb-lock-table-822xx2w"
+    dynamodb_table = "dynamodb-lock-table-3vmnj35"
   }
 
   required_providers {
@@ -62,6 +62,7 @@ module "cicd" {
   cluster_name    = data.terraform_remote_state.cluster.outputs.cluster_name
   s3_bucket_artf  = data.terraform_remote_state.cluster.outputs.s3_artifact_bucket
   network_info    = data.terraform_remote_state.network.outputs
+  ecs_info        = data.terraform_remote_state.cluster.outputs
 }
 
 #-----------------------------------------------------------------------------------
