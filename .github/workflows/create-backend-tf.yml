@@ -14,7 +14,9 @@ permissions:
 jobs:
   setupTFBackend:
     runs-on: ubuntu-latest
-    working-directory: ./00-infra-backend
+    defaults:
+      run:
+        working-directory: ./00-infra-backend
     steps:
       - name: Git clone the repository
         uses: actions/checkout@v4
