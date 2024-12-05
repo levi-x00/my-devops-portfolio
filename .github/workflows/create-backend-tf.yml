@@ -1,0 +1,46 @@
+name: Terraform Create Backend
+
+# Controls when the action will run. Triggers only when merging into the master branch
+# and pull request from base master branch
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: read
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git clone the repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4.0.0
+        with:
+          role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
+          role-session-name: ${{ secrets.ROLE_SESSION_NAME }}
+          aws-region: ${{ vars.TF_REGION }}
+
+      - name: Verify Sts GetCallerIdentity
+        run: aws sts get-caller-identity
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Verify terraform version
+        run: terraform --version
+
+      - name: Terraform init
+        run: terraform init
+        
+      - name: Terraform validate
+        run: terraform validate
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
