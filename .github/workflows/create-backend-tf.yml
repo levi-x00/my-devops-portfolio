@@ -1,4 +1,4 @@
-name: Terraform Create Backend
+name: Backend for Terraform
 
 # Controls when the action will run. Triggers only when merging into the master branch
 # and pull request from base master branch
@@ -12,7 +12,7 @@ permissions:
   pull-requests: read
 
 jobs:
-  terraform:
+  setupTFBackend:
     runs-on: ubuntu-latest
     steps:
       - name: Git clone the repository
