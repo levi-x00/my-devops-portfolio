@@ -1,0 +1,60 @@
+name: Setup Network Stack
+
+# Controls when the action will run. Triggers only when merging into the master branch
+# and pull request from base master branch
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: read
+
+jobs:
+  SetupNetworkStacks:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./01-network-stack
+    steps:
+      - name: Git clone the repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4.0.0
+        with:
+          role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
+          role-session-name: ${{ secrets.ROLE_SESSION_NAME }}
+          aws-region: ${{ vars.TF_REGION }}
+
+      - name: Verify Sts GetCallerIdentity
+        run: aws sts get-caller-identity
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Verify terraform version
+        run: terraform --version
+
+      - name: Terraform init
+        run: |
+          terraform init \
+            -backend-config="${{ env.S3_BACKEND_CONFIG }}" \
+            -backend-config="key=${{ env.ENVIRONMENT }}/network.tfstate" \
+            -backend-config="region=${{ env.TF_REGION }}" \
+            -backend-config="encrypt=true" \
+            -backend-config="dynamodb_table=${{ env.DYNAMODB_TABLE }}"
+
+      - name: Terraform validate
+        run: terraform validate
+
+      - name: Terraform Apply
+        if: ${{ env.DESTROY }} == 'false'
+        run: terraform apply -auto-approve
+
+      - name: Terraform Destroy
+        if: ${{ env.DESTROY }} == 'true'
+        run: terraform destroy -auto-approve
