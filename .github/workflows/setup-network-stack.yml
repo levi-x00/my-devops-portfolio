@@ -56,6 +56,4 @@ jobs:
 
       - name: Terraform Destroy
         if: ${{ vars.DESTROY == 'true' }}
-        run: |
-          echo "DESTROY is set to ${{ vars.DESTROY }}"
-          echo "terraform destroy -auto-approve"
+        run: terraform destroy -auto-approve
