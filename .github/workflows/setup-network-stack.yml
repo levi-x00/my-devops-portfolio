@@ -41,7 +41,11 @@ jobs:
 
       - name: Terraform init
         run: |
-          terraform init -backend-config="${{ env.S3_BACKEND_CONFIG }}" -backend-config="key=${{ env.ENVIRONMENT }}/network.tfstate" -backend-config="region=${{ env.TF_REGION }}" -backend-config="encrypt=true" -backend-config="dynamodb_table=${{ env.DYNAMODB_TABLE }}"
+          terraform init -backend-config="${{ vars.S3_BACKEND_CONFIG }}" \
+            -backend-config="key=${{ vars.ENVIRONMENT }}/network.tfstate" \
+            -backend-config="region=${{ vars.TF_REGION }}" \
+            -backend-config="encrypt=true" \
+            -backend-config="dynamodb_table=${{ vars.DYNAMODB_TABLE }}"
 
       - name: Terraform validate
         run: terraform validate
