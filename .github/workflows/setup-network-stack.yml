@@ -51,9 +51,9 @@ jobs:
         run: terraform validate
 
       - name: Terraform Apply
-        if: ${{ vars.DESTROY }} == false
+        if: ${{ vars.DESTROY }} == 'false'
         run: terraform apply -auto-approve
 
       - name: Terraform Destroy
-        if: ${{ vars.DESTROY }} == true
+        if: ${{ vars.DESTROY }} == 'true'
         run: terraform destroy -auto-approve
