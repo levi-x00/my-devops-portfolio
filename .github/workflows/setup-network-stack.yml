@@ -41,6 +41,7 @@ jobs:
 
       - name: Terraform init
         run: |
+          ls -al
           terraform init \
             -backend-config="${{ env.S3_BACKEND_CONFIG }}" \
             -backend-config="key=${{ env.ENVIRONMENT }}/network.tfstate" \
