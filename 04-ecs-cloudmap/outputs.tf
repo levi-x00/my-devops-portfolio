@@ -15,11 +15,11 @@ output "lb_sg_id" {
 }
 
 output "http_listener_arn" {
-  value = aws_lb_listener.ecs_listener.arn
+  value = var.enable_lb_ssl == true ? aws_lb_listener.ecs_listener1[0].arn : aws_lb_listener.ecs_listener0[0].arn
 }
 
 output "https_listener_arn" {
-  value = aws_lb_listener.ecs_listener_443.arn
+  value = var.enable_lb_ssl == true ? aws_lb_listener.ecs_listener_443[0].arn : ""
 }
 
 output "ecs_svc_linked_role_name" {

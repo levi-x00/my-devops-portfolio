@@ -19,3 +19,4 @@ variable "enable_lb_ssl" {}
 variable "retention_days" {
   default = 90
 }
+variable "s3_config_bucket" {}

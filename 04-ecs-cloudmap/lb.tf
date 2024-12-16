@@ -80,8 +80,8 @@ resource "aws_lb" "cluster" {
 #------------------------------------------------------------------------------------------------------
 # create if acm can't be verified with the DNS service e.g route53
 #------------------------------------------------------------------------------------------------------
-resource "aws_lb_listener" "ecs_listener" {
-  count = var.enable_lb_ssl == true ? 0 : 1
+resource "aws_lb_listener" "ecs_listener0" {
+  count = var.enable_lb_ssl == false ? 1 : 0
 
   load_balancer_arn = aws_lb.cluster.arn
 
@@ -103,7 +103,7 @@ resource "aws_lb_listener" "ecs_listener" {
 #------------------------------------------------------------------------------------------------------
 # https configuration section, create only if acm can be verified with route53
 #------------------------------------------------------------------------------------------------------
-resource "aws_lb_listener" "ecs_listener" {
+resource "aws_lb_listener" "ecs_listener1" {
   count = var.enable_lb_ssl == true ? 1 : 0
 
   load_balancer_arn = aws_lb.cluster.arn
