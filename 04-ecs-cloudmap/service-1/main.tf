@@ -29,8 +29,9 @@ provider "aws" {
   }
 }
 
+
 #-----------------------------------------------------------------------------------
-# main service section
+# main section
 #-----------------------------------------------------------------------------------
 module "service" {
   source = "../../modules/ecs-task/fargate-cm"
@@ -43,9 +44,11 @@ module "service" {
   port   = var.port
 
   path_pattern = "/${var.service_name}"
+
   cluster_info = local.cluster_info
   network_info = local.network_info
 }
+
 
 #-----------------------------------------------------------------------------------
 # CI/CD section
@@ -61,9 +64,7 @@ module "cicd" {
   ecs_info        = data.terraform_remote_state.cluster.outputs
 }
 
-#-----------------------------------------------------------------------------------
-# output section
-#-----------------------------------------------------------------------------------
+############### output section ##################
 output "service_name" {
   value = module.service.service_name
 }

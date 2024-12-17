@@ -10,10 +10,10 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0.0"
+      version = "~> 5.80.0"
     }
   }
-  required_version = ">=1.5.0"
+  required_version = ">=1.10.0"
 }
 
 provider "aws" {
@@ -32,7 +32,7 @@ provider "aws" {
 # main service section
 #-----------------------------------------------------------------------------------
 module "service" {
-  source = "../../modules/ecs-task/fargate-cm"
+  source = "../../modules/ecs-task/fargate"
 
   service_name     = var.service_name
   docker_file_path = "${path.module}/src"
@@ -42,6 +42,10 @@ module "service" {
   port   = var.port
 
   path_pattern = "/*"
+
+  listener_arn = local.listener_arn
+
+  lb_sg_id     = local.cluster_info.lb_sg_id
   cluster_info = local.cluster_info
   network_info = local.network_info
 }

@@ -4,8 +4,8 @@ import os
 
 
 app = Flask(__name__)
-SERVICE1_URL = os.environ['SERVICE1_URL']
-SERVICE2_URL = os.environ['SERVICE2_URL']
+SERVICE1_URL = os.getenv('SERVICE1_URL', '')
+SERVICE2_URL = os.getenv('SERVICE2_URL', '')
 
 @app.route('/')
 def home():

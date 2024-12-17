@@ -1,4 +1,4 @@
-FROM python:3.9-alpine
+FROM python:3.9-slim
 
 RUN useradd -m flask
 RUN apt update -y && apt install curl -y
@@ -14,8 +14,8 @@ COPY . .
 RUN chown -R flask:flask /app
 USER flask
 
-ENV SERVICE1_URL=http://internal-devops-blueprint-internal-alb-1529248780.us-east-1.elb.amazonaws.com/service-1
-ENV SERVICE2_URL=http://internal-devops-blueprint-internal-alb-1529248780.us-east-1.elb.amazonaws.com/service-2
+ENV SERVICE1_URL=http://service-1.devops-portfolio.internal
+ENV SERVICE2_URL=http://service-2.devops-portfolio.internal
 
 CMD ["python", "app.py"]
 
