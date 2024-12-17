@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM python:3.9-alpine
 
 RUN useradd -m flask
 RUN apt update -y && apt install curl -y

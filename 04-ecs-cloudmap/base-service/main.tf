@@ -1,10 +1,10 @@
 ############### provider section ##################
 terraform {
   backend "s3" {
-    bucket         = "s3-backend-tfstate-822xx2w"
+    bucket         = "s3-backend-tfstate-lpch2ib"
     key            = "dev/main-svc-stack.tfstate"
     region         = "us-east-1"
-    dynamodb_table = "dynamodb-lock-table-822xx2w"
+    dynamodb_table = "dynamodb-lock-table-lpch2ib"
   }
 
   required_providers {
@@ -42,10 +42,6 @@ module "service" {
   port   = var.port
 
   path_pattern = "/*"
-
-  listener_arn = local.listener_arn
-
-  lb_sg_id     = local.cluster_info.lb_sg_id
   cluster_info = local.cluster_info
   network_info = local.network_info
 }
@@ -58,6 +54,7 @@ module "cicd" {
   cluster_name    = data.terraform_remote_state.cluster.outputs.cluster_name
   s3_bucket_artf  = data.terraform_remote_state.cluster.outputs.s3_artifact_bucket
   network_info    = data.terraform_remote_state.network.outputs
+  ecs_info        = data.terraform_remote_state.cluster.outputs
 }
 
 ############### output section ##################
