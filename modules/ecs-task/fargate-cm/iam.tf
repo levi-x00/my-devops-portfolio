@@ -66,7 +66,7 @@ resource "aws_iam_role" "task_role" {
 
 resource "aws_iam_role_policy" "ssm_policy" {
   name   = "ssm-policy"
-  role   = aws_iam_role.task_role.arn
+  role   = aws_iam_role.task_role.name
   policy = data.aws_iam_policy_document.ssm_policy.json
 }
 

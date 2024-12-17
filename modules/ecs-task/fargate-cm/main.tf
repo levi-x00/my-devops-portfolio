@@ -20,7 +20,8 @@ resource "aws_ecs_service" "ecs_service" {
   task_definition = aws_ecs_task_definition.task_def.arn
 
   service_registries {
-    registry_arn = local.registry_arn
+    registry_arn   = aws_service_discovery_service.internal.arn
+    container_port = var.port
   }
 
   # alarms {
@@ -53,5 +54,24 @@ resource "aws_ecs_service" "ecs_service" {
 
   tags = {
     Name = var.service_name
+  }
+}
+
+resource "aws_service_discovery_service" "internal" {
+  name = var.service_name
+
+  dns_config {
+    namespace_id = local.namespace_id
+
+    dns_records {
+      ttl  = 10
+      type = "A"
+    }
+
+    routing_policy = "MULTIVALUE"
+  }
+
+  health_check_custom_config {
+    failure_threshold = 1
   }
 }

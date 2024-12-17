@@ -18,5 +18,3 @@ variable "path_pattern" {
 }
 variable "cluster_info" {}
 variable "network_info" {}
-variable "listener_arn" {}
-variable "lb_sg_id" {}

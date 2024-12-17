@@ -42,16 +42,19 @@ resource "aws_iam_role" "codebuild_role" {
   assume_role_policy = data.aws_iam_policy_document.codebuild_assume_role_policy.json
   description        = "IAM role for codebuild"
 
-  managed_policy_arns = [
+  name = "${var.service_name}-codebuild-role"
+  path = "/service-role/"
+}
+
+resource "aws_iam_role_policy_attachments_exclusive" "codebuild_role" {
+  role_name = aws_iam_role.codebuild_role.name
+  policy_arns = [
     "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess",
     "arn:aws:iam::aws:policy/AmazonVPCFullAccess",
     "arn:aws:iam::aws:policy/AWSCodeBuildDeveloperAccess",
     "arn:aws:iam::aws:policy/AmazonS3FullAccess",
     "arn:aws:iam::aws:policy/EC2InstanceProfileForImageBuilderECRContainerBuilds"
   ]
-
-  name = "${var.service_name}-codebuild-role"
-  path = "/service-role/"
 }
 
 resource "aws_iam_role_policy" "codebuild_policy" {
