@@ -14,14 +14,14 @@ resource "aws_ecs_service" "ecs_service" {
   launch_type = "FARGATE"
 
   platform_version    = "LATEST"
-  propagate_tags      = "NONE"
+  propagate_tags      = "SERVICE"
   scheduling_strategy = "REPLICA"
 
   task_definition = aws_ecs_task_definition.task_def.arn
 
   service_registries {
-    registry_arn   = aws_service_discovery_service.internal.arn
-    container_port = var.port
+    registry_arn = aws_service_discovery_service.internal.arn
+    # container_port = var.port
   }
 
   # alarms {
