@@ -59,14 +59,15 @@ resource "aws_iam_role" "task_role" {
     ]
   })
 
-  inline_policy {
-    name   = "ssm-policy"
-    policy = data.aws_iam_policy_document.ssm_policy.json
-  }
-
   tags = {
     Name = "${var.service_name}-task-role"
   }
+}
+
+resource "aws_iam_role_policy" "task_policy" {
+  name   = "taskrole-inline-policy"
+  role   = aws_iam_role.task_role.name
+  policy = data.aws_iam_policy_document.ssm_policy.json
 }
 
 resource "aws_iam_role_policy_attachment" "AmazonECSTaskExecutionRolePolicy" {
