@@ -189,7 +189,7 @@ resource "aws_lb_listener" "ecs_listener_443" {
   protocol = "HTTPS"
 
   ssl_policy      = "ELBSecurityPolicy-2016-08"
-  certificate_arn = aws_acm_certificate.acm.arn
+  certificate_arn = aws_acm_certificate.acm[0].arn
 
   default_action {
     order = 1
