@@ -1,0 +1,1 @@
+variable "external_dns" {}
