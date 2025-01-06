@@ -29,5 +29,5 @@ data "http" "lbc_iam_policy" {
 
 # Datasource: EKS Cluster Auth 
 data "aws_eks_cluster_auth" "cluster" {
-  name = data.terraform_remote_state.eks.outputs.cluster_id
+  name = local.cluster_id
 }

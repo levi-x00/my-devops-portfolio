@@ -68,7 +68,7 @@ resource "kubernetes_ingress_class_v1" "ingress_class_default" {
 
 # Resource: Helm Release for external DNS
 resource "helm_release" "external_dns" {
-  depends_on = [aws_iam_role.externaldns_iam_role]
+  depends_on = [aws_iam_role.external_dns_role]
   name       = "external-dns"
 
   repository = "https://kubernetes-sigs.github.io/external-dns/"
