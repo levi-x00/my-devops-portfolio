@@ -87,10 +87,10 @@ resource "aws_eks_node_group" "eks_nodes" {
 
   cluster_name    = aws_eks_cluster.cluster.name
   version         = var.cluster_version
+  release_version = nonsensitive(data.aws_ssm_parameter.eks_ami_release_version.value)
   node_group_name = "${var.cluster_name}-node"
   node_role_arn   = aws_iam_role.eks_nodes_role.arn
 
-  ami_type      = "AL2_x86_64"
   subnet_ids    = local.prv_subnets
   capacity_type = "ON_DEMAND"
 
