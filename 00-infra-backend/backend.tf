@@ -70,29 +70,6 @@ data "aws_iam_policy_document" "s3_backend" {
   }
 }
 
-resource "aws_dynamodb_table" "dynamodb-lock-table" {
-  name           = "dynamodb-lock-table-${random_string.random.id}"
-  hash_key       = "LockID"
-  billing_mode   = "PROVISIONED"
-  read_capacity  = 1
-  write_capacity = 1
-
-  deletion_protection_enabled = false
-
-  attribute {
-    name = "LockID"
-    type = "S"
-  }
-
-  tags = {
-    Name = "dynamodb-lock-table-${random_string.random.id}"
-  }
-}
-
 output "s3_bucket_name" {
   value = aws_s3_bucket_policy.s3_backend.id
-}
-
-output "dynamodb_table_name" {
-  value = aws_dynamodb_table.dynamodb-lock-table.id
 }
