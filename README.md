@@ -6,7 +6,7 @@ This repo showcases of my research and development (RnD) and my experience worki
 
 ---
 
-![Alt text](./01-network-stack/network.jpg?raw=true "Network Architecture")
+![Alt text](./images/vpc-arch.png?raw=true "Network Architecture")
 Project Descriptions:
 
 - The VPC has two public, private, and database subnets each for resiliency
