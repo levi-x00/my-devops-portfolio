@@ -2,7 +2,7 @@
 
 ### Disclaimer
 
-Please not that this terraform AWS lambda only available for Python runtime for now, you guys can freely modify `my-lambda` module
+Please note that this terraform AWS lambda only available for Python runtime for now, you guys can freely modify `my-lambda` module
 
 ### Example
 
