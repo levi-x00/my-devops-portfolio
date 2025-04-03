@@ -1,120 +1,63 @@
-resource "aws_eks_cluster" "cluster" {
-  name     = var.cluster_name
-  version  = var.cluster_version
-  role_arn = aws_iam_role.eks_role.arn
+module "eks" {
+  source  = "terraform-aws-modules/eks/aws"
+  version = "~> 20.31"
 
-  vpc_config {
-    subnet_ids              = local.prv_subnets
-    endpoint_private_access = false
-    endpoint_public_access  = true
-    public_access_cidrs     = ["0.0.0.0/0"]
-  }
+  cluster_name    = var.cluster_name
+  cluster_version = var.cluster_version
 
-  enabled_cluster_log_types = [
-    "api",
-    "audit",
-    "authenticator",
-    "controllerManager",
-    "scheduler"
-  ]
+  cluster_endpoint_public_access = true
 
-  depends_on = [
-    aws_iam_role_policy_attachment.vpc_res_ctrler,
-    aws_iam_role_policy_attachment.eks_cluster
-  ]
-}
+  enable_cluster_creator_admin_permissions = true
 
-resource "aws_launch_template" "eks_ng" {
-  name          = "${var.cluster_name}-ng"
-  ebs_optimized = true
-  instance_type = var.instance_type
-  key_name      = var.key_name
-
-  block_device_mappings {
-    device_name = "/dev/xvda"
-
-    ebs {
-      volume_size           = var.volume_size
-      volume_type           = var.volume_type
-      delete_on_termination = true
+  cluster_addons = {
+    vpc-cni = {
+      before_compute = true
+      most_recent    = true
+      configuration_values = jsonencode({
+        env = {
+          ENABLE_POD_ENI                    = "true"
+          ENABLE_PREFIX_DELEGATION          = "true"
+          POD_SECURITY_GROUP_ENFORCING_MODE = "standard"
+        }
+        nodeAgent = {
+          enablePolicyEventLogs = "true"
+        }
+        enableNetworkPolicy = "true"
+      })
     }
   }
 
-  capacity_reservation_specification {
-    capacity_reservation_preference = "open"
-  }
+  vpc_id     = local.vpc_id
+  subnet_ids = local.prv_subnets
 
-  monitoring {
-    enabled = true
-  }
+  create_cluster_security_group = true
+  create_node_security_group    = false
 
-  network_interfaces {
-    associate_public_ip_address = false
-  }
+  eks_managed_node_groups = {
+    myapp-ng = {
+      instance_types           = [var.instance_type]
+      force_update_version     = true
+      release_version          = var.ami_release_version
+      use_name_prefix          = false
+      iam_role_name            = "${var.cluster_name}-ng-role"
+      iam_role_use_name_prefix = false
 
-  tag_specifications {
-    resource_type = "instance"
-    tags = {
-      Name = "${var.cluster_name}-ng"
-    }
-  }
+      min_size     = 1
+      max_size     = 2
+      desired_size = 1
 
-  tag_specifications {
-    resource_type = "volume"
-    tags = {
-      Name = "${var.cluster_name}-ng"
-    }
-  }
+      update_config = {
+        max_unavailable_percentage = 50
+      }
 
-  tag_specifications {
-    resource_type = "network-interface"
-    tags = {
-      Name = "${var.cluster_name}-ng"
+      labels = {
+        service_name = "myapp"
+      }
     }
   }
 
   tags = {
-    Name = "${var.cluster_name}-ng"
-  }
-}
-
-resource "aws_eks_node_group" "eks_nodes" {
-  depends_on = [
-    aws_iam_role_policy_attachment.worker_node,
-    aws_iam_role_policy_attachment.eks_cni,
-    aws_iam_role_policy_attachment.registry_read_only
-  ]
-
-  cluster_name    = aws_eks_cluster.cluster.name
-  version         = var.cluster_version
-  release_version = nonsensitive(data.aws_ssm_parameter.eks_ami_release_version.value)
-  node_group_name = "${var.cluster_name}-node"
-  node_role_arn   = aws_iam_role.eks_nodes_role.arn
-
-  subnet_ids    = local.prv_subnets
-  capacity_type = "ON_DEMAND"
-
-  launch_template {
-    id      = aws_launch_template.eks_ng.id
-    version = "$Latest"
-  }
-
-  scaling_config {
-    desired_size = 2
-    max_size     = 2
-    min_size     = 2
-  }
-
-  update_config {
-    max_unavailable = 1
-  }
-
-  # Allow external changes without Terraform plan difference
-  lifecycle {
-    ignore_changes = [scaling_config[0].desired_size]
-  }
-
-  tags = {
-    Name = "${var.cluster_name}-ng"
+    Name                     = var.cluster_name
+    "karpenter.sh/discovery" = var.cluster_name
   }
 }
