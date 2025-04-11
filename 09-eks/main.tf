@@ -46,6 +46,9 @@ module "eks" {
       max_size     = 2
       desired_size = 1
 
+      disk_size   = var.disk_size
+      volume_type = var.volume_type
+
       update_config = {
         max_unavailable_percentage = 50
       }
