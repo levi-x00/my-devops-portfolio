@@ -1,66 +1,76 @@
-module "eks" {
-  source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.31"
+resource "aws_eks_cluster" "this" {
+  name = var.cluster_name
 
-  cluster_name    = var.cluster_name
-  cluster_version = var.cluster_version
+  access_config {
+    authentication_mode = "API"
+  }
 
-  cluster_endpoint_public_access = true
+  role_arn = aws_iam_role.eks_cluster.arn
+  version  = var.cluster_version
 
-  enable_cluster_creator_admin_permissions = true
-
-  cluster_addons = {
-    vpc-cni = {
-      before_compute = true
-      most_recent    = true
-      configuration_values = jsonencode({
-        env = {
-          ENABLE_POD_ENI                    = "true"
-          ENABLE_PREFIX_DELEGATION          = "true"
-          POD_SECURITY_GROUP_ENFORCING_MODE = "standard"
-        }
-        nodeAgent = {
-          enablePolicyEventLogs = "true"
-        }
-        enableNetworkPolicy = "true"
-      })
+  encryption_config {
+    provider {
+      key_arn = local.kms_key_arn
     }
+    resources = ["secrets"]
   }
 
-  vpc_id     = local.vpc_id
-  subnet_ids = local.prv_subnets
+  vpc_config {
+    endpoint_private_access = true
+    endpoint_public_access  = true
+    public_access_cidrs     = ["0.0.0.0/0"]
 
-  create_cluster_security_group = true
-  create_node_security_group    = false
+    # vpc_id     = local.vpc_id
+    subnet_ids = local.prv_subnets
 
-  eks_managed_node_groups = {
-    myapp-ng = {
-      instance_types           = [var.instance_type]
-      force_update_version     = true
-      release_version          = var.ami_release_version
-      use_name_prefix          = false
-      iam_role_name            = "${var.cluster_name}-ng-role"
-      iam_role_use_name_prefix = false
-
-      min_size     = 1
-      max_size     = 2
-      desired_size = 1
-
-      disk_size   = var.disk_size
-      volume_type = var.volume_type
-
-      update_config = {
-        max_unavailable_percentage = 50
-      }
-
-      labels = {
-        service_name = "myapp"
-      }
-    }
+    # cluster_security_group_id = "sg-00c2b32532eefca66"
   }
 
-  tags = {
-    Name                     = var.cluster_name
-    "karpenter.sh/discovery" = var.cluster_name
+  # Ensure that IAM Role permissions are created before and deleted
+  # after EKS Cluster handling. Otherwise, EKS will not be able to
+  # properly delete EKS managed EC2 infrastructure such as Security Groups.
+  depends_on = [
+    aws_iam_role_policy_attachment.cluster_AmazonEKSClusterPolicy,
+    aws_iam_role_policy_attachment.cluster_AmazonEKSComputePolicy,
+    aws_iam_role_policy_attachment.cluster_AmazonEKSBlockStoragePolicy,
+    aws_iam_role_policy_attachment.cluster_AmazonEKSNetworkingPolicy
+  ]
+}
+
+resource "aws_eks_node_group" "this" {
+  cluster_name    = aws_eks_cluster.this.name
+  node_group_name = "${var.cluster_name}-ng"
+  node_role_arn   = aws_iam_role.eks_node.arn
+  subnet_ids      = local.prv_subnets
+
+  version = var.cluster_version
+
+  scaling_config {
+    desired_size = 1
+    max_size     = 2
+    min_size     = 1
   }
+
+  update_config {
+    max_unavailable = 1
+  }
+
+  labels = {
+    Service = "myapp"
+  }
+
+  disk_size      = 20
+  instance_types = ["t3.micro", "t3.small"]
+
+  lifecycle {
+    ignore_changes = [scaling_config[0].desired_size]
+  }
+
+  # Ensure that IAM Role permissions are created before and deleted after EKS Node Group handling.
+  # Otherwise, EKS will not be able to properly delete EC2 Instances and Elastic Network Interfaces.
+  depends_on = [
+    aws_iam_role_policy_attachment.node_AmazonEKSWorkerNodeMinimalPolicy,
+    aws_iam_role_policy_attachment.node_AmazonEKS_CNI_Policy,
+    aws_iam_role_policy_attachment.node_AmazonEC2ContainerRegistryPullOnly,
+  ]
 }

@@ -11,7 +11,7 @@ variable "cluster_name" {
   default = "devops-blueprint-eks"
 }
 variable "cluster_version" {
-  default = "1.30"
+  default = "1.31"
 }
 variable "instance_type" {
   default = "t3.medium"

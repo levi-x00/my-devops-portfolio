@@ -1,7 +1,7 @@
 terraform {
 
   backend "s3" {
-    bucket       = "s3-backend-tfstate-6vukw0w"
+    bucket       = "s3-backend-tfstate-l32yrpi"
     key          = "dev/eks-stack.tfstate"
     region       = "us-east-1"
     encrypt      = true
@@ -11,7 +11,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.53"
+      version = "~> 5.94"
     }
   }
   required_version = ">=1.6.0"
