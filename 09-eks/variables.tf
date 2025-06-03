@@ -17,7 +17,7 @@ variable "instance_type" {
   default = "t3.medium"
 }
 variable "disk_size" {
-  default = 16
+  default = 20
 }
 variable "volume_type" {
   default = "gp3"

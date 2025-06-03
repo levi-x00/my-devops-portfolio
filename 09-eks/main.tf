@@ -2,7 +2,8 @@ resource "aws_eks_cluster" "this" {
   name = var.cluster_name
 
   access_config {
-    authentication_mode = "API"
+    authentication_mode                         = "API_AND_CONFIG_MAP"
+    bootstrap_cluster_creator_admin_permissions = true
   }
 
   role_arn = aws_iam_role.eks_cluster.arn
@@ -19,11 +20,7 @@ resource "aws_eks_cluster" "this" {
     endpoint_private_access = true
     endpoint_public_access  = true
     public_access_cidrs     = ["0.0.0.0/0"]
-
-    # vpc_id     = local.vpc_id
-    subnet_ids = local.prv_subnets
-
-    # cluster_security_group_id = "sg-00c2b32532eefca66"
+    subnet_ids              = local.private_subnet_ids
   }
 
   # Ensure that IAM Role permissions are created before and deleted
@@ -41,7 +38,7 @@ resource "aws_eks_node_group" "this" {
   cluster_name    = aws_eks_cluster.this.name
   node_group_name = "${var.cluster_name}-ng"
   node_role_arn   = aws_iam_role.eks_node.arn
-  subnet_ids      = local.prv_subnets
+  subnet_ids      = local.private_subnet_ids
 
   version = var.cluster_version
 
@@ -59,7 +56,7 @@ resource "aws_eks_node_group" "this" {
     Service = "myapp"
   }
 
-  disk_size      = 20
+  disk_size      = var.disk_size
   instance_types = ["t3.micro", "t3.small"]
 
   lifecycle {
