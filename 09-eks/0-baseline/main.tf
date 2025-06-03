@@ -70,4 +70,8 @@ resource "aws_eks_node_group" "this" {
     aws_iam_role_policy_attachment.node_AmazonEKS_CNI_Policy,
     aws_iam_role_policy_attachment.node_AmazonEC2ContainerRegistryPullOnly,
   ]
+
+  tags = {
+    Name = "${var.cluster_name}-ng"
+  }
 }
