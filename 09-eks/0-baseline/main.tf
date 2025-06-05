@@ -110,7 +110,7 @@ resource "aws_eks_node_group" "this" {
     Type    = "ON_DEMAND"
   }
 
-  instance_types = ["t3.micro", "t3.small"]
+  instance_types = ["t3.medium"]
 
   lifecycle {
     ignore_changes = [scaling_config[0].desired_size]
