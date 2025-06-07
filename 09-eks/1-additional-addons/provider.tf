@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket       = "s3-backend-tfstate-5180c5z"
+    bucket       = "s3-backend-tfstate-l32yrpi"
     key          = "dev/eks-additional-stuffs.tfstate"
     region       = "us-east-1"
     encrypt      = true
@@ -11,6 +11,11 @@ terraform {
     aws = {
       source  = "hashicorp/aws"
       version = "~> 5.94"
+    }
+
+    tls = {
+      source  = "hashicorp/tls"
+      version = ">= 4.0"
     }
   }
   required_version = ">=1.6.0"
@@ -24,5 +29,13 @@ provider "aws" {
       Environment = var.environment
       Application = var.application
     }
+  }
+}
+
+provider "helm" {
+  kubernetes {
+    host                   = data.terraform_remote_state.eks.outputs.cluster_endpoint
+    cluster_ca_certificate = base64decode(data.terraform_remote_state.eks.outputs.cluster_certificate_authority_data)
+    token                  = data.aws_eks_cluster_auth.cluster.token
   }
 }
