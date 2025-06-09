@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket       = "s3-backend-tfstate-l32yrpi"
+    bucket       = "s3-backend-tfstate-5180c5z"
     key          = "dev/eks-additional-stuffs.tfstate"
     region       = "us-east-1"
     encrypt      = true
@@ -17,6 +17,16 @@ terraform {
       source  = "hashicorp/tls"
       version = ">= 4.0"
     }
+
+    helm = {
+      source  = "hashicorp/helm"
+      version = "2.16.1"
+    }
+
+    http = {
+      source  = "hashicorp/http"
+      version = ">= 3.4.0"
+    }
   }
   required_version = ">=1.6.0"
 }
@@ -31,6 +41,8 @@ provider "aws" {
     }
   }
 }
+
+provider "http" {}
 
 provider "helm" {
   kubernetes {

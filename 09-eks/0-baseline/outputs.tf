@@ -6,6 +6,10 @@ output "cluster_id" {
   value = aws_eks_cluster.this.id
 }
 
+output "cluster_vpc_id" {
+  value = local.vpc_id
+}
+
 output "cluster_arn" {
   value = aws_eks_cluster.this.arn
 }
