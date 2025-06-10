@@ -39,8 +39,6 @@ provider "aws" {
 }
 
 provider "http" {}
-
-# HELM Provider
 provider "helm" {
   kubernetes {
     host                   = local.cluster_endpoint
@@ -48,8 +46,6 @@ provider "helm" {
     token                  = data.aws_eks_cluster_auth.cluster.token
   }
 }
-
-# Terraform Kubernetes Provider
 provider "kubernetes" {
   host                   = local.cluster_endpoint
   cluster_ca_certificate = base64decode(local.cluster_ca)
