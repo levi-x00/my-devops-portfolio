@@ -1,1 +1,0 @@
-variable "external_dns" {}
