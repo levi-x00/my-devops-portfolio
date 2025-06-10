@@ -76,9 +76,7 @@ module "app1" {
   lambda_inline_policy = data.aws_iam_policy_document.inline_policy.json
 
   tags = {
-    Name        = "app1"
-    Environment = var.environment
-    Application = var.application
+    Name = "app1"
   }
 }
 
@@ -100,8 +98,6 @@ module "app2" {
   lambda_inline_policy = data.aws_iam_policy_document.inline_policy.json
 
   tags = {
-    Name        = "app2"
-    Environment = var.environment
-    Application = var.application
+    Name = "app2"
   }
 }
