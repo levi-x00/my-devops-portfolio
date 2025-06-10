@@ -1,6 +1,6 @@
-# output "autoscaling_group_name" {
-#   value = aws_eks_node_group.this.resources[0].autoscaling_groups[0].name
-# }
+output "account_id" {
+  value = data.aws_caller_identity.current.account_id
+}
 
 output "cluster_id" {
   value = aws_eks_cluster.this.id

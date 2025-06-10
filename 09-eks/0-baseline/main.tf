@@ -83,7 +83,6 @@ resource "aws_launch_template" "cluster_al2023" {
   }
 }
 
-
 resource "aws_eks_node_group" "this" {
   cluster_name    = aws_eks_cluster.this.name
   node_group_name = "${var.cluster_name}-ng"
@@ -110,7 +109,7 @@ resource "aws_eks_node_group" "this" {
     Type    = "ON_DEMAND"
   }
 
-  instance_types = ["t3.medium"]
+  instance_types = var.instance_types
 
   lifecycle {
     ignore_changes = [scaling_config[0].desired_size]

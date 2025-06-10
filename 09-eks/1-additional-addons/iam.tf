@@ -1,4 +1,39 @@
 #################################################################
+# RBAC
+#################################################################
+data "aws_iam_policy_document" "rbac_assume_role" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type = "AWS"
+      identifiers = [
+        "arn:aws:iam::${local.account_id}:user/cloud_user"
+      ]
+    }
+
+    actions = ["sts:AssumeRole"]
+  }
+}
+
+resource "aws_iam_role" "eks_rbac" {
+  name = "${local.cluster_name}-rbac"
+
+  assume_role_policy = data.aws_iam_policy_document.rbac_assume_role.json
+
+  force_detach_policies = true
+  tags = {
+    Name = "${local.cluster_name}-rbac"
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "node_AmazonEKSWorkerNodeMinimalPolicy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodeMinimalPolicy"
+  role       = aws_iam_role.eks_rbac.name
+}
+
+
+#################################################################
 # aws load balancer controller IAM
 #################################################################
 data "aws_iam_policy_document" "lbc_assume_role_policy" {

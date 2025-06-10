@@ -27,6 +27,11 @@ terraform {
       source  = "hashicorp/http"
       version = ">= 3.4.0"
     }
+
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.35.0"
+    }
   }
   required_version = ">=1.6.0"
 }
@@ -46,8 +51,14 @@ provider "http" {}
 
 provider "helm" {
   kubernetes {
-    host                   = data.terraform_remote_state.eks.outputs.cluster_endpoint
-    cluster_ca_certificate = base64decode(data.terraform_remote_state.eks.outputs.cluster_certificate_authority_data)
+    host                   = local.cluster_endpoint
+    cluster_ca_certificate = base64decode(local.cluster_certificate_authority_data)
     token                  = data.aws_eks_cluster_auth.cluster.token
   }
+}
+
+provider "kubernetes" {
+  host                   = aws_eks_cluster.eks_cluster.endpoint
+  cluster_ca_certificate = base64decode(aws_eks_cluster.eks_cluster.certificate_authority[0].data)
+  token                  = data.aws_eks_cluster_auth.cluster.token
 }

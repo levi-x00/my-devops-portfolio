@@ -33,3 +33,6 @@ variable "eks_cluster_cidr" {
 variable "cluster_dns_ip" {
   default = "172.20.0.10"
 }
+variable "instance_types" {
+  default = ["t3.medium"]
+}

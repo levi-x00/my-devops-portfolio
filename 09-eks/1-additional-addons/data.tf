@@ -8,7 +8,7 @@ data "terraform_remote_state" "eks" {
 }
 
 data "aws_eks_cluster_auth" "cluster" {
-  name = data.terraform_remote_state.eks.outputs.cluster_id
+  name = local.cluster_name
 }
 
 data "http" "lbc_iam_policy" {
@@ -23,9 +23,34 @@ locals {
   eks_tfstate  = data.terraform_remote_state.eks.outputs
   cluster_name = local.eks_tfstate.cluster_id
 
+  cluster_endpoint = local.eks_tfstate.cluster_endpoint
+
   cluster_vpc_id = local.eks_tfstate.cluster_vpc_id
+  account_id     = local.eks_tfstate.account_id
 
   openid_connect_provider_cluster_arn = local.eks_tfstate.openid_connect_provider_cluster_arn
   openid_connect_provider_cluster_url = local.eks_tfstate.openid_connect_provider_cluster_url
+  cluster_certificate_authority_data  = local.eks_tfstate.cluster_certificate_authority_data
+
+  configmap_roles = [
+    {
+      rolearn  = "${aws_iam_role.eks_rbac.arn}"
+      username = "eks-admin"
+      groups   = ["system:masters"]
+    },
+  ]
+
+  # configmap_users = [
+  #   {
+  #     userarn  = "${aws_iam_user.basic_user.arn}"
+  #     username = "${aws_iam_user.basic_user.name}"
+  #     groups   = ["system:masters"]
+  #   },
+  #   {
+  #     userarn  = "${aws_iam_user.admin_user.arn}"
+  #     username = "${aws_iam_user.admin_user.name}"
+  #     groups   = ["system:masters"]
+  #   },
+  # ]
 
 }
