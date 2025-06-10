@@ -51,7 +51,7 @@ module "service" {
 }
 
 module "cicd" {
-  source = "../../modules/cicd-pipeline"
+  source = "../../modules/ecs-cicd"
 
   service_name    = var.service_name
   repository_name = "${var.service_name}-repo"
