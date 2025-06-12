@@ -32,7 +32,6 @@ resource "aws_iam_role_policy_attachment" "node_AmazonEKSWorkerNodeMinimalPolicy
   role       = aws_iam_role.eks_rbac.name
 }
 
-
 #################################################################
 # aws load balancer controller IAM
 #################################################################
