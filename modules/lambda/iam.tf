@@ -1,11 +1,17 @@
 resource "aws_iam_role" "lambda_role" {
-  name               = "${var.lambda_name}-role"
+  name = "${var.lambda_name}-role"
+
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 
-  inline_policy {
-    name   = "lambda-inline-policy"
-    policy = local.inline_policy
+  tags = {
+    Name = "${var.lambda_name}-role"
   }
+}
+
+resource "aws_iam_role_policy" "lambda_inline_policy" {
+  name   = "lambda-inline-policy"
+  role   = aws_iam_role.lambda_role.name
+  policy = local.inline_policy
 }
 
 resource "aws_iam_role_policy_attachment" "basic_policy" {
