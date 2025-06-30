@@ -70,11 +70,12 @@ resource "aws_iam_role" "node_role" {
   name = "${var.cluster_name}-node-role"
 
   assume_role_policy = data.aws_iam_policy_document.node_doc.json
+}
 
-  inline_policy {
-    name   = "node-inline-policy"
-    policy = data.aws_iam_policy_document.inline_policy.json
-  }
+resource "aws_iam_role_policy" "node_role" {
+  name   = "node-inline-policy"
+  policy = data.aws_iam_policy_document.inline_policy.json
+  role   = aws_iam_role.node_role.name
 }
 
 resource "aws_iam_role_policy_attachment" "ContainerServiceforEC2Role" {

@@ -1,10 +1,10 @@
 data "aws_route53_zone" "selected" {
-  name         = var.service_domain
+  name         = local.domain_name
   private_zone = false
 }
 
 resource "aws_acm_certificate" "acm" {
-  domain_name       = var.service_domain
+  domain_name       = local.domain_name
   validation_method = "DNS"
 
   tags = {}

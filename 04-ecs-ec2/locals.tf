@@ -8,6 +8,8 @@ locals {
   prv_subnets = data.terraform_remote_state.network.outputs.private_subnet_ids
   account_id  = data.aws_caller_identity.current.account_id
 
+  domain_name = "${local.account_id}.realhandsonlabs.net"
+
   default_tags = {
     Environment = var.environment
     Application = var.application

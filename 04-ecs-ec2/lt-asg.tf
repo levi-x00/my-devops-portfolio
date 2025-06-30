@@ -81,12 +81,6 @@ resource "aws_launch_template" "lt" {
     enabled = true
   }
 
-  # user_data = base64encode(<<-EOF
-  #   #!/bin/bash
-  #   echo ECS_CLUSTER=${var.cluster_name} >> /etc/ecs/ecs.config
-  #   EOF
-  # )
-
   user_data = base64encode(templatefile("${path.module}/userdata.sh", { ECS_CLUSTER = var.cluster_name }))
 
   tag_specifications {

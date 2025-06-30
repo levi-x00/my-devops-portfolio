@@ -102,7 +102,7 @@ resource "aws_lb_listener" "int_ecs_listener_443" {
 
 resource "aws_route53_record" "pub_alb_record" {
   zone_id = data.aws_route53_zone.selected.zone_id
-  name    = var.service_domain
+  name    = local.domain_name
   type    = "A"
 
   alias {
@@ -140,7 +140,7 @@ resource "aws_lb" "internal_lb" {
 }
 
 resource "aws_route53_zone" "phz" {
-  name = var.service_domain
+  name = local.domain_name
   vpc {
     vpc_id = local.vpc_id
   }
@@ -148,7 +148,7 @@ resource "aws_route53_zone" "phz" {
 
 resource "aws_route53_record" "internal_alb_record" {
   zone_id = aws_route53_zone.phz.zone_id
-  name    = var.service_domain
+  name    = local.domain_name
   type    = "A"
 
   alias {
