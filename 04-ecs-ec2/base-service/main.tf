@@ -24,10 +24,11 @@ data "terraform_remote_state" "cluster" {
 #-----------------------------------------------------------------------------------
 terraform {
   backend "s3" {
-    bucket         = "s3-backend-tfstate-lnic1rx"
-    key            = "dev/main-svc-stack.tfstate"
-    region         = "us-east-1"
-    dynamodb_table = "dynamodb-lock-table-lnic1rx"
+    bucket       = "s3-backend-tfstate-lnic1rx"
+    key          = "dev/main-svc-stack.tfstate"
+    region       = "us-east-1"
+    encrypt      = true
+    use_lockfile = true
   }
 
   required_providers {
@@ -71,6 +72,8 @@ module "service" {
   cluster_info = data.terraform_remote_state.cluster.outputs
   network_info = data.terraform_remote_state.network.outputs
   path_pattern = "/"
+
+  listener_arn = ""
 }
 
 module "cicd" {
