@@ -1,6 +1,7 @@
 ## My DevOps Portfolio
 
-This repo showcases of my research and development (RnD) and my experience working as Cloud/DevOps/Site Reliability Engineer and any related field while keeping all proprietary confidential. Some projects that I worked in the past. Feel free to use it and A little support goes a long way! If you’d like to help me keep creating, you can do so at <a href="https://ko-fi.com/mrpahlevi"><img src="https://github.com/levi-x00/my-devops-portfolio/blob/master/images/ko-fi-supportme.png" alt="Alt Text" width="200"/></a>
+This repo showcases of my research and development (RnD) and my experience working as Cloud/DevOps/Site Reliability Engineer and any related field while keeping all proprietary confidential. Some projects that I worked in the past. Feel free to use it and A little support goes a long way! If you’d like to help me keep creating, you can do so in
+<a href="https://ko-fi.com/mrpahlevi"><img src="https://github.com/levi-x00/my-devops-portfolio/blob/master/images/ko-fi-supportme.png" alt="Alt Text" width="200"/></a>
 
 ### Network and Infrastructure Design
 
