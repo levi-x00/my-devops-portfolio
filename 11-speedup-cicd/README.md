@@ -14,13 +14,13 @@ You can follow these steps to setup:
    ![Alt text](./images/Screenshot-demo-repo.png?raw=true)
 2. Copy the files from `01-network-stack` to the cloned repository, then commit the terraform files, for example in my case I created a new demo repository called `tf-network-stacks`
 
-```sh
-   git add .
-   git config user.name 'your username'
-   git config user.email 'your useremail'
-   git commit -m 'init'
-   git push origin master
-```
+   ```sh
+      git add .
+      git config user.name 'your username'
+      git config user.email 'your useremail'
+      git commit -m 'init'
+      git push origin master
+   ```
 
 3. Now that the files already commited, go to AWS CodePipeline console, then click Create pipeline
    ![Alt text](./images/Screenshot-codepipeline-console.png?raw=true)
