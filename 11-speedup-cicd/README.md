@@ -10,9 +10,9 @@ Services that being used for this projects:
 
 You can follow these steps to setup:
 
-1. Create a new repository for this project
+1. Create a new repository for this project, then clone it
    ![Alt text](./images/Screenshot-demo-repo.png?raw=true)
-2. Commit the terraform files of network stack in `01-network-stack`, example for my case I created a new demo repository called `tf-network-stacks`
+2. Copy the files from `01-network-stack` to the cloned repository, then commit the terraform files, for example in my case I created a new demo repository called `tf-network-stacks`
 
 ```sh
    git add .
