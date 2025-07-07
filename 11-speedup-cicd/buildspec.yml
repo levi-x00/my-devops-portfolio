@@ -1,0 +1,37 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo Installing Terraform...
+      - |
+        if [ ! -f ./terraform.zip ]; then
+          curl -o terraform.zip https://releases.hashicorp.com/terraform/1.10.2/terraform_1.10.2_linux_amd64.zip
+        else
+          echo terraform.zip already exists
+        fi
+      - unzip terraform.zip
+      - mv terraform /usr/local/bin/
+      - terraform --version
+
+  pre_build:
+    commands:
+      - echo List all content of SourceArtifact
+      - ls -al
+
+  build:
+    commands:
+      - echo "Running terraform init..."
+      - terraform init
+      - echo "Running terraform plan..."
+      - terraform plan
+
+  post_build:
+    commands:
+      - echo "Post build steps here (optional)..."
+
+cache:
+  paths:
+    - .terraform/**/*
+    - .terraform.lock.hcl
+    - terraform.zip
