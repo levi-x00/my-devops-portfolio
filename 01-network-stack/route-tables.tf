@@ -1,4 +1,6 @@
-# ========================= mark default route table ================================
+########################################################################
+# default route table
+########################################################################
 resource "aws_default_route_table" "def-pub-rt" {
   default_route_table_id = aws_vpc.main.default_route_table_id
 
@@ -14,7 +16,9 @@ resource "aws_route" "igw_default_rt" {
   destination_cidr_block = "0.0.0.0/0"
 }
 
-# ========================= custom private route table ==============================
+########################################################################
+# private route table
+########################################################################
 resource "aws_route_table" "private1" {
   vpc_id = aws_vpc.main.id
 
@@ -46,8 +50,9 @@ resource "aws_route" "private2_route" {
   destination_cidr_block = "0.0.0.0/0"
 }
 
-
-# ====================== custom public route table ==============================
+########################################################################
+# public route table
+########################################################################
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
 
@@ -63,7 +68,9 @@ resource "aws_route" "public_rt_route" {
   destination_cidr_block = "0.0.0.0/0"
 }
 
-# ========================= associate the subnets to route table =======================
+########################################################################
+# subnet association to route table
+########################################################################
 resource "aws_route_table_association" "private-1a" {
   subnet_id      = aws_subnet.private-1a.id
   route_table_id = aws_route_table.private1.id

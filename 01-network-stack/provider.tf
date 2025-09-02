@@ -1,7 +1,7 @@
 terraform {
 
   backend "s3" {
-    bucket       = "s3-backend-tfstate-5180c5z"
+    bucket       = "s3-backend-tfstate-cy75t0o"
     key          = "dev/network.tfstate"
     region       = "us-east-1"
     encrypt      = true
@@ -18,7 +18,7 @@ terraform {
 }
 
 provider "aws" {
-  region = var.region
+  region = var.aws_region
 
   default_tags {
     tags = {

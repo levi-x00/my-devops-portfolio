@@ -2,7 +2,7 @@ variable "project_name" {
   default = "devops-project"
 }
 
-variable "region" {
+variable "aws_region" {
   type    = string
   default = "us-east-1"
 }
