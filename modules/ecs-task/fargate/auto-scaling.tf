@@ -1,6 +1,6 @@
 resource "aws_appautoscaling_target" "target" {
-  max_capacity       = 1
-  min_capacity       = 1
+  max_capacity       = var.max_capacity
+  min_capacity       = var.min_capacity
   resource_id        = "service/${local.cluster_name}/${var.service_name}"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace  = "ecs"
@@ -17,7 +17,7 @@ resource "aws_appautoscaling_policy" "memory" {
     predefined_metric_specification {
       predefined_metric_type = "ECSServiceAverageMemoryUtilization"
     }
-    target_value = 70
+    target_value = var.target_value
   }
 }
 
@@ -32,6 +32,6 @@ resource "aws_appautoscaling_policy" "cpu" {
     predefined_metric_specification {
       predefined_metric_type = "ECSServiceAverageCPUUtilization"
     }
-    target_value = 60
+    target_value = var.target_value
   }
 }

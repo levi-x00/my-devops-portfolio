@@ -1,6 +1,6 @@
-#------------------------------------------------------------------------------------------------------
+#####################################################################
 # create log group for ecs & session manager
-#------------------------------------------------------------------------------------------------------
+#####################################################################
 resource "aws_cloudwatch_log_group" "cluster" {
   name       = "${var.cluster_name}-logs"
   kms_key_id = local.kms_key_arn
@@ -21,13 +21,18 @@ resource "aws_cloudwatch_log_group" "sess_manager" {
   }
 }
 
+data "aws_iam_roles" "ecs" {
+  name_regex = "^AWSServiceRoleForECS$"
+}
+
 resource "aws_iam_service_linked_role" "ecs" {
+  count            = length(data.aws_iam_roles.ecs.names) == 0 ? 1 : 0
   aws_service_name = "ecs.amazonaws.com"
 }
 
-#------------------------------------------------------------------------------------------------------
+#####################################################################
 # create ECS cluster
-#------------------------------------------------------------------------------------------------------
+#####################################################################
 resource "aws_ecs_cluster" "cluster" {
   depends_on = [
     aws_s3_bucket.s3_sess_manager,
@@ -63,9 +68,3 @@ resource "aws_ecs_cluster" "cluster" {
     Name = var.cluster_name
   }
 }
-
-# resource "aws_service_discovery_private_dns_namespace" "internal" {
-#   name        = "devops-portfolio.internal"
-#   description = "service discovery internal access"
-#   vpc         = local.vpc_id
-# }

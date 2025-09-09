@@ -7,15 +7,6 @@ resource "aws_cloudwatch_log_group" "svc_logs" {
   }
 }
 
-resource "aws_cloudwatch_log_group" "otel_logs" {
-  name = "/aws/ecs/${var.service_name}-otel-logs"
-
-  retention_in_days = var.retention_days
-  tags = {
-    Name = "/aws/ecs/${var.service_name}-otel-logs"
-  }
-}
-
 resource "aws_security_group" "service_sg" {
   name   = "${var.service_name}-svc-sg"
   vpc_id = local.vpc_id
@@ -121,37 +112,15 @@ resource "aws_ecs_task_definition" "task_def" {
       "systemControls" : [],
       "ulimits" : [],
       "volumesFrom" : []
-    },
-    {
-      "command" : [
-        "--config=/etc/ecs/ecs-cloudwatch.yaml"
-      ],
-      "cpu" : 0,
-      "environment" : [],
-      "essential" : true,
-      "image" : "public.ecr.aws/aws-observability/aws-otel-collector:v0.39.0",
-      "logConfiguration" : {
-        "logDriver" : "awslogs",
-        "options" : {
-          "awslogs-create-group" : "true",
-          "awslogs-group" : "/aws/ecs/${var.service_name}-otel-logs",
-          "awslogs-region" : "${local.region}",
-          "awslogs-stream-prefix" : "${var.service_name}"
-        }
-      },
-      "mountPoints" : [],
-      "name" : "aws-otel-collector",
-      "portMappings" : [],
-      "systemControls" : [],
-      "volumesFrom" : []
     }
   ])
 
   requires_compatibilities = ["FARGATE"]
 
-  cpu          = var.cpu
-  family       = "${var.service_name}-task-def"
-  memory       = var.memory
+  cpu    = var.cpu
+  family = "${var.service_name}-task-def"
+  memory = var.memory
+
   network_mode = "awsvpc"
 
   task_role_arn      = aws_iam_role.task_role.arn

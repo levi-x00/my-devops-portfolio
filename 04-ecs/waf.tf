@@ -7,7 +7,8 @@ resource "aws_wafv2_web_acl" "ecs_lb_waf" {
   }
 
   rule {
-    name     = "rule-1"
+    name = "rule-1"
+
     priority = 1
 
     override_action {
@@ -62,12 +63,20 @@ resource "aws_wafv2_web_acl" "ecs_lb_waf" {
 }
 
 resource "aws_cloudwatch_log_group" "waf_logs" {
-  name = "aws-waf-logs-some-uniq-suffix"
+  name       = "aws-waf-logs"
+  kms_key_id = local.kms_key_arn
+
+  retention_in_days = var.retention_days
+  tags = {
+    Name = "aws-waf-logs"
+  }
 }
 
 resource "aws_wafv2_web_acl_logging_configuration" "waf_log_conf" {
-  log_destination_configs = [aws_cloudwatch_log_group.waf_logs.arn]
-  resource_arn            = aws_wafv2_web_acl.ecs_lb_waf.arn
+  log_destination_configs = [
+    aws_cloudwatch_log_group.waf_logs.arn
+  ]
+  resource_arn = aws_wafv2_web_acl.ecs_lb_waf.arn
 }
 
 resource "aws_wafv2_web_acl_association" "waf-alb" {

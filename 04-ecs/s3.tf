@@ -6,9 +6,9 @@ resource "random_string" "random" {
   numeric = true
 }
 
-#------------------------------------------------------------------------------------------------------
-# s3 for session manager logs into fargate
-#------------------------------------------------------------------------------------------------------
+#####################################################################
+# session manager logs bucket
+#####################################################################
 resource "aws_s3_bucket" "s3_sess_manager" {
   force_destroy = true
 
@@ -57,9 +57,9 @@ data "aws_iam_policy_document" "s3_sess_manager" {
   }
 }
 
-#------------------------------------------------------------------------------------------------------
-# s3 bucket for artifact ci/cd pipelines for services in ECS
-#------------------------------------------------------------------------------------------------------
+#####################################################################
+# s3 bucket for codepipeline artfact
+#####################################################################
 resource "aws_s3_bucket" "s3_artifact" {
   force_destroy = true
 
@@ -108,7 +108,9 @@ data "aws_iam_policy_document" "s3_artifact" {
   }
 }
 
-
+#####################################################################
+# s3 bucket for load balancer logs
+#####################################################################
 resource "aws_s3_bucket" "s3_lb_logs" {
   force_destroy = true
 
@@ -123,7 +125,6 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "s3_lb_logs" {
 
   rule {
     apply_server_side_encryption_by_default {
-      # kms_master_key_id = local.kms_key_arn
       sse_algorithm = "AES256"
     }
   }

@@ -1,5 +1,7 @@
 variable "service_name" {}
-
+variable "min_capacity" {}
+variable "max_capacity" {}
+variable "target_value" {}
 variable "retention_days" {
   default = 90
 }
