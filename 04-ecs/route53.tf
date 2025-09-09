@@ -7,12 +7,9 @@ resource "aws_acm_certificate" "acm" {
   domain_name       = var.service_domain
   validation_method = "DNS"
 
-  tags = {}
+  tags = { Name = var.service_domain }
 }
 
-#####################################################################
-# create ECS cluster
-#####################################################################
 resource "aws_route53_record" "r53_record" {
   for_each = {
     for dvo in aws_acm_certificate.acm.domain_validation_options : dvo.domain_name => {

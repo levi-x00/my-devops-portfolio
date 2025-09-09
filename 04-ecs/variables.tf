@@ -2,9 +2,11 @@ variable "cluster_name" {
   default = "devops-blueprint"
 }
 
-variable "region" {
+variable "aws_region" {
   default = "us-east-1"
 }
+
+variable "aws_profile" {}
 
 variable "environment" {
   default = "dev"

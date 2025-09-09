@@ -120,6 +120,7 @@ resource "aws_s3_bucket" "s3_lb_logs" {
   }
 }
 
+# for now ALB access logs only support AES256 type of encryption
 resource "aws_s3_bucket_server_side_encryption_configuration" "s3_lb_logs" {
   bucket = aws_s3_bucket.s3_lb_logs.id
 

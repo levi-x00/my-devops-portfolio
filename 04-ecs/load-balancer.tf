@@ -93,12 +93,13 @@ resource "aws_lb" "cluster" {
   name     = "${var.cluster_name}-alb"
   internal = false
 
-  load_balancer_type = "application"
-
-  security_groups = [aws_security_group.lb_sg.id]
-  subnets         = local.lb_subnets
-
+  load_balancer_type         = "application"
   enable_deletion_protection = false
+
+  security_groups = [
+    aws_security_group.lb_sg.id
+  ]
+  subnets = local.public_subnet_ids
 
   access_logs {
     bucket  = aws_s3_bucket_policy.s3_lb_logs.id
