@@ -1,4 +1,19 @@
-resource "aws_ecs_service" "ecs_service" {
+resource "aws_ecr_repository" "this" {
+  name = "${var.service_name}-ecr"
+
+  force_delete = true
+
+  image_tag_mutability = "IMMUTABLE"
+  image_scanning_configuration {
+    scan_on_push = var.scan_on_push
+  }
+
+  tags = {
+    Name = "${var.service_name}-ecr"
+  }
+}
+
+resource "aws_ecs_service" "this" {
   name    = var.service_name
   cluster = local.cluster_name
 
@@ -69,9 +84,5 @@ resource "aws_service_discovery_service" "internal" {
     }
 
     routing_policy = "MULTIVALUE"
-  }
-
-  health_check_custom_config {
-    failure_threshold = 1
   }
 }
