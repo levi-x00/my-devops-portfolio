@@ -1,3 +1,9 @@
+resource "aws_codestarconnections_connection" "this" {
+  name = "${var.service_name}-conn"
+
+  provider_type = "GitHub"
+}
+
 resource "aws_codepipeline" "pipeline" {
   name     = "${var.service_name}-pipeline"
   role_arn = aws_iam_role.codepipeline_role.arn
@@ -11,22 +17,23 @@ resource "aws_codepipeline" "pipeline" {
     name = "Source"
     action {
       category = "Source"
+      name     = "Source"
+
       configuration = {
-        BranchName           = "master"
-        OutputArtifactFormat = "CODE_ZIP"
-        PollForSourceChanges = "false"
-        RepositoryName       = var.repository_name
+        ConnectionArn    = aws_codestarconnections_connection.this.arn
+        FullRepositoryId = var.repository_id
+        BranchName       = var.branch_name
       }
+
       input_artifacts  = []
-      name             = "Source"
-      namespace        = "SourceVariables"
       output_artifacts = ["SourceArtifact"]
-      owner            = "AWS"
-      provider         = "CodeCommit"
-      region           = local.region
-      role_arn         = null
-      run_order        = 1
-      version          = "1"
+
+      namespace = "SourceVariables"
+      owner     = "AWS"
+      provider  = "CodeStarSourceConnection"
+      region    = local.region
+      run_order = 1
+      version   = "1"
     }
   }
 
@@ -58,14 +65,16 @@ resource "aws_codepipeline" "pipeline" {
         CustomData      = "Dear reviewer please check"
         NotificationArn = local.sns_arn
       }
+
       input_artifacts  = []
-      name             = "Checking"
       output_artifacts = []
-      owner            = "AWS"
-      provider         = "Manual"
-      region           = local.region
-      run_order        = 1
-      version          = jsonencode(1)
+
+      name      = "Checking"
+      owner     = "AWS"
+      provider  = "Manual"
+      region    = local.region
+      run_order = 1
+      version   = jsonencode(1)
     }
   }
 
@@ -80,15 +89,15 @@ resource "aws_codepipeline" "pipeline" {
         ServiceName       = var.service_name
       }
       input_artifacts  = ["BuildArtifact"]
-      name             = "Deploy"
-      namespace        = "DeployVariables"
       output_artifacts = []
-      owner            = "AWS"
-      provider         = "ECS"
-      region           = local.region
-      role_arn         = null
-      run_order        = 1
-      version          = "1"
+
+      name      = "Deploy"
+      namespace = "DeployVariables"
+      owner     = "AWS"
+      provider  = "ECS"
+      region    = local.region
+      run_order = 1
+      version   = "1"
     }
   }
 

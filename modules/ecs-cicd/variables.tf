@@ -1,5 +1,9 @@
-variable "service_name" {
-  default = ""
+variable "service_name" {}
+variable "repository_id" {
+  default = "levi-x00/sample-lambda"
+}
+variable "branch_name" {
+  default = "master"
 }
 
 variable "build_timeout" {

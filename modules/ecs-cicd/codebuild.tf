@@ -11,8 +11,7 @@ resource "aws_cloudwatch_log_group" "cb_logs" {
 
 resource "aws_security_group" "codebuild" {
   vpc_id = local.vpc_id
-
-  name = "${var.service_name}-codebuild-sg"
+  name   = "${var.service_name}-codebuild-sg"
 
   ingress {
     from_port        = 0
@@ -54,19 +53,20 @@ resource "aws_security_group" "codebuild" {
 resource "aws_codebuild_project" "codebuild" {
   badge_enabled  = false
   build_timeout  = var.build_timeout
-  description    = "codebuild for CI/CD pipeline"
+  description    = "${var.service_name} codebuild CI/CD pipeline"
   encryption_key = local.kms_key_arn
   name           = "${var.service_name}-codebuild"
   queued_timeout = 480
   service_role   = aws_iam_role.codebuild_role.arn
 
   artifacts {
-    name                   = "${var.service_name}-codebuild"
+    name      = "${var.service_name}-codebuild"
+    packaging = "NONE"
+    path      = null
+    type      = "CODEPIPELINE"
+
     namespace_type         = null
     override_artifact_name = false
-    packaging              = "NONE"
-    path                   = null
-    type                   = "CODEPIPELINE"
   }
 
   cache {
