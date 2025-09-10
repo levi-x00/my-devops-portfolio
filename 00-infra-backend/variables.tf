@@ -3,6 +3,8 @@ variable "environment" {
   default = "dev"
 }
 
+variable "aws_profile" {}
+
 variable "application" {
   type    = string
   default = "infra-prerequisites"
