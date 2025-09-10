@@ -27,7 +27,7 @@ output "https_listener_arn" {
 }
 
 output "ecs_svc_linked_role_name" {
-  value = aws_iam_service_linked_role.ecs.name
+  value = length(data.aws_iam_roles.ecs.names) == 0 ? aws_iam_service_linked_role.ecs[0].name : "AWSServiceRoleForECS"
 }
 
 output "sns_arn" {

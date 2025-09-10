@@ -63,12 +63,12 @@ resource "aws_wafv2_web_acl" "ecs_lb_waf" {
 }
 
 resource "aws_cloudwatch_log_group" "waf_logs" {
-  name       = "aws-waf-logs"
+  name       = "aws-waf-logs-ecs"
   kms_key_id = local.kms_key_arn
 
   retention_in_days = var.retention_days
   tags = {
-    Name = "aws-waf-logs"
+    Name = "aws-waf-logs-ecs"
   }
 }
 
