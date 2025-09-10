@@ -51,15 +51,21 @@ module "service" {
 module "cicd" {
   source = "../../modules/ecs-cicd"
 
-  service_name    = var.service_name
-  repository_name = "${var.service_name}-repo"
-  cluster_name    = data.terraform_remote_state.cluster.outputs.cluster_name
-  s3_bucket_artf  = data.terraform_remote_state.cluster.outputs.s3_artifact_bucket
-  network_info    = data.terraform_remote_state.network.outputs
-  ecs_info        = data.terraform_remote_state.cluster.outputs
+  service_name = var.service_name
+  cluster_name = local.cluster_info.cluster_name
+
+  network_info = local.network_info
+  ecs_info     = local.cluster_info
+
+  s3_bucket_artf = local.s3_artifact_bucket
+
+  repository_id = ""
+  branch_name   = ""
 }
 
-############### output section ##################
+#####################################################################
+# output section
+#####################################################################
 output "service_name" {
   value = module.service.service_name
 }

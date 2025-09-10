@@ -15,7 +15,6 @@ variable "retention_days" {
 }
 
 variable "s3_bucket_artf" {}
-variable "repository_name" {}
 variable "cluster_name" {}
 variable "network_info" {}
 variable "ecs_info" {}

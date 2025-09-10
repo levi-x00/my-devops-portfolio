@@ -2,8 +2,8 @@ resource "aws_cloudwatch_log_group" "cb_logs" {
   name = "/aws/codebuild/${var.service_name}-logs"
 
   retention_in_days = var.retention_days
-  kms_key_id        = local.kms_key_arn
 
+  kms_key_id = local.kms_key_arn
   tags = {
     Name = "${var.service_name}-logs"
   }
@@ -76,11 +76,11 @@ resource "aws_codebuild_project" "codebuild" {
   }
 
   environment {
-    certificate     = null
-    compute_type    = "BUILD_GENERAL1_SMALL"
-    image           = "aws/codebuild/amazonlinux2-x86_64-standard:5.0"
+    image = "aws/codebuild/amazonlinux2-x86_64-standard:5.0"
+    type  = "LINUX_CONTAINER"
+
     privileged_mode = true
-    type            = "LINUX_CONTAINER"
+    compute_type    = "BUILD_GENERAL1_SMALL"
 
     image_pull_credentials_type = "CODEBUILD"
 
@@ -111,11 +111,13 @@ resource "aws_codebuild_project" "codebuild" {
   }
 
   source {
-    buildspec           = "buildspec.yml"
-    git_clone_depth     = 0
-    insecure_ssl        = false
-    location            = null
+    buildspec    = "buildspec.yml"
+    insecure_ssl = false
+    location     = null
+
+    type            = "CODEPIPELINE"
+    git_clone_depth = 0
+
     report_build_status = false
-    type                = "CODEPIPELINE"
   }
 }
