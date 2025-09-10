@@ -1,12 +1,6 @@
 terraform {
 
-  backend "s3" {
-    bucket       = "s3-backend-tfstate-cy75t0o"
-    key          = "dev/network.tfstate"
-    region       = "us-east-1"
-    encrypt      = true
-    use_lockfile = true
-  }
+  backend "s3" {}
 
   required_providers {
     aws = {
