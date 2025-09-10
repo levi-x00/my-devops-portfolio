@@ -1,6 +1,6 @@
-output "image_id" {
-  value = data.aws_ecr_image.service_image.id
-}
+# output "image_id" {
+#   value = data.aws_ecr_image.service_image.id
+# }
 
 output "repository_name" {
   value = "${var.service_name}-repo"
