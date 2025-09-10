@@ -67,9 +67,9 @@ resource "aws_security_group" "service_sg" {
 }
 
 resource "aws_ecs_task_definition" "task_def" {
-  depends_on = [
-    null_resource.push_image
-  ]
+  # depends_on = [
+  #   null_resource.push_image
+  # ]
 
   container_definitions = jsonencode([
     {
@@ -77,17 +77,18 @@ resource "aws_ecs_task_definition" "task_def" {
       "environment" : [],
       "environmentFiles" : [],
       "essential" : true,
-      "healthCheck" : {
-        "command" : [
-          "CMD-SHELL",
-          "curl -f http://localhost:${var.port}/health || exit 1"
-        ],
-        "interval" : 30,
-        "retries" : 3,
-        "timeout" : 10,
-        "startPeriod" : 60,
-      },
-      "image" : "${local.image_uri}",
+      # "healthCheck" : {
+      #   "command" : [
+      #     "CMD-SHELL",
+      #     "curl -f http://localhost:${var.port}/health || exit 1"
+      #   ],
+      #   "interval" : 30,
+      #   "retries" : 3,
+      #   "timeout" : 10,
+      #   "startPeriod" : 60,
+      # },
+      # "image" : "${local.image_uri}",
+      "image" : "public.ecr.aws/nginx/nginx:latest",
       "logConfiguration" : {
         "logDriver" : "awslogs",
         "options" : {
