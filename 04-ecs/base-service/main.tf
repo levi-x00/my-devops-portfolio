@@ -1,12 +1,5 @@
-############### provider section ##################
 terraform {
-  backend "s3" {
-    bucket         = "s3-backend-tfstate-3vmnj35"
-    key            = "dev/main-svc-stack.tfstate"
-    region         = "us-east-1"
-    dynamodb_table = "dynamodb-lock-table-3vmnj35"
-  }
-
+  backend "s3" {}
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -17,7 +10,7 @@ terraform {
 }
 
 provider "aws" {
-  region = var.region
+  region = var.aws_region
 
   default_tags {
     tags = {
@@ -28,9 +21,9 @@ provider "aws" {
   }
 }
 
-#-----------------------------------------------------------------------------------
+#####################################################################
 # main service section
-#-----------------------------------------------------------------------------------
+#####################################################################
 module "service" {
   source = "../../modules/ecs-task/fargate"
 
@@ -48,6 +41,11 @@ module "service" {
   lb_sg_id     = local.cluster_info.lb_sg_id
   cluster_info = local.cluster_info
   network_info = local.network_info
+
+  min_capacity = 1
+  max_capacity = 1
+
+  target_value = 70
 }
 
 module "cicd" {
