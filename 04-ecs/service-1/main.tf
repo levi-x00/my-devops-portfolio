@@ -49,6 +49,11 @@ module "service" {
   lb_sg_id     = local.cluster_info.internal_lb_sg_id
   cluster_info = local.cluster_info
   network_info = local.network_info
+
+  min_capacity = 1
+  max_capacity = 1
+
+  target_value = 70
 }
 
 #-----------------------------------------------------------------------------------
@@ -57,12 +62,12 @@ module "service" {
 module "cicd" {
   source = "../../modules/ecs-cicd"
 
-  service_name    = var.service_name
-  repository_name = "${var.service_name}-repo"
-  cluster_name    = data.terraform_remote_state.cluster.outputs.cluster_name
-  s3_bucket_artf  = data.terraform_remote_state.cluster.outputs.s3_artifact_bucket
-  network_info    = data.terraform_remote_state.network.outputs
-  ecs_info        = data.terraform_remote_state.cluster.outputs
+  service_name = var.service_name
+
+  cluster_name   = data.terraform_remote_state.cluster.outputs.cluster_name
+  s3_bucket_artf = data.terraform_remote_state.cluster.outputs.s3_artifact_bucket
+  network_info   = data.terraform_remote_state.network.outputs
+  ecs_info       = data.terraform_remote_state.cluster.outputs
 }
 
 #-----------------------------------------------------------------------------------

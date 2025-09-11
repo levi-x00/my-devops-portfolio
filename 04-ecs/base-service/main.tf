@@ -3,7 +3,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0.0"
+      version = "6.11.0"
     }
   }
   required_version = ">=1.5.0"
@@ -48,20 +48,20 @@ module "service" {
   target_value = 70
 }
 
-module "cicd" {
-  source = "../../modules/ecs-cicd"
+# module "cicd" {
+#   source = "../../modules/ecs-cicd"
 
-  service_name = var.service_name
-  cluster_name = local.cluster_info.cluster_name
+#   service_name = var.service_name
+#   cluster_name = local.cluster_info.cluster_name
 
-  network_info = local.network_info
-  ecs_info     = local.cluster_info
+#   network_info = local.network_info
+#   ecs_info     = local.cluster_info
 
-  s3_bucket_artf = local.s3_artifact_bucket
+#   s3_bucket_artf = local.s3_artifact_bucket
 
-  repository_id = ""
-  branch_name   = ""
-}
+#   repository_id = ""
+#   branch_name   = ""
+# }
 
 #####################################################################
 # output section
