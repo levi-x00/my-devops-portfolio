@@ -32,30 +32,44 @@ Here I have two public subnets, two private subnets and two DB subnets, one publ
 
 ## VPC Setup
 
-After the s3 and dynamodb setup for the backend in `provider.tf` replace the value of of this code snippet
+After s3 bucket created, now create a file name `backend.config`, this is the example of backend config
 
-```terraform
-backend "s3" {
-    bucket         = "s3-backend-tfstate-<random-string>"
-    key            = "dev/network.tfstate"
-    region         = "<region>"
-    dynamodb_table = "dynamodb-lock-table-<random-string>"
-}
+```
+bucket = "s3-backend-tfstate-<random-string>"
+key = "dev/network.tfstate"
+region = "<region>"
+encrypt = true
+use_lockfile = true
 ```
 
 After that run these commands to setup, for this case I'm using the default value in the `variables.tf` or you can create your own `.tfvars`
 
 ```sh
-$ terraform init
+$ terraform init -backend-config=backend.config
 $ terraform plan
 $ terraform approve -auto-approve
 ```
 
-for OpenTofu
+if you have your own `.tfvars`
+
+```sh
+$ terraform init -backend-config=backend.config
+$ terraform plan -var-file=terraform.tfvars
+$ terraform approve -auto-approve -var-file=terraform.tfvars
+```
+
 for OpenTofu
 
 ```sh
-$ tofu init
+$ tofu init -backend-config=backend.config
 $ tofu plan
 $ tofu apply -auto-approve
+```
+
+if you have your own `.tfvars`
+
+```sh
+$ tofu init -backend-config=backend.config
+$ tofu plan -var-file=terraform.tfvars
+$ tofu apply -auto-approve -var-file=terraform.tfvars
 ```
