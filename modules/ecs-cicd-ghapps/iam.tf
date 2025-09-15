@@ -237,6 +237,16 @@ data "aws_iam_policy_document" "pipeline_inline_policy" {
     ]
     resources = ["*"]
   }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "codestar-connections:UseConnection"
+    ]
+
+    resources = ["*"]
+  }
 }
 
 resource "aws_iam_role" "codepipeline_role" {
