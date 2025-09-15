@@ -59,3 +59,5 @@ variable "map_public_ip_on_launch" {
 variable "public_domain" {
   default = ""
 }
+
+variable "aws_profile" {}
