@@ -56,8 +56,5 @@ variable "map_public_ip_on_launch" {
   default = true
 }
 
-variable "public_domain" {
-  default = ""
-}
-
 variable "aws_profile" {}
+variable "enable_two_nats" {}

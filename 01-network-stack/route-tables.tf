@@ -19,7 +19,17 @@ resource "aws_route" "igw_default_rt" {
 ########################################################################
 # private route table
 ########################################################################
+resource "aws_route_table" "private_rt" {
+  count  = var.enable_two_nats == true ? 0 : 1
+  vpc_id = aws_vpc.main.id
+
+  tags = {
+    Name = "${var.project_name}-private-rt"
+  }
+}
+
 resource "aws_route_table" "private1" {
+  count  = var.enable_two_nats == true ? 1 : 0
   vpc_id = aws_vpc.main.id
 
   tags = {
@@ -28,7 +38,7 @@ resource "aws_route_table" "private1" {
 }
 
 resource "aws_route" "private1_route" {
-  route_table_id = aws_route_table.private1.id
+  route_table_id = var.enable_two_nats == true ? aws_route_table.private1[0].id : aws_route_table.private_rt[0].id
   nat_gateway_id = aws_nat_gateway.nat1.id
 
   destination_cidr_block = "0.0.0.0/0"
@@ -36,6 +46,7 @@ resource "aws_route" "private1_route" {
 
 
 resource "aws_route_table" "private2" {
+  count  = var.enable_two_nats == true ? 1 : 0
   vpc_id = aws_vpc.main.id
 
   tags = {
@@ -44,8 +55,9 @@ resource "aws_route_table" "private2" {
 }
 
 resource "aws_route" "private2_route" {
-  route_table_id = aws_route_table.private2.id
-  nat_gateway_id = aws_nat_gateway.nat2.id
+  count          = var.enable_two_nats == true ? 1 : 0
+  route_table_id = aws_route_table.private2[0].id
+  nat_gateway_id = aws_nat_gateway.nat2[0].id
 
   destination_cidr_block = "0.0.0.0/0"
 }
@@ -73,22 +85,22 @@ resource "aws_route" "public_rt_route" {
 ########################################################################
 resource "aws_route_table_association" "private-1a" {
   subnet_id      = aws_subnet.private-1a.id
-  route_table_id = aws_route_table.private1.id
+  route_table_id = var.enable_two_nats == true ? aws_route_table.private1[0].id : aws_route_table.private_rt[0].id
 }
 
 resource "aws_route_table_association" "private-1b" {
   subnet_id      = aws_subnet.private-1b.id
-  route_table_id = aws_route_table.private2.id
+  route_table_id = var.enable_two_nats == true ? aws_route_table.private1[0].id : aws_route_table.private_rt[0].id
 }
 
 resource "aws_route_table_association" "db-1a" {
   subnet_id      = aws_subnet.db-1a.id
-  route_table_id = aws_route_table.private1.id
+  route_table_id = var.enable_two_nats == true ? aws_route_table.private1[0].id : aws_route_table.private_rt[0].id
 }
 
 resource "aws_route_table_association" "db-1b" {
   subnet_id      = aws_subnet.db-1b.id
-  route_table_id = aws_route_table.private2.id
+  route_table_id = var.enable_two_nats == true ? aws_route_table.private1[0].id : aws_route_table.private_rt[0].id
 }
 
 resource "aws_route_table_association" "public-1a" {
