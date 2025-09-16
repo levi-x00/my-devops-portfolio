@@ -45,10 +45,6 @@ resource "aws_security_group" "service_sg" {
 }
 
 resource "aws_ecs_task_definition" "task_def" {
-  depends_on = [
-    null_resource.push_image
-  ]
-
   container_definitions = jsonencode([
     {
       "cpu" : 0,
@@ -65,7 +61,7 @@ resource "aws_ecs_task_definition" "task_def" {
         "timeout" : 10,
         "startPeriod" : 60,
       },
-      "image" : "${local.image_uri}",
+      "image" : "public.ecr.aws/nginx/nginx:latest",
       "logConfiguration" : {
         "logDriver" : "awslogs",
         "options" : {

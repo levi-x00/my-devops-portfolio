@@ -77,16 +77,16 @@ resource "aws_ecs_task_definition" "task_def" {
       "environment" : [],
       "environmentFiles" : [],
       "essential" : true,
-      # "healthCheck" : {
-      #   "command" : [
-      #     "CMD-SHELL",
-      #     "curl -f http://localhost:${var.port}/health || exit 1"
-      #   ],
-      #   "interval" : 30,
-      #   "retries" : 3,
-      #   "timeout" : 10,
-      #   "startPeriod" : 60,
-      # },
+      "healthCheck" : {
+        "command" : [
+          "CMD-SHELL",
+          "curl -f http://localhost:${var.port}/health || exit 1"
+        ],
+        "interval" : 30,
+        "retries" : 3,
+        "timeout" : 10,
+        "startPeriod" : 60,
+      },
       # "image" : "${local.image_uri}",
       "image" : "public.ecr.aws/nginx/nginx:latest",
       "logConfiguration" : {
