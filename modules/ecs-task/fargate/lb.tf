@@ -1,21 +1,3 @@
-resource "aws_vpc_security_group_ingress_rule" "ingress_lb" {
-  security_group_id = var.lb_sg_id
-  from_port         = var.port
-  ip_protocol       = "tcp"
-  to_port           = var.port
-
-  referenced_security_group_id = aws_security_group.service_sg.id
-}
-
-resource "aws_vpc_security_group_egress_rule" "egress_lb" {
-  security_group_id = var.lb_sg_id
-  from_port         = var.port
-  ip_protocol       = "tcp"
-  to_port           = var.port
-
-  referenced_security_group_id = aws_security_group.service_sg.id
-}
-
 resource "aws_lb_target_group" "service_tg" {
   name     = "${var.service_name}-tg"
   port     = 80
