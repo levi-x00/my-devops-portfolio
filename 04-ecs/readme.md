@@ -2,6 +2,7 @@
 
 This is the ECS cluster architecture
 ![Alt text](../images/ecs-cloudmap.drawio.svg?raw=true "ECS Deployment Architecture")<br>
+
 and this is the flow of the CI/CD pipeline using AWS native tools with CodePipeline, CodeBuild, and CodeDeploy
 
 ![Alt text](../images/cicd-ecs-blue-green.drawio.svg?raw=true "ECS Deployment Architecture")<br>
@@ -26,8 +27,6 @@ In short:
 - In `01-network-stack`, deploy the VPC and the subnets
 
 - Now in `04-ecs`, create `backend.config` file and `terraform.tfvars`, for example:
-
-<sub><sup>backend.config</sup></sub>
 
 ```
 # backend.config
