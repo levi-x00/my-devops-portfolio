@@ -2,15 +2,6 @@
 # mixed locals and data source in terraform, update the tfremote state network
 ########################################################################
 
-# data "terraform_remote_state" "network" {
-#   backend = "s3"
-#   config = {
-#     bucket = "s3-backend-tfstate-nig4odz"
-#     key    = "dev/network.tfstate"
-#     region = "ap-southeast-1"
-#   }
-# }
-
 data "terraform_remote_state" "network" {
   backend = "s3"
   config = {

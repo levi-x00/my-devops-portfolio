@@ -54,9 +54,9 @@ resource "aws_ecs_cluster" "cluster" {
       }
     }
 
-    # managed_storage_configuration {
-    #   fargate_ephemeral_storage_kms_key_id = local.kms_key_arn
-    # }
+    managed_storage_configuration {
+      fargate_ephemeral_storage_kms_key_id = local.kms_key_arn
+    }
   }
 
   setting {
