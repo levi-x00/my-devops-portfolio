@@ -1,7 +1,4 @@
-variable "region" {
-  default = "us-east-1"
-}
-
+variable "aws_region" {}
 variable "environment" {
   default = "dev"
 }
@@ -29,3 +26,8 @@ variable "cw_logs_retention_days" {
 variable "port" {
   default = 5002
 }
+
+variable "aws_profile" {}
+variable "tfstate_bucket" {}
+variable "tfstate_network_key" {}
+variable "tfstate_ecs_key" {}

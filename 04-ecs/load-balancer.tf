@@ -159,12 +159,14 @@ resource "aws_lb_listener" "ecs_listener_443" {
 
 resource "aws_route53_record" "alb_record" {
   zone_id = data.aws_route53_zone.selected.zone_id
-  name    = var.service_domain
-  type    = "A"
+
+  name = "myapp.${var.service_domain}"
+  type = "A"
 
   alias {
-    name                   = aws_lb.cluster.dns_name
-    zone_id                = aws_lb.cluster.zone_id
+    name    = aws_lb.cluster.dns_name
+    zone_id = aws_lb.cluster.zone_id
+
     evaluate_target_health = true
   }
 }

@@ -10,7 +10,8 @@ terraform {
 }
 
 provider "aws" {
-  region = var.aws_region
+  region  = var.aws_region
+  profile = var.aws_profile
 
   default_tags {
     tags = {
@@ -38,7 +39,7 @@ module "service" {
 
   listener_arn = local.listener_arn
 
-  lb_sg_id     = local.cluster_info.lb_sg_id
+  lb_sg_id     = local.cluster_info.alb_security_group_id
   cluster_info = local.cluster_info
   network_info = local.network_info
 
@@ -48,24 +49,24 @@ module "service" {
   target_value = 70
 }
 
-# module "cicd" {
-#   source = "../../modules/ecs-cicd"
+module "cicd" {
+  source = "../../modules/ecs-cicd-ghapps"
 
-#   service_name = var.service_name
-#   cluster_name = local.cluster_info.cluster_name
+  service_name = var.service_name
+  cluster_name = local.cluster_info.cluster_name
 
-#   network_info = local.network_info
-#   ecs_info     = local.cluster_info
+  network_info = local.network_info
+  ecs_info     = local.cluster_info
 
-#   s3_bucket_artf = local.s3_artifact_bucket
+  s3_bucket_artf = local.s3_artifact_bucket
 
-#   repository_id = ""
-#   branch_name   = ""
-# }
+  repository_id = "levi-x00/base-service"
+  branch_name   = "master"
+}
 
-#####################################################################
+####################################################################
 # output section
-#####################################################################
+####################################################################
 output "service_name" {
   value = module.service.service_name
 }

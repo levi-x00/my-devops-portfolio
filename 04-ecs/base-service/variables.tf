@@ -29,3 +29,8 @@ variable "port" {
 variable "cw_logs_retention_days" {
   default = 90
 }
+
+variable "aws_profile" {}
+variable "tfstate_bucket" {}
+variable "tfstate_network_key" {}
+variable "tfstate_ecs_key" {}

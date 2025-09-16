@@ -1,25 +1,17 @@
-#-----------------------------------------------------------------------------------
-# provider section
-#-----------------------------------------------------------------------------------
 terraform {
-  backend "s3" {
-    bucket         = "s3-backend-tfstate-rldtvg7"
-    key            = "dev/ecs-service2-stack.tfstate"
-    region         = "us-east-1"
-    dynamodb_table = "dynamodb-lock-table-rldtvg7"
-  }
-
+  backend "s3" {}
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0.0"
+      version = "6.11.0"
     }
   }
   required_version = ">=1.5.0"
 }
 
 provider "aws" {
-  region = var.region
+  region  = var.aws_region
+  profile = var.aws_profile
 
   default_tags {
     tags = {
@@ -29,12 +21,11 @@ provider "aws" {
   }
 }
 
-
-#-----------------------------------------------------------------------------------
-# main section
-#-----------------------------------------------------------------------------------
+#####################################################################
+# main service
+#####################################################################
 module "service" {
-  source = "../../modules/ecs-task/fargate"
+  source = "../../modules/ecs-task/fargate-cm"
 
   service_name     = var.service_name
   docker_file_path = "${path.module}/src"
@@ -45,34 +36,38 @@ module "service" {
 
   path_pattern = "/${var.service_name}"
 
-  listener_arn = local.http_listener_arn
-
-  lb_sg_id     = local.cluster_info.internal_lb_sg_id
   cluster_info = local.cluster_info
   network_info = local.network_info
 
   min_capacity = 1
   max_capacity = 1
 
-  target_value = 70
+  cpu_target_value = 85
+  mem_target_value = 85
+
 }
 
-
-#-----------------------------------------------------------------------------------
-# CI/CD section
-#-----------------------------------------------------------------------------------
+#####################################################################
+# CI/CD
+#####################################################################
 module "cicd" {
-  source = "../../modules/ecs-cicd"
+  source = "../../modules/ecs-cicd-ghapps"
 
   service_name = var.service_name
 
-  cluster_name   = data.terraform_remote_state.cluster.outputs.cluster_name
-  s3_bucket_artf = data.terraform_remote_state.cluster.outputs.s3_artifact_bucket
-  network_info   = data.terraform_remote_state.network.outputs
-  ecs_info       = local.cluster_info
+  cluster_name   = local.cluster_name
+  s3_bucket_artf = local.s3_bucket_artf
+
+  network_info = local.network_info
+  ecs_info     = local.cluster_info
+
+  repository_id = "levi-x00/service-2"
+  branch_name   = "master"
 }
 
-############### output section ##################
+#####################################################################
+# output section
+#####################################################################
 output "service_name" {
   value = module.service.service_name
 }

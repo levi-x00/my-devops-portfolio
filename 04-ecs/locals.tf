@@ -5,18 +5,19 @@
 # data "terraform_remote_state" "network" {
 #   backend = "s3"
 #   config = {
-#     bucket = "s3-backend-tfstate-rldtvg7"
+#     bucket = "s3-backend-tfstate-nig4odz"
 #     key    = "dev/network.tfstate"
-#     region = "us-east-1"
+#     region = "ap-southeast-1"
 #   }
 # }
 
 data "terraform_remote_state" "network" {
   backend = "s3"
   config = {
-    bucket = var.tfstate_bucket
-    key    = var.tfstate_key
-    region = var.aws_region
+    bucket  = var.tfstate_bucket
+    key     = var.tfstate_key
+    region  = var.aws_region
+    profile = var.aws_profile
   }
 }
 

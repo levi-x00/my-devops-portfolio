@@ -4,7 +4,7 @@ data "aws_route53_zone" "selected" {
 }
 
 resource "aws_acm_certificate" "acm" {
-  domain_name       = var.service_domain
+  domain_name       = "*.${var.service_domain}"
   validation_method = "DNS"
 
   tags = { Name = var.service_domain }

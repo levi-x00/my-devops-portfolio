@@ -10,11 +10,11 @@ output "alb_arn" {
   value = aws_lb.cluster.arn
 }
 
-output "lb_sg_id" {
+output "alb_security_group_id" {
   value = aws_security_group.lb_sg.id
 }
 
-output "svc_sg_id" {
+output "service_security_group_id" {
   value = aws_security_group.service_sg.id
 }
 
@@ -36,4 +36,8 @@ output "sns_arn" {
 
 output "s3_artifact_bucket" {
   value = aws_s3_bucket.s3_artifact.id
+}
+
+output "service_discovery_prv_id" {
+  value = aws_service_discovery_private_dns_namespace.internal.id
 }
