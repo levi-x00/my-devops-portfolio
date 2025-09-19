@@ -21,6 +21,6 @@ variable "service_domain" {}
 variable "retention_days" {
   default = 90
 }
-
+variable "instance_type" {}
 variable "tfstate_bucket" {}
 variable "tfstate_key" {}

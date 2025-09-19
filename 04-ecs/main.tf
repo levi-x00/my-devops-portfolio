@@ -74,3 +74,32 @@ resource "aws_service_discovery_private_dns_namespace" "internal" {
   description = "service discovery internal access"
   vpc         = local.vpc_id
 }
+
+#####################################################################
+# launch template
+#####################################################################
+resource "aws_launch_template" "ecs_launch_template" {
+  # name          = "${var.namespace}_EC2_LaunchTemplate_${var.environment}"
+  name = "ecs-launch-template"
+
+  image_id      = data.aws_ami.amazon_linux_2.id
+  instance_type = var.instance_type
+
+  # key_name               = aws_key_pair.default.key_name
+
+  user_data = base64encode(data.template_file.user_data.rendered)
+
+  vpc_security_group_ids = [aws_security_group.ec2.id]
+
+  iam_instance_profile {
+    arn = aws_iam_instance_profile.ec2_instance_role_profile.arn
+  }
+
+  monitoring {
+    enabled = true
+  }
+
+  tags = {
+    Name = "ecs-launch-template"
+  }
+}

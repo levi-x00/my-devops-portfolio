@@ -62,9 +62,6 @@ resource "aws_security_group" "service_sg" {
 }
 
 resource "aws_ecs_task_definition" "task_def" {
-  depends_on = [
-    null_resource.push_image
-  ]
 
   family = "${var.service_name}-task-def"
 
@@ -91,13 +88,13 @@ resource "aws_ecs_task_definition" "task_def" {
         "timeout" : 10,
         "startPeriod" : 60,
       },
-      "image" : "${local.image_uri}",
+      "image" : "public.ecr.aws/nginx/nginx:latest",
       "logConfiguration" : {
         "logDriver" : "awslogs",
         "options" : {
           "awslogs-create-group" : "true",
           "awslogs-group" : "/aws/ecs/${var.service_name}-logs",
-          "awslogs-region" : "${local.region}",
+          "awslogs-region" : "${local.aws_region}",
           "awslogs-stream-prefix" : "${var.service_name}"
         },
         "secretOptions" : []
@@ -115,28 +112,6 @@ resource "aws_ecs_task_definition" "task_def" {
       ],
       "systemControls" : [],
       "ulimits" : [],
-      "volumesFrom" : []
-    },
-    {
-      "command" : [
-        "--config=/etc/ecs/ecs-cloudwatch.yaml"
-      ],
-      "environment" : [],
-      "essential" : true,
-      "image" : "public.ecr.aws/aws-observability/aws-otel-collector:v0.39.0",
-      "logConfiguration" : {
-        "logDriver" : "awslogs",
-        "options" : {
-          "awslogs-create-group" : "true",
-          "awslogs-group" : "/aws/ecs/${var.service_name}-otel-logs",
-          "awslogs-region" : "${local.region}",
-          "awslogs-stream-prefix" : "${var.service_name}"
-        }
-      },
-      "mountPoints" : [],
-      "name" : "aws-otel-collector",
-      "portMappings" : [],
-      "systemControls" : [],
       "volumesFrom" : []
     }
   ])

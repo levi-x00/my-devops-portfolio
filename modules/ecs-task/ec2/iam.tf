@@ -47,7 +47,7 @@ data "aws_iam_policy_document" "ecs_svc_policy" {
       "kms:GenerateDataKey*",
       "kms:Describe*"
     ]
-    resources = ["*"]
+    resources = [local.kms_key_arn]
   }
 
   statement {
@@ -74,11 +74,6 @@ resource "aws_iam_role" "task_role" {
       }
     ]
   })
-
-  inline_policy {
-    name   = "ecs-svc-inline-policy"
-    policy = data.aws_iam_policy_document.ecs_svc_policy.json
-  }
 
   tags = {
     Name = "${var.service_name}-task-role"

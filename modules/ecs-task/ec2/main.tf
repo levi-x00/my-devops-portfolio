@@ -9,7 +9,7 @@ resource "aws_ecs_service" "ecs_service" {
   health_check_grace_period_seconds  = 0
   enable_ecs_managed_tags            = true
 
-  launch_type     = "EC2"
+  launch_type     = var.launch_type
   task_definition = aws_ecs_task_definition.task_def.arn
 
   # alarms {

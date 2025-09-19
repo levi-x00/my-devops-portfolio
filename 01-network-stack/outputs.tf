@@ -26,6 +26,10 @@ output "account_id" {
   value = local.account_id
 }
 
+output "aws_region" {
+  value = var.aws_region
+}
+
 output "kms_key_arn" {
   value = aws_kms_key.kms.arn
 }

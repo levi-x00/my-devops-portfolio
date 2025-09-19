@@ -9,3 +9,4 @@ variable "cluster_info" {}
 variable "network_info" {}
 variable "path_pattern" {}
 variable "desired_count" {}
+variable "launch_type" {}

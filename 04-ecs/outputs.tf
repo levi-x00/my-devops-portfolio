@@ -2,6 +2,14 @@ output "cluster_name" {
   value = var.cluster_name
 }
 
+output "account_id" {
+  value = local.account_id
+}
+
+output "aws_region" {
+  value = local.aws_region
+}
+
 output "cluster_arn" {
   value = aws_ecs_cluster.cluster.arn
 }
