@@ -1,16 +1,7 @@
-################### variables section ##########################
-variable "bucket_name" {}
-variable "versioning" {
-  default = "Disabled"
-}
-
 resource "aws_s3_bucket" "this" {
-  force_destroy = true
+  force_destroy = var.force_destroy
 
-  bucket = "${var.bucket_name}-${random_string.random.id}"
-  tags = {
-    Name = "${var.bucket_name}-${random_string.random.id}"
-  }
+  bucket = var.bucket_name
 }
 
 resource "aws_s3_bucket_versioning" "this" {
@@ -21,23 +12,9 @@ resource "aws_s3_bucket_versioning" "this" {
 }
 
 resource "aws_s3_bucket_policy" "this" {
+  count  = var.bucket_policy == null ? 1 : 0
   bucket = aws_s3_bucket.this.id
   policy = data.aws_iam_policy_document.this.json
-}
-
-resource "aws_s3_bucket_logging" "this" {
-  bucket = aws_s3_bucket.this.id
-
-  target_bucket = aws_s3_bucket.this.id
-  target_prefix = "log/"
-}
-
-resource "random_string" "random" {
-  length  = 7
-  special = false
-  upper   = false
-  lower   = true
-  numeric = true
 }
 
 data "aws_iam_policy_document" "this" {
@@ -56,8 +33,8 @@ data "aws_iam_policy_document" "this" {
     ]
 
     resources = [
-      "arn:aws:s3:::${var.bucket_name}-${random_string.random.id}",
-      "arn:aws:s3:::${var.bucket_name}-${random_string.random.id}/*"
+      "arn:aws:s3:::${var.bucket_name}",
+      "arn:aws:s3:::${var.bucket_name}/*"
     ]
 
     condition {
