@@ -9,6 +9,7 @@ resource "aws_subnet" "private-1a" {
   tags = {
     Name                              = "private-1a"
     "kubernetes.io/role/internal-elb" = "1"
+    "karpenter.sh/discovery"          = var.cluster_name
   }
 }
 
@@ -20,6 +21,7 @@ resource "aws_subnet" "private-1b" {
   tags = {
     Name                              = "private-1b"
     "kubernetes.io/role/internal-elb" = "1"
+    "karpenter.sh/discovery"          = var.cluster_name
   }
 }
 
