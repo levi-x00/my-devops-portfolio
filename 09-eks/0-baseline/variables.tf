@@ -4,14 +4,20 @@ variable "environment" {
 variable "application" {
   default = "myapp"
 }
-variable "region" {
+variable "aws_region" {
   default = "us-east-1"
+}
+variable "aws_profile" {
+  default = "sandbox"
 }
 variable "cluster_name" {
   default = "devops-blueprint-eks"
 }
 variable "cluster_version" {
-  default = "1.31"
+  default = "1.33"
+}
+variable "retention_in_days" {
+  default = 30
 }
 variable "instance_type" {
   default = "t3.medium"
@@ -36,3 +42,5 @@ variable "cluster_dns_ip" {
 variable "instance_types" {
   default = ["t3.medium"]
 }
+variable "tfstate_bucket" {}
+variable "tfstate_key" {}

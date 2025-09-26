@@ -1,11 +1,5 @@
 terraform {
-  backend "s3" {
-    bucket       = "s3-backend-tfstate-5180c5z"
-    key          = "dev/eks-stack.tfstate"
-    region       = "us-east-1"
-    encrypt      = true
-    use_lockfile = true
-  }
+  backend "s3" {}
 
   required_providers {
     aws = {
@@ -22,7 +16,8 @@ terraform {
 }
 
 provider "aws" {
-  region = var.region
+  region  = var.aws_region
+  profile = var.aws_profile
 
   default_tags {
     tags = {

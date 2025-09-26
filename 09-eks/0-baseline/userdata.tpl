@@ -15,7 +15,6 @@ spec:
     cidr: ${CLUSTER_SERVICE_CIDR}
   kubelet:
     config:
-      maxPods: 110
       clusterDNS:
       - ${CLUSTER_DNS_IP}
       
