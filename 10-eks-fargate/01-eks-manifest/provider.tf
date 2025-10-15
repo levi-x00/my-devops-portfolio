@@ -1,28 +1,25 @@
 terraform {
 
-  backend "s3" {
-    bucket         = "s3-backend-tfstate-ae16zls"
-    key            = "dev/eks-stack.tfstate"
-    region         = "us-east-1"
-    dynamodb_table = "dynamodb-lock-table-ae16zls"
-  }
+  backend "s3" {}
 
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 5.53"
+      version = "~> 5.94"
     }
 
-    kubernetes = {
-      source  = "hashicorp/kubernetes"
-      version = ">= 2.20"
+    tls = {
+      source  = "hashicorp/tls"
+      version = ">= 4.0"
     }
   }
   required_version = ">=1.6.0"
 }
 
+
 provider "aws" {
-  region = var.region
+  region  = var.aws_region
+  profile = var.aws_profile
 
   default_tags {
     tags = {
@@ -31,3 +28,4 @@ provider "aws" {
     }
   }
 }
+
