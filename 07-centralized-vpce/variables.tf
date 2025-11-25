@@ -2,12 +2,16 @@ variable "environment" {
   default = "dev"
 }
 
-variable "application" {
-  default = "devops-app"
+variable "aws_region" {
+  default = "us-east-1"
 }
 
-variable "region" {
-  default = "us-east-1"
+variable "aws_profile" {
+  default = "default"
+}
+
+variable "application" {
+  default = "devops-app"
 }
 
 variable "tags" {
@@ -27,4 +31,12 @@ variable "vpc_spoke2_cidr" {
 
 variable "vpc_vpce_cidr" {
   default = "10.1.0.0/23"
+}
+
+variable "vpc_endpoints" {
+  default = [
+    "ssm",
+    "ssmmessages",
+    "ec2messages"
+  ]
 }

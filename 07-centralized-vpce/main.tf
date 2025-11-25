@@ -1,10 +1,5 @@
 terraform {
-  # backend "s3" {
-  #   bucket         = "s3-backend-tfstate-djnf2a8"
-  #   key            = "${var.environment}/centralize-vpce-stack.tfstate"
-  #   region         = "us-east-1"
-  #   dynamodb_table = "dynamodb-lock-table-djnf2a8"
-  # }
+  backend "s3" {}
 
   required_providers {
     aws = {
@@ -16,7 +11,9 @@ terraform {
 }
 
 provider "aws" {
-  region = var.region
+  region  = var.aws_region
+  profile = var.aws_profile
+
   default_tags {
     tags = var.tags
   }
