@@ -18,12 +18,24 @@ References:
 - Cost saving for having small number of VPC endpoints
 - Security compliance by using private link communication with AWS services
 
+## Prerequisites
+- Apply the terraform state bucket in `00-infra-bucket`
+- Create `backend.config`, update the configuration based on your needs
+```
+bucket = "s3-backend-tfstate-xxxxxx"
+key = "dev/centralized-vpce.tfstate"
+region = "your-region"
+encrypt = true
+use_lockfile = true
+profile = "your-profilename"
+```
+
 ## Deploy
 
 ```
-$ terraform init
-$ terraform plan
-$ terraform apply -auto-approve
+$ terraform init -backend-config=backend.config
+$ terraform plan -var-file=terraform.tfvars # use .tfvars if any
+$ terraform apply -var-file=terraform.tfvars -auto-approve # use .tfvars if any
 ```
 
 ## Testing
