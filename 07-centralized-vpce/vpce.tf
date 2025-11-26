@@ -106,7 +106,7 @@ resource "aws_security_group" "spoke2_ec2_sg" {
 # endpoints setup
 ##########################################################################
 resource "aws_vpc_endpoint" "vpce" {
-  for_each = var.vpc_endpoints
+  for_each = toset(var.vpc_endpoints)
 
   vpc_id            = module.vpc_vpce.vpc_id
   service_name      = "com.amazonaws.${var.aws_region}.${each.value}"

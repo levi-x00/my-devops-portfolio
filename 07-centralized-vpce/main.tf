@@ -28,6 +28,8 @@ module "vpc_vpce" {
   private_subnet_cidra = "10.1.0.0/25"
   private_subnet_cidrb = "10.1.0.128/25"
 
+  region = var.aws_region
+
   public_subnet_cidra = "10.1.1.0/25"
   public_subnet_cidrb = "10.1.1.128/25"
 
@@ -46,6 +48,8 @@ module "vpc_spoke1" {
   private_subnet_cidra = "10.2.0.0/25"
   private_subnet_cidrb = "10.2.0.128/25"
 
+  region = var.aws_region
+
   public_subnet_cidra = "10.2.1.0/25"
   public_subnet_cidrb = "10.2.1.128/25"
 
@@ -63,6 +67,8 @@ module "vpc_spoke2" {
 
   private_subnet_cidra = "10.3.0.0/25"
   private_subnet_cidrb = "10.3.0.128/25"
+
+  region = var.aws_region
 
   public_subnet_cidra = "10.3.1.0/25"
   public_subnet_cidrb = "10.3.1.128/25"
