@@ -12,16 +12,6 @@ variable "vpc_name" {
   default = "devops-project"
 }
 
-variable "region" {
-  type    = string
-  default = "us-east-1"
-}
-
-variable "profile" {
-  type    = string
-  default = "default"
-}
-
 variable "vpc_cidr_block" {}
 variable "private_subnet_cidra" {}
 variable "private_subnet_cidrb" {}
