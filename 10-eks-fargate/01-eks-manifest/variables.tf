@@ -3,10 +3,6 @@ variable "application" {}
 variable "aws_region" {}
 variable "cluster_name" {}
 variable "cluster_version" {}
-variable "instance_type" {}
-variable "key_name" {}
-variable "volume_size" {}
-variable "volume_type" {}
 variable "aws_profile" {}
 variable "tfstate_bucket" {}
 variable "tfstate_key" {}
