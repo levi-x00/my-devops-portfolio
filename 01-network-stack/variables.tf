@@ -1,19 +1,47 @@
 variable "project_name" {
-  default = "devops-project"
+  description = "The project name for this terraform vpc"
+  default     = ""
 }
 
 variable "aws_region" {
-  type    = string
-  default = "us-east-1"
+  description = "AWS region where the resources will be created"
+  type        = string
+  default     = ""
 }
 
 variable "cluster_name" {
-  default = "devops-blueprint-eks"
+  description = "EKS cluster name"
+  default     = ""
 }
 
 variable "vpc_cidr_block" {
-  type    = string
-  default = "10.0.0.0/22"
+  description = "The VPC CIDR network"
+  type        = string
+  default     = ""
+}
+
+variable "public_subnet_cidr_1a" {
+  default = ""
+}
+
+variable "public_subnet_cidr_1b" {
+  default = ""
+}
+
+variable "private_subnet_cidr_1a" {
+  default = ""
+}
+
+variable "private_subnet_cidr_1b" {
+  default = ""
+}
+
+variable "db_subnet_cidr_1a" {
+  default = ""
+}
+
+variable "db_subnet_cidr_1b" {
+  default = ""
 }
 
 variable "enable_dns_hostnames" {
@@ -37,18 +65,9 @@ variable "environment" {
 }
 
 variable "application" {
-  type    = string
-  default = "devops-blueprint-app"
-}
-
-variable "public_subnet_cidr_blocks" {
-  type    = list(string)
-  default = []
-}
-
-variable "availability_zones" {
-  type    = list(string)
-  default = []
+  description = "The application name for this VPC"
+  type        = string
+  default     = "myapp"
 }
 
 variable "map_public_ip_on_launch" {
