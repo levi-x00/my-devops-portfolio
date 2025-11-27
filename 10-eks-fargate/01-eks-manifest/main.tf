@@ -19,7 +19,7 @@ resource "aws_eks_cluster" "cluster" {
   ]
 
   depends_on = [
-    aws_iam_role_policy_attachment.vpc_res_ctrler,
-    aws_iam_role_policy_attachment.eks_cluster
+    aws_iam_role.eks_role,
+    aws_iam_role.fargate_profile_role
   ]
 }
