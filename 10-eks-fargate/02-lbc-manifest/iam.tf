@@ -34,7 +34,7 @@ resource "aws_iam_role_policy" "externaldns_iam_policy" {
 }
 
 resource "aws_iam_role" "lbc_iam_role" {
-  name = "${var.cluster_name}-lbc-iam-role"
+  name = "${local.cluster_id}-lbc-iam-role"
 
   # Terraform's "jsonencode" function converts a Terraform expression result to valid JSON syntax.
   assume_role_policy = jsonencode({
@@ -58,12 +58,12 @@ resource "aws_iam_role" "lbc_iam_role" {
   })
 
   tags = {
-    Name = "${var.cluster_name}-lbc-iam-role"
+    Name = "${local.cluster_id}-lbc-iam-role"
   }
 }
 
 resource "aws_iam_role" "external_dns_role" {
-  name = "${var.cluster_name}-external-dns-role"
+  name = "${local.cluster_id}-external-dns-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -86,6 +86,6 @@ resource "aws_iam_role" "external_dns_role" {
   })
 
   tags = {
-    Name = "${var.cluster_name}-external-dns-role"
+    Name = "${local.cluster_id}-external-dns-role"
   }
 }

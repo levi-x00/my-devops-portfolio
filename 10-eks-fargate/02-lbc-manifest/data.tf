@@ -2,19 +2,20 @@
 data "terraform_remote_state" "eks" {
   backend = "s3"
   config = {
-    bucket = "s3-backend-tfstate-ae16zls"
-    key    = "dev/eks-stack.tfstate"
-    region = var.region
+    bucket  = var.tfstate_bucket
+    key     = var.eks_tfstate_key
+    region  = var.aws_region
+    profile = var.aws_profile
   }
 }
 
-# Terraform Remote State Datasource - Remote Backend AWS S3 for network stack
 data "terraform_remote_state" "network" {
   backend = "s3"
   config = {
-    bucket = "s3-backend-tfstate-ae16zls"
-    key    = "dev/network.tfstate"
-    region = "us-east-1"
+    bucket  = var.tfstate_bucket
+    key     = var.network_tfstate_key
+    region  = var.aws_region
+    profile = var.aws_profile
   }
 }
 

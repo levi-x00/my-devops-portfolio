@@ -1,4 +1,7 @@
 variable "environment" {}
 variable "application" {}
-variable "region" {}
-variable "cluster_name" {}
+variable "tfstate_bucket" {}
+variable "network_tfstate_key" {}
+variable "eks_tfstate_key" {}
+variable "aws_region" {}
+variable "aws_profile" {}

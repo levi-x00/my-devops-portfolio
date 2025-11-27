@@ -1,35 +1,29 @@
 # Terraform Settings Block
 terraform {
   required_version = ">= 1.6.0"
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 5.31"
+      version = ">= 6.21"
     }
     helm = {
       source  = "hashicorp/helm"
-      version = ">= 2.9"
+      version = "3.1.0"
     }
     http = {
       source  = "hashicorp/http"
       version = ">= 3.3"
     }
-    kubernetes = {
-      source  = "hashicorp/kubernetes"
-      version = ">= 2.20"
-    }
   }
 
-  backend "s3" {
-    bucket         = "s3-backend-tfstate-ae16zls"
-    key            = "dev/lbc-stack.tfstate"
-    region         = "us-east-1"
-    dynamodb_table = "dynamodb-lock-table-ae16zls"
-  }
+  backend "s3" {}
 }
 
 provider "aws" {
-  region = var.region
+  region  = var.aws_region
+  profile = var.aws_profile
+
   default_tags {
     tags = {
       Environment = var.environment
@@ -40,14 +34,7 @@ provider "aws" {
 
 provider "http" {}
 provider "helm" {
-  kubernetes {
-    host                   = local.cluster_endpoint
-    cluster_ca_certificate = base64decode(local.cluster_ca)
-    token                  = data.aws_eks_cluster_auth.cluster.token
+  kubernetes = {
+    config_path = "~/.kube/config"
   }
-}
-provider "kubernetes" {
-  host                   = local.cluster_endpoint
-  cluster_ca_certificate = base64decode(local.cluster_ca)
-  token                  = data.aws_eks_cluster_auth.cluster.token
 }
