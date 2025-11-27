@@ -12,12 +12,12 @@ resource "aws_iam_role" "eks_role" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "vpc_res_ctrler" {
+resource "aws_iam_role_policy_attachment" "amzn_eks_vpc_resources_controller" {
   role       = aws_iam_role.eks_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
 }
 
-resource "aws_iam_role_policy_attachment" "eks_cluster" {
+resource "aws_iam_role_policy_attachment" "amzn_eks_cluster_policy" {
   role       = aws_iam_role.eks_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
 }
@@ -37,7 +37,7 @@ resource "aws_iam_role" "fargate_profile_role" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "eks_fargate_pod_execution_role_policy" {
+resource "aws_iam_role_policy_attachment" "amzn_eks_fargate_pod_execution_role_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy"
   role       = aws_iam_role.fargate_profile_role.name
 }
