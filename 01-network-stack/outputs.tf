@@ -18,6 +18,10 @@ output "public_subnet_ids" {
   value = [aws_subnet.public-1a.id, aws_subnet.public-1b.id]
 }
 
+output "db_subnet_ids" {
+  value = [aws_subnet.db-1a.id, aws_subnet.db-1b.id]
+}
+
 output "default_sg_id" {
   value = aws_default_security_group.default-sg.id
 }
