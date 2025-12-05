@@ -20,7 +20,7 @@ terraform {
 
     helm = {
       source  = "hashicorp/helm"
-      version = "3.0.2"
+      version = ">= 3.1.0"
     }
 
     http = {
@@ -50,15 +50,7 @@ provider "aws" {
 provider "http" {}
 
 provider "helm" {
-  kubernetes {
-    host                   = local.cluster_endpoint
-    cluster_ca_certificate = base64decode(local.cluster_certificate_authority_data)
-    token                  = data.aws_eks_cluster_auth.cluster.token
+  kubernetes = {
+    config_path = "~/.kube/config"
   }
-}
-
-provider "kubernetes" {
-  host                   = aws_eks_cluster.eks_cluster.endpoint
-  cluster_ca_certificate = base64decode(aws_eks_cluster.eks_cluster.certificate_authority[0].data)
-  token                  = data.aws_eks_cluster_auth.cluster.token
 }

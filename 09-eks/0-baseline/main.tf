@@ -9,6 +9,8 @@ resource "aws_eks_cluster" "this" {
   role_arn = aws_iam_role.eks_cluster.arn
   version  = var.cluster_version
 
+  enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+
   encryption_config {
     provider {
       key_arn = local.kms_key_arn
@@ -24,10 +26,10 @@ resource "aws_eks_cluster" "this" {
   }
 
   depends_on = [
-    aws_iam_role_policy_attachment.cluster_AmazonEKSClusterPolicy,
-    aws_iam_role_policy_attachment.cluster_AmazonEKSComputePolicy,
-    aws_iam_role_policy_attachment.cluster_AmazonEKSBlockStoragePolicy,
-    aws_iam_role_policy_attachment.cluster_AmazonEKSNetworkingPolicy
+    aws_iam_role_policy_attachment.amzn_eks_cluster,
+    aws_iam_role_policy_attachment.amzn_eks_compute,
+    aws_iam_role_policy_attachment.amzn_eks_block_storage,
+    aws_iam_role_policy_attachment.amzn_eks_networking
   ]
 
   tags = {
@@ -53,11 +55,14 @@ resource "aws_launch_template" "cluster_al2023" {
     }
   }
 
-  tag_specifications {
-    resource_type = "instance"
+  dynamic "tag_specifications" {
+    for_each = local.tag_resource_types
+    content {
+      resource_type = tag_specifications.value
 
-    tags = {
-      Name = "${var.cluster_name}-worker-node"
+      tags = {
+        Name = "${var.cluster_name}-worker-node"
+      }
     }
   }
 
@@ -116,9 +121,9 @@ resource "aws_eks_node_group" "this" {
   }
 
   depends_on = [
-    aws_iam_role_policy_attachment.node_AmazonEKSWorkerNodeMinimalPolicy,
-    aws_iam_role_policy_attachment.node_AmazonEKS_CNI_Policy,
-    aws_iam_role_policy_attachment.node_AmazonEC2ContainerRegistryPullOnly,
+    aws_iam_role_policy_attachment.amzn_eks_worker_node,
+    aws_iam_role_policy_attachment.amzn_eks_cni,
+    aws_iam_role_policy_attachment.amzn_ec2_container_registry_pull_only,
   ]
 
   tags = {
