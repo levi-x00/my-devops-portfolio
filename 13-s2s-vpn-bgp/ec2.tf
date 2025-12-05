@@ -51,7 +51,7 @@ resource "aws_security_group" "cloud_sg" {
 # EC2 on On-Premises VPC
 #########################################################################
 resource "aws_instance" "onprem_router" {
-  ami = var.ami_id
+  ami = var.router_ami_id
 
   instance_type = var.instance_type
 
@@ -68,7 +68,7 @@ resource "aws_instance" "onprem_router" {
 }
 
 resource "aws_instance" "onprem_server" {
-  ami = var.ami_id
+  ami = var.router_ami_id
 
   instance_type = var.instance_type
 
@@ -85,7 +85,7 @@ resource "aws_instance" "onprem_server" {
 }
 
 resource "aws_instance" "server" {
-  ami = var.ami_id
+  ami = var.cloud_ami_id
 
   instance_type = var.instance_type
 
