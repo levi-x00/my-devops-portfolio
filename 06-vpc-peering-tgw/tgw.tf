@@ -1,7 +1,7 @@
 resource "aws_ec2_transit_gateway" "my_tgw" {
-  description = "demo tgw"
+  description = "lab tgw"
   tags = {
-    Name = "my-${var.environment}-tgw"
+    Name = "lab-tgw"
   }
 }
 
