@@ -35,5 +35,5 @@ output "private1_rtb_id" {
 }
 
 output "private2_rtb_id" {
-  value = var.enable_nat == true ? aws_route_table.private2[0].id : ""
+  value = var.enable_nat == true && var.multi_az_nat == true ? aws_route_table.private2[0].id : ""
 }
