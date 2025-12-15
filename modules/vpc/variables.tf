@@ -3,6 +3,11 @@ variable "enable_nat" {
   default = false
 }
 
+variable "multi_az_nat" {
+  type    = bool
+  default = false
+}
+
 variable "create_igw" {
   type    = bool
   default = true

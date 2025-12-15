@@ -12,7 +12,7 @@ resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "${var.vpc_name}-private-rt"
+    Name = "${var.vpc_name}-private-rtb"
   }
 }
 
@@ -21,7 +21,7 @@ resource "aws_route_table" "private1" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "${var.vpc_name}-private1-rt"
+    Name = local.private_rtb_name
   }
 }
 
@@ -34,16 +34,16 @@ resource "aws_route" "nat1" {
 }
 
 resource "aws_route_table" "private2" {
-  count  = var.enable_nat == true ? 1 : 0
+  count  = var.enable_nat == true && var.multi_az_nat == true ? 1 : 0
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "${var.vpc_name}-private2-rt"
+    Name = "${var.vpc_name}-private-rtb2"
   }
 }
 
 resource "aws_route" "nat2" {
-  count          = var.enable_nat == true ? 1 : 0
+  count          = var.enable_nat == true && var.multi_az_nat == true ? 1 : 0
   route_table_id = aws_route_table.private2[0].id
 
   destination_cidr_block = "0.0.0.0/0"
@@ -77,7 +77,7 @@ resource "aws_route_table_association" "private-1a" {
 resource "aws_route_table_association" "private-1b" {
   count          = var.enable_nat == true ? 1 : 0
   subnet_id      = aws_subnet.private-1b.id
-  route_table_id = aws_route_table.private2[0].id
+  route_table_id = local.private_rtb_azb
 }
 
 resource "aws_route_table_association" "public-1a" {
