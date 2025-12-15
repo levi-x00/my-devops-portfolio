@@ -1,36 +1,33 @@
-module "ec2_instance01" {
-  depends_on = [aws_vpc_endpoint.eps_01]
-
-  source = "terraform-aws-modules/ec2-instance/aws"
-
-  name = "instance-01"
-  ami  = data.aws_ami.amzlinux2.id
-
+resource "aws_instance" "instance01" {
   instance_type = var.instance_type
   subnet_id     = module.vpc1.private_subnet_ids[0]
-  iam_role_name = aws_iam_role.ec2_role.name
+
+  ami = var.ami_id
 
   iam_instance_profile   = aws_iam_instance_profile.ec2_role.name
-  vpc_security_group_ids = [aws_security_group.ec2_sg01.id]
+  vpc_security_group_ids = [aws_security_group.vpc1_ec2_sg.id]
+
+  root_block_device {
+    volume_size = var.volume_size
+  }
 
   tags = {
     Name = "instance-01"
   }
 }
 
-module "ec2_instance02" {
-  depends_on = [aws_vpc_endpoint.eps_02]
-
-  source = "terraform-aws-modules/ec2-instance/aws"
-
-  name = "instance-02"
-  ami  = data.aws_ami.amzlinux2.id
-
+resource "aws_instance" "instance02" {
   instance_type = var.instance_type
   subnet_id     = module.vpc2.private_subnet_ids[0]
 
+  ami = var.ami_id
+
   iam_instance_profile   = aws_iam_instance_profile.ec2_role.name
-  vpc_security_group_ids = [aws_security_group.ec2_sg02.id]
+  vpc_security_group_ids = [aws_security_group.vpc2_ec2_sg.id]
+
+  root_block_device {
+    volume_size = var.volume_size
+  }
 
   tags = {
     Name = "instance-02"
