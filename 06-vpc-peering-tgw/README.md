@@ -14,9 +14,18 @@
 #### Prerequisites
 - AWS CLI configured
 - Terraform installed
-- S3 bucket for Terraform state
 
-#### 1. Configure Backend
+#### 1. Setup Terraform State Backend
+First, run the infrastructure backend setup to create the S3 bucket for Terraform state:
+```bash
+cd ../00-infra-backend
+terraform init
+terraform plan
+terraform apply
+cd ../06-vpc-peering-tgw
+```
+
+#### 2. Configure Backend
 Update `backend.config` with your S3 bucket details:
 ```
 bucket = "your-terraform-state-bucket"
