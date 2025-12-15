@@ -7,10 +7,10 @@ module "ec2_instance01" {
   ami  = data.aws_ami.amzlinux2.id
 
   instance_type = var.instance_type
-  subnet_id     = aws_subnet.subnets_vpc01[0].id
+  subnet_id     = module.vpc1.private_subnet_ids[0]
   iam_role_name = aws_iam_role.ec2_role.name
 
-  iam_instance_profile   = aws_iam_instance_profile.ec2_instance_profile.name
+  iam_instance_profile   = aws_iam_instance_profile.ec2_role.name
   vpc_security_group_ids = [aws_security_group.ec2_sg01.id]
 
   tags = {
@@ -27,9 +27,9 @@ module "ec2_instance02" {
   ami  = data.aws_ami.amzlinux2.id
 
   instance_type = var.instance_type
-  subnet_id     = aws_subnet.subnets_vpc02[0].id
+  subnet_id     = module.vpc2.private_subnet_ids[0]
 
-  iam_instance_profile   = aws_iam_instance_profile.ec2_instance_profile.name
+  iam_instance_profile   = aws_iam_instance_profile.ec2_role.name
   vpc_security_group_ids = [aws_security_group.ec2_sg02.id]
 
   tags = {

@@ -33,14 +33,12 @@ resource "aws_security_group" "vpc1_ec2_sg" {
       cidr_blocks = ["0.0.0.0/0"]
     }
   }
-
   ingress {
     from_port   = -1
     to_port     = -1
     protocol    = "icmp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["10.3.0.0/24"]
   }
-
   egress {
     from_port   = 0
     to_port     = 0
@@ -93,18 +91,17 @@ resource "aws_security_group" "vpc2_ec2_sg" {
     }
   }
 
-  ingress {
-    from_port   = -1
-    to_port     = -1
-    protocol    = "icmp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+  ingress {
+    from_port   = -1
+    to_port     = -1
+    protocol    = "icmp"
+    cidr_blocks = ["10.2.0.0/24"]
   }
 
   lifecycle {

@@ -1,9 +1,55 @@
-## VPC Peering Architecture
+## VPC Peering with Transit Gateway Architecture
 
-![Alt text](../images/vpc-peering.drawio.svg?raw=true "ECS Deployment Architecture")<br>
+![Alt text](../images/connect-vpc-tgw.drawio.svg?raw=true "VPC Peering with Transit Gateway Architecture")
 
-1. Here I have VPC 1 & VPC 2
-2. The instance 1 and 2 are inside the private subnet
-3. VPC Peering configured with auto accept from VPC 1
-4. Both private route table each VPC configured
-5. Log in to each instance to verify the peering connection
+### Architecture Overview
+1. VPC 1 & VPC 2 connected via Transit Gateway
+2. EC2 instances in private subnets of each VPC
+3. Transit Gateway attachments for both VPCs
+4. VPC endpoints for SSM access
+5. Cross-VPC communication through Transit Gateway
+
+### Setup Steps
+
+#### Prerequisites
+- AWS CLI configured
+- Terraform installed
+- S3 bucket for Terraform state
+
+#### 1. Configure Backend
+Update `backend.config` with your S3 bucket details:
+```
+bucket = "your-terraform-state-bucket"
+key    = "vpc-peering-tgw/terraform.tfstate"
+region = "us-east-1"
+```
+
+#### 2. Initialize Terraform
+```bash
+terraform init -backend-config=backend.config
+```
+
+#### 3. Plan and Apply
+```bash
+terraform plan
+terraform apply
+```
+
+#### 4. Verify Connectivity
+Connect to instances via Session Manager and test connectivity between VPCs:
+   ```bash
+   # From instance-01, ping instance-02
+   ping <instance-02-private-ip>
+   ```
+
+#### 5. Cleanup
+```bash
+terraform destroy
+```
+
+### Resources Created
+- 2 VPCs with public/private subnets
+- Transit Gateway with VPC attachments
+- EC2 instances in private subnets
+- VPC endpoints for SSM
+- Security groups and IAM roles
