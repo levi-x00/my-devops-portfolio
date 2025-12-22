@@ -21,7 +21,7 @@ variable "instance_type" {
 }
 
 variable "cloud_vpc_cidr_block" {
-  default = "10.1.0.0/23"
+  default = "10.16.0.0/16"
 }
 variable "onprem_vpc_cidr_block" {
   default = "10.2.0.0/23"

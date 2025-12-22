@@ -1,0 +1,236 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  Advanced Demo - HA BGP Site-to-Site VPN
+  MUST be applied in us-east-1
+
+########################################
+# Parameters
+########################################
+Parameters:
+  LatestAmiId:
+    Description: AMI for Misc Instances (default is latest Amazon Linux 2)
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+
+  RouterAmiId:
+    Description: AMI for the Router Instances (do not change)
+    Type: String
+    Default: ami-0ac80df6eff0e70b5
+
+  Branch:
+    Description: Git branch to pull assets from
+    Type: String
+    Default: master
+    AllowedValues:
+      - master
+      - stage
+      - dev
+
+  ProjectName:
+    Description: Project name used for asset paths
+    Type: String
+    Default: aws-hybrid-bgpvpn
+
+########################################
+# AWS VPC (Cloud Side)
+########################################
+Resources:
+  AWSVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.16.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: A4L-AWS
+
+  AWSSubnetPrivateA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref AWSVPC
+      AvailabilityZone: !Select [0, !GetAZs ""]
+      CidrBlock: 10.16.32.0/20
+      Tags:
+        - Key: Name
+          Value: sn-aws-private-A
+
+  AWSSubnetPrivateB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref AWSVPC
+      AvailabilityZone: !Select [1, !GetAZs ""]
+      CidrBlock: 10.16.96.0/20
+      Tags:
+        - Key: Name
+          Value: sn-aws-private-B
+
+  ########################################
+  # AWS Routing
+  ########################################
+  AWSCustomRT:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref AWSVPC
+      Tags:
+        - Key: Name
+          Value: A4L-AWS-RT
+
+  AWSTGWDefaultRoute:
+    Type: AWS::EC2::Route
+    DependsOn: AWSTGWVPC
+    Properties:
+      RouteTableId: !Ref AWSCustomRT
+      DestinationCidrBlock: 0.0.0.0/0
+      TransitGatewayId: !Ref AWSTGW
+
+  AWSRTAssociationPrivateA:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref AWSSubnetPrivateA
+      RouteTableId: !Ref AWSCustomRT
+
+  AWSRTAssociationPrivateB:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref AWSSubnetPrivateB
+      RouteTableId: !Ref AWSCustomRT
+
+  ########################################
+  # AWS Security Group
+  ########################################
+  AWSInstanceSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref AWSVPC
+      GroupDescription: Default A4L AWS SG
+      SecurityGroupIngress:
+        - Description: Allow SSH (IPv4)
+          IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - Description: Allow all from ONPREM
+          IpProtocol: -1
+          CidrIp: 192.168.8.0/21
+
+  AWSInstanceSGSelfReferenceRule:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref AWSInstanceSG
+      IpProtocol: -1
+      SourceSecurityGroupId: !Ref AWSInstanceSG
+
+  ########################################
+  # AWS EC2 Instances
+  ########################################
+  AWSEC2A:
+    Type: AWS::EC2::Instance
+    DependsOn:
+      - AWSssminterfaceendpoint
+      - AWSssmec2messagesinterfaceendpoint
+      - AWSssmmessagesinterfaceendpoint
+    Properties:
+      InstanceType: t3.micro
+      ImageId: !Ref LatestAmiId
+      IamInstanceProfile: !Ref AWSEC2InstanceProfile
+      SubnetId: !Ref AWSSubnetPrivateA
+      SecurityGroupIds:
+        - !Ref AWSInstanceSG
+      Tags:
+        - Key: Name
+          Value: AWS-EC2-A
+
+  AWSEC2B:
+    Type: AWS::EC2::Instance
+    DependsOn:
+      - AWSssminterfaceendpoint
+      - AWSssmec2messagesinterfaceendpoint
+      - AWSssmmessagesinterfaceendpoint
+    Properties:
+      InstanceType: t3.micro
+      ImageId: !Ref LatestAmiId
+      IamInstanceProfile: !Ref AWSEC2InstanceProfile
+      SubnetId: !Ref AWSSubnetPrivateB
+      SecurityGroupIds:
+        - !Ref AWSInstanceSG
+      Tags:
+        - Key: Name
+          Value: AWS-EC2-B
+
+  ########################################
+  # IAM (Shared for AWS & ONPREM EC2)
+  ########################################
+  AWSEC2Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: EC2-SSM-Full
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ssm:*
+                  - ssmmessages:*
+                  - ec2messages:*
+                  - s3:*
+                  - sns:*
+                Resource: "*"
+
+  AWSEC2InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles:
+        - !Ref AWSEC2Role
+
+  ########################################
+  # VPC Endpoints (AWS)
+  ########################################
+  AWSssminterfaceendpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcId: !Ref AWSVPC
+      VpcEndpointType: Interface
+      PrivateDnsEnabled: true
+      SubnetIds:
+        - !Ref AWSSubnetPrivateA
+        - !Ref AWSSubnetPrivateB
+      SecurityGroupIds:
+        - !Ref AWSInstanceSG
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.ssm
+
+  AWSssmec2messagesinterfaceendpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcId: !Ref AWSVPC
+      VpcEndpointType: Interface
+      PrivateDnsEnabled: true
+      SubnetIds:
+        - !Ref AWSSubnetPrivateA
+        - !Ref AWSSubnetPrivateB
+      SecurityGroupIds:
+        - !Ref AWSInstanceSG
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.ec2messages
+
+  AWSssmmessagesinterfaceendpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcId: !Ref AWSVPC
+      VpcEndpointType: Interface
+      PrivateDnsEnabled: true
+      SubnetIds:
+        - !Ref AWSSubnetPrivateA
+        - !Ref AWSSubnetPrivateB
+      SecurityGroupIds:
+        - !Ref AWSInstanceSG
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.ssmmessages
