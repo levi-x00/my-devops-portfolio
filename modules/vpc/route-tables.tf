@@ -68,16 +68,30 @@ resource "aws_route" "igw" {
 }
 
 # ========================= associate the subnets to route table =======================
-resource "aws_route_table_association" "private-1a" {
-  count          = var.enable_nat == true ? 1 : 0
+# Single-AZ NAT: both subnets use private1 route table
+resource "aws_route_table_association" "private-1a-single-nat" {
+  count          = var.enable_nat == true && var.multi_az_nat == false ? 1 : 0
   subnet_id      = aws_subnet.private-1a.id
   route_table_id = aws_route_table.private1[0].id
 }
 
-resource "aws_route_table_association" "private-1b" {
-  count          = var.enable_nat == true ? 1 : 0
+resource "aws_route_table_association" "private-1b-single-nat" {
+  count          = var.enable_nat == true && var.multi_az_nat == false ? 1 : 0
   subnet_id      = aws_subnet.private-1b.id
-  route_table_id = local.private_rtb_azb
+  route_table_id = aws_route_table.private1[0].id
+}
+
+# Multi-AZ NAT: each subnet uses its own route table
+resource "aws_route_table_association" "private-1a-multi-nat" {
+  count          = var.enable_nat == true && var.multi_az_nat == true ? 1 : 0
+  subnet_id      = aws_subnet.private-1a.id
+  route_table_id = aws_route_table.private1[0].id
+}
+
+resource "aws_route_table_association" "private-1b-multi-nat" {
+  count          = var.enable_nat == true && var.multi_az_nat == true ? 1 : 0
+  subnet_id      = aws_subnet.private-1b.id
+  route_table_id = aws_route_table.private2[0].id
 }
 
 resource "aws_route_table_association" "public-1a" {
