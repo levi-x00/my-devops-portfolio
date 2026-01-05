@@ -4,14 +4,14 @@
 resource "aws_eip" "nat1" {
   count = var.enable_nat == true ? 1 : 0
   tags = {
-    Name = "${var.environment}-nat1"
+    Name = "${var.environment}-${var.vpc_name}-nat1"
   }
 }
 
 resource "aws_eip" "nat2" {
   count = var.enable_nat == true && var.multi_az_nat == true ? 1 : 0
   tags = {
-    Name = "${var.environment}-nat2"
+    Name = "${var.environment}-${var.vpc_name}-nat2"
   }
 }
 
@@ -25,7 +25,7 @@ resource "aws_nat_gateway" "nat1" {
   subnet_id     = aws_subnet.public-1a.id
 
   tags = {
-    Name = "nat-gw1"
+    Name = "${var.environment}-${var.vpc_name}-nat-gw1"
   }
 
   depends_on = [aws_internet_gateway.igw]
@@ -38,7 +38,7 @@ resource "aws_nat_gateway" "nat2" {
   subnet_id     = aws_subnet.public-1b.id
 
   tags = {
-    Name = "nat-gw2"
+    Name = "${var.environment}-${var.vpc_name}-nat-gw2"
   }
 
   depends_on = [aws_internet_gateway.igw]
