@@ -1,24 +1,6 @@
-#########################################################################
-# Outputs
-#########################################################################
 output "transit_gateway_id" {
   description = "ID of the Transit Gateway"
   value       = aws_ec2_transit_gateway.main.id
-}
-
-output "vpn_connection_id" {
-  description = "ID of the VPN Connection"
-  value       = aws_vpn_connection.main.id
-}
-
-output "customer_gateway_id" {
-  description = "ID of the Customer Gateway"
-  value       = aws_customer_gateway.main.id
-}
-
-output "onprem_router_public_ip" {
-  description = "Public IP of the OnPrem Router"
-  value       = aws_eip.onprem_router.public_ip
 }
 
 output "cloud_vpc_id" {
@@ -31,12 +13,37 @@ output "onprem_vpc_id" {
   value       = module.on_prem_vpc.vpc_id
 }
 
-output "vpn_tunnel_1_address" {
-  description = "The public IP address of the first VPN tunnel"
-  value       = aws_vpn_connection.main.tunnel1_address
+output "router1_public_ip" {
+  description = "Public IP of Router1"
+  value       = aws_eip.router1.public_ip
 }
 
-output "vpn_tunnel_2_address" {
-  description = "The public IP address of the second VPN tunnel"
-  value       = aws_vpn_connection.main.tunnel2_address
+output "router2_public_ip" {
+  description = "Public IP of Router2"
+  value       = aws_eip.router2.public_ip
+}
+
+output "router1_private_ip" {
+  description = "Private IP of Router1"
+  value       = aws_instance.onprem_router1.private_ip
+}
+
+output "router2_private_ip" {
+  description = "Private IP of Router2"
+  value       = aws_instance.onprem_router2.private_ip
+}
+
+output "cloud_ec2_a_private_ip" {
+  description = "Private IP of Cloud EC2 A"
+  value       = aws_instance.cloud_ec2_a.private_ip
+}
+
+output "onprem_server1_private_ip" {
+  description = "Private IP of OnPrem Server 1"
+  value       = aws_instance.onprem_server1.private_ip
+}
+
+output "onprem_server2_private_ip" {
+  description = "Private IP of OnPrem Server 2"
+  value       = aws_instance.onprem_server2.private_ip
 }
