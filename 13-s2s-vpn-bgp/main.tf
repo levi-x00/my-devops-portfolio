@@ -15,10 +15,12 @@ module "cloud_vpc" {
   public_subnet_cidrb = "10.16.64.0/20"
 
   multi_az_nat = false
-  enable_nat   = false
-  create_igw   = false
+  enable_nat   = true
+  create_igw   = true
 
-  tags = {}
+  tags = {
+    Name = "cloud-vpc"
+  }
 }
 
 #########################################################################
@@ -40,6 +42,49 @@ module "on_prem_vpc" {
   enable_nat   = true
   create_igw   = true
 
-  tags = {}
+  tags = {
+    Name = "on-prem-vpc"
+  }
 }
 
+#########################################################################
+# VPN 1
+#########################################################################
+resource "aws_customer_gateway" "cgw1" {
+  bgp_asn    = "65016"
+  ip_address = aws_eip.router1.public_ip
+  type       = "ipsec.1"
+
+  tags = {
+    Name = "${var.environment}-cgw1"
+  }
+}
+
+resource "aws_vpn_connection" "vpn1" {
+  customer_gateway_id = aws_customer_gateway.cgw1.id
+  transit_gateway_id  = aws_ec2_transit_gateway.main.id
+  type                = aws_customer_gateway.cgw1.type
+
+  tags = {
+    Name = "${var.environment}-vpn1"
+  }
+}
+
+#########################################################################
+# VPN 2
+#########################################################################
+# resource "aws_customer_gateway" "cgw2" {
+#   bgp_asn    = "65016"
+#   ip_address = aws_eip.onprem_eip2.public_ip
+#   type       = "ipsec.1"
+
+#   tags = {
+#     Name = "${var.environment}-cgw2"
+#   }
+# }
+
+# resource "aws_vpn_connection" "vpn2" {
+#   customer_gateway_id = aws_customer_gateway.cgw2.id
+#   transit_gateway_id  = aws_ec2_transit_gateway.main.id
+#   type                = aws_customer_gateway.cgw2.type
+# }
