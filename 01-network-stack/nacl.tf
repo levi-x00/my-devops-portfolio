@@ -1,28 +1,20 @@
-resource "aws_default_network_acl" "public_nacl" {
+resource "aws_default_network_acl" "default" {
   default_network_acl_id = aws_vpc.main.default_network_acl_id
 
-  subnet_ids = [
-    aws_subnet.public-1a.id,
-    aws_subnet.public-1b.id,
-    aws_subnet.private-1a.id,
-    aws_subnet.private-1b.id,
-    aws_subnet.db-1a.id,
-    aws_subnet.db-1b.id
-  ]
-
+  # Deny all traffic by default (best practice)
   ingress {
-    rule_no    = "100"
+    rule_no    = 100
     protocol   = "-1"
-    action     = "allow"
+    action     = "deny"
     cidr_block = "0.0.0.0/0"
     from_port  = 0
     to_port    = 0
   }
 
   egress {
-    rule_no    = "100"
+    rule_no    = 100
     protocol   = "-1"
-    action     = "allow"
+    action     = "deny"
     cidr_block = "0.0.0.0/0"
     from_port  = 0
     to_port    = 0
@@ -36,37 +28,56 @@ resource "aws_default_network_acl" "public_nacl" {
 resource "aws_network_acl" "public_nacl" {
   vpc_id = aws_vpc.main.id
 
-  subnet_ids = [
-    # aws_subnet.public-1a.id,
-    # aws_subnet.public-1b.id,
-    # aws_subnet.private-1a.id,
-    # aws_subnet.private-1b.id,
-    # aws_subnet.db-1a.id,
-    # aws_subnet.db-1b.id
-  ]
+  subnet_ids = aws_subnet.public[*].id
 
-  dynamic "ingress" {
-    for_each = local.public_nacl_rules.ingress
-    content {
-      rule_no    = ingress.value.rule_no
-      protocol   = ingress.value.protocol
-      action     = ingress.value.action
-      cidr_block = ingress.value.cidr_block
-      from_port  = ingress.value.from_port
-      to_port    = ingress.value.to_port
-    }
+  # HTTP
+  ingress {
+    rule_no    = 100
+    protocol   = "tcp"
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 80
+    to_port    = 80
   }
 
-  dynamic "egress" {
-    for_each = local.public_nacl_rules.ingress
-    content {
-      rule_no    = egress.value.rule_no
-      protocol   = egress.value.protocol
-      action     = egress.value.action
-      cidr_block = "0.0.0.0/0"
-      from_port  = egress.value.from_port
-      to_port    = egress.value.to_port
-    }
+  # HTTPS
+  ingress {
+    rule_no    = 110
+    protocol   = "tcp"
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 443
+    to_port    = 443
+  }
+
+  # SSH from trusted IPs only (adjust cidr_block as needed)
+  ingress {
+    rule_no    = 120
+    protocol   = "tcp"
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 22
+    to_port    = 22
+  }
+
+  # Ephemeral ports for return traffic
+  ingress {
+    rule_no    = 130
+    protocol   = "tcp"
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 1024
+    to_port    = 65535
+  }
+
+  # Allow all outbound
+  egress {
+    rule_no    = 100
+    protocol   = "-1"
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 0
+    to_port    = 0
   }
 
   tags = {
@@ -77,36 +88,42 @@ resource "aws_network_acl" "public_nacl" {
 resource "aws_network_acl" "private_nacl" {
   vpc_id = aws_vpc.main.id
 
-  subnet_ids = []
+  subnet_ids = concat(
+    aws_subnet.private[*].id,
+    aws_subnet.db[*].id
+  )
 
-  dynamic "ingress" {
-    for_each = local.private_nacl_rules.ingress
-    content {
-      rule_no    = ingress.value.rule_no
-      protocol   = ingress.value.protocol
-      action     = ingress.value.action
-      cidr_block = ingress.value.cidr_block
-      from_port  = ingress.value.from_port
-      to_port    = ingress.value.to_port
-    }
+  # Allow from VPC CIDR
+  ingress {
+    rule_no    = 100
+    protocol   = "-1"
+    action     = "allow"
+    cidr_block = var.vpc_cidr_block
+    from_port  = 0
+    to_port    = 0
   }
 
-  dynamic "egress" {
-    for_each = local.private_nacl_rules.egress
-    content {
-      rule_no    = egress.value.rule_no
-      protocol   = egress.value.protocol
-      action     = egress.value.action
-      cidr_block = egress.value.cidr_block
-      from_port  = egress.value.from_port
-      to_port    = egress.value.to_port
-    }
+  # Ephemeral ports for return traffic from internet
+  ingress {
+    rule_no    = 110
+    protocol   = "tcp"
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 1024
+    to_port    = 65535
+  }
+
+  # Allow all outbound (for internet access via NAT)
+  egress {
+    rule_no    = 100
+    protocol   = "-1"
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 0
+    to_port    = 0
   }
 
   tags = {
     Name = "${var.project_name}-private-nacl"
   }
 }
-
-
-

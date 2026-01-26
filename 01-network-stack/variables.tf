@@ -20,28 +20,16 @@ variable "vpc_cidr_block" {
   default     = ""
 }
 
-variable "public_subnet_cidr_1a" {
-  default = ""
+variable "availability_zones" {
+  description = "List of availability zones"
+  type        = list(string)
+  default     = ["a", "b"]
 }
 
-variable "public_subnet_cidr_1b" {
-  default = ""
-}
-
-variable "private_subnet_cidr_1a" {
-  default = ""
-}
-
-variable "private_subnet_cidr_1b" {
-  default = ""
-}
-
-variable "db_subnet_cidr_1a" {
-  default = ""
-}
-
-variable "db_subnet_cidr_1b" {
-  default = ""
+variable "subnet_newbits" {
+  description = "Number of bits to add to VPC CIDR for subnets (e.g., 3 for /27 from /24)"
+  type        = number
+  default     = 3
 }
 
 variable "enable_dns_hostnames" {

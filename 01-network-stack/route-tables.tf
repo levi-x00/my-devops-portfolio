@@ -83,32 +83,20 @@ resource "aws_route" "public_rt_route" {
 ########################################################################
 # subnet association to route table
 ########################################################################
-resource "aws_route_table_association" "private-1a" {
-  subnet_id      = aws_subnet.private-1a.id
+resource "aws_route_table_association" "private" {
+  count          = local.az_count
+  subnet_id      = aws_subnet.private[count.index].id
   route_table_id = var.enable_two_nats == true ? aws_route_table.private1[0].id : aws_route_table.private_rt[0].id
 }
 
-resource "aws_route_table_association" "private-1b" {
-  subnet_id      = aws_subnet.private-1b.id
+resource "aws_route_table_association" "db" {
+  count          = local.az_count
+  subnet_id      = aws_subnet.db[count.index].id
   route_table_id = var.enable_two_nats == true ? aws_route_table.private1[0].id : aws_route_table.private_rt[0].id
 }
 
-resource "aws_route_table_association" "db-1a" {
-  subnet_id      = aws_subnet.db-1a.id
-  route_table_id = var.enable_two_nats == true ? aws_route_table.private1[0].id : aws_route_table.private_rt[0].id
-}
-
-resource "aws_route_table_association" "db-1b" {
-  subnet_id      = aws_subnet.db-1b.id
-  route_table_id = var.enable_two_nats == true ? aws_route_table.private1[0].id : aws_route_table.private_rt[0].id
-}
-
-resource "aws_route_table_association" "public-1a" {
-  subnet_id      = aws_subnet.public-1a.id
-  route_table_id = aws_route_table.public.id
-}
-
-resource "aws_route_table_association" "public-1b" {
-  subnet_id      = aws_subnet.public-1b.id
+resource "aws_route_table_association" "public" {
+  count          = local.az_count
+  subnet_id      = aws_subnet.public[count.index].id
   route_table_id = aws_route_table.public.id
 }
