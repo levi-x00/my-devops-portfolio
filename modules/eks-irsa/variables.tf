@@ -24,6 +24,12 @@ variable "policy_arns" {
   default     = []
 }
 
+variable "custom_policy_json" {
+  description = "Custom IAM policy JSON to create and attach to the role"
+  type        = string
+  default     = null
+}
+
 variable "tags" {
   description = "Tags to apply to IAM role"
   type        = map(string)
