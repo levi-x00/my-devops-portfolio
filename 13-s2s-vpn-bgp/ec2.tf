@@ -42,6 +42,8 @@ resource "aws_security_group" "cloud_sg" {
   }
 }
 
+# test1
+
 resource "aws_security_group" "onprem_sg" {
   name        = "onprem-sg"
   description = "Default ONPREM SG"
@@ -75,9 +77,9 @@ resource "aws_security_group" "onprem_sg" {
   }
 }
 
-# #########################################################################
-# # AWS VPC EC2 Instances
-# #########################################################################
+#########################################################################
+# AWS VPC EC2 Instances
+#########################################################################
 # resource "aws_instance" "cloud_ec2_a" {
 #   ami = var.ami_id
 
@@ -95,28 +97,28 @@ resource "aws_security_group" "onprem_sg" {
 #   }
 # }
 
-# #########################################################################
-# # On-Prem Router 1 Network Interfaces
-# #########################################################################
-# resource "aws_network_interface" "router1_public" {
-#   subnet_id         = module.on_prem_vpc.public_subnet_ids[0]
-#   security_groups   = [aws_security_group.onprem_sg.id]
-#   source_dest_check = false
+#########################################################################
+# On-Prem Router 1 Network Interfaces
+#########################################################################
+resource "aws_network_interface" "router1_public" {
+  subnet_id         = module.on_prem_vpc.public_subnet_ids[0]
+  security_groups   = [aws_security_group.onprem_sg.id]
+  source_dest_check = false
 
-#   tags = {
-#     Name = "onprem-router1-public"
-#   }
-# }
+  tags = {
+    Name = "onprem-router1-public"
+  }
+}
 
-# resource "aws_network_interface" "router1_private" {
-#   subnet_id         = module.on_prem_vpc.private_subnet_ids[0]
-#   security_groups   = [aws_security_group.onprem_sg.id]
-#   source_dest_check = false
+resource "aws_network_interface" "router1_private" {
+  subnet_id         = module.on_prem_vpc.private_subnet_ids[0]
+  security_groups   = [aws_security_group.onprem_sg.id]
+  source_dest_check = false
 
-#   tags = {
-#     Name = "onprem-router1-private"
-#   }
-# }
+  tags = {
+    Name = "onprem-router1-private"
+  }
+}
 
 # #########################################################################
 # # On-Prem Router 2 Network Interfaces
@@ -154,10 +156,10 @@ resource "aws_eip" "router1" {
   depends_on = [module.on_prem_vpc]
 }
 
-# resource "aws_eip_association" "router1" {
-#   allocation_id        = aws_eip.router1.id
-#   network_interface_id = aws_network_interface.router1_public.id
-# }
+resource "aws_eip_association" "router1" {
+  allocation_id        = aws_eip.router1.id
+  network_interface_id = aws_network_interface.router1_public.id
+}
 
 # resource "aws_eip" "router2" {
 #   domain = "vpc"
@@ -177,36 +179,34 @@ resource "aws_eip" "router1" {
 #########################################################################
 # On-Prem Router Instances
 #########################################################################
-# resource "aws_instance" "onprem_router1" {
-#   ami           = var.router_ami_id
-#   instance_type = var.router_instance_type
+resource "aws_instance" "onprem_router1" {
+  ami           = var.ami_id
+  instance_type = var.router_instance_type
 
-#   iam_instance_profile = aws_iam_instance_profile.ec2_ssm.name
+  iam_instance_profile = aws_iam_instance_profile.ec2_ssm.name
 
-#   user_data = templatefile("${path.module}/user-data-router1.sh", {
-#     branch       = var.branch
-#     project_name = var.project_name
-#   })
+  primary_network_interface {
+    network_interface_id = aws_network_interface.router1_public.id
+  }
 
-#   primary_network_interface {
-#     network_interface_id  = aws_network_interface.router1_public.id
-#     delete_on_termination = false
-#   }
+  lifecycle {
+    ignore_changes = [
+      source_dest_check
+    ]
+  }
 
-#   tags = {
-#     Name = "onprem-router1"
-#   }
+  tags = {
+    Name = "onprem-router1"
+  }
 
-#   lifecycle {
-#     ignore_changes = [network_interface]
-#   }
-# }
+  # depends_on = [aws_vpn_connection.vpn1]
+}
 
-# resource "aws_network_interface_attachment" "onprem_router1_private" {
-#   instance_id          = aws_instance.onprem_router1.id
-#   network_interface_id = aws_network_interface.router1_private.id
-#   device_index         = 1
-# }
+resource "aws_network_interface_attachment" "onprem_router1_private" {
+  instance_id          = aws_instance.onprem_router1.id
+  network_interface_id = aws_network_interface.router1_private.id
+  device_index         = 1
+}
 
 # resource "aws_instance" "onprem_router2" {
 #   ami           = var.router_ami_id
@@ -221,7 +221,6 @@ resource "aws_eip" "router1" {
 
 #   primary_network_interface {
 #     network_interface_id  = aws_network_interface.router2_public.id
-#     delete_on_termination = false
 #   }
 
 #   tags = {
@@ -229,7 +228,7 @@ resource "aws_eip" "router1" {
 #   }
 
 #   lifecycle {
-#     ignore_changes = [network_interface]
+#     ignore_changes = [primary_network_interface]
 #   }
 # }
 
@@ -239,9 +238,9 @@ resource "aws_eip" "router1" {
 #   device_index         = 1
 # }
 
-#########################################################################
-# On-Prem Server Instances
-#########################################################################
+# #########################################################################
+# # On-Prem Server Instances
+# #########################################################################
 # resource "aws_instance" "onprem_server1" {
 #   ami           = var.ami_id
 #   instance_type = var.instance_type

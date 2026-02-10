@@ -13,24 +13,24 @@ output "onprem_vpc_id" {
   value       = module.on_prem_vpc.vpc_id
 }
 
-# output "router1_public_ip" {
-#   description = "Public IP of Router1"
-#   value       = aws_eip.router1.public_ip
-# }
+output "router1_public_ip" {
+  description = "Public IP of Router1"
+  value       = aws_eip.router1.public_ip
+}
 
 # output "router2_public_ip" {
 #   description = "Public IP of Router2"
 #   value       = aws_eip.router2.public_ip
 # }
 
-# output "router1_private_ip" {
-#   description = "Private IP of Router1"
-#   value       = aws_instance.onprem_router1.private_ip
-# }
+output "router1_private_ip" {
+  description = "Private IP of Router1"
+  value       = aws_network_interface.router1_private.private_ip
+}
 
 # output "router2_private_ip" {
 #   description = "Private IP of Router2"
-#   value       = aws_instance.onprem_router2.private_ip
+#   value       = aws_network_interface.router2_private.private_ip
 # }
 
 # output "cloud_ec2_a_private_ip" {
