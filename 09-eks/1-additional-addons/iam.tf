@@ -56,11 +56,11 @@ data "aws_iam_policy_document" "lbc_assume_role_policy" {
 
 resource "aws_iam_role" "load_balancer_controller" {
   name        = "${local.cluster_name}-load-balancer-controller"
-  description = "Allow load-balancer-controller to manage ALBs and NLBs."
+  description = "Allow load-balancer-controller to manage ALBs and NLBs"
 
-  assume_role_policy = data.aws_iam_policy_document.lbc_assume_role_policy.json
-
+  assume_role_policy    = data.aws_iam_policy_document.lbc_assume_role_policy.json
   force_detach_policies = true
+
   tags = {
     Name                      = "${local.cluster_name}-load-balancer-controller"
     "ServiceAccountName"      = "aws-load-balancer-controller"
@@ -97,11 +97,10 @@ data "aws_iam_policy_document" "autoscaler_assume_role_policy" {
 }
 
 resource "aws_iam_role" "autoscaler" {
-  name = "${local.cluster_name}-autoscaler"
-
-  assume_role_policy = data.aws_iam_policy_document.autoscaler_assume_role_policy.json
-
+  name                  = "${local.cluster_name}-autoscaler"
+  assume_role_policy    = data.aws_iam_policy_document.autoscaler_assume_role_policy.json
   force_detach_policies = true
+
   tags = {
     Name                      = "${local.cluster_name}-cluster-autoscaler"
     "ServiceAccountName"      = "cluster-autoscaler"

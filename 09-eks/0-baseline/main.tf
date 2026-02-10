@@ -89,15 +89,17 @@ resource "aws_launch_template" "cluster_al2023" {
 }
 
 resource "aws_eks_node_group" "this" {
+  for_each = var.node_groups
+
   cluster_name    = aws_eks_cluster.this.name
-  node_group_name = "${var.cluster_name}-ng"
+  node_group_name = "${var.cluster_name}-${each.key}"
   node_role_arn   = aws_iam_role.eks_node.arn
   subnet_ids      = local.private_subnet_ids
 
   scaling_config {
-    desired_size = 1
-    max_size     = 2
-    min_size     = 1
+    desired_size = each.value.desired_size
+    max_size     = each.value.max_size
+    min_size     = each.value.min_size
   }
 
   launch_template {
@@ -109,12 +111,15 @@ resource "aws_eks_node_group" "this" {
     max_unavailable = 1
   }
 
-  labels = {
-    Service = "myapp"
-    Type    = "ON_DEMAND"
-  }
+  labels = merge(
+    each.value.labels,
+    {
+      Service = var.application
+    }
+  )
 
-  instance_types = var.instance_types
+  instance_types = each.value.instance_types
+  capacity_type  = each.value.capacity_type
 
   lifecycle {
     ignore_changes = [scaling_config[0].desired_size]
@@ -127,6 +132,6 @@ resource "aws_eks_node_group" "this" {
   ]
 
   tags = {
-    Name = "${var.cluster_name}-node-group"
+    Name = "${var.cluster_name}-${each.key}"
   }
 }
