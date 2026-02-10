@@ -70,6 +70,38 @@ resource "aws_network_acl" "public_nacl" {
     to_port    = 65535
   }
 
+  # ICMP
+  ingress {
+    rule_no    = 140
+    protocol   = "icmp"
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 0
+    to_port    = 0
+    icmp_type  = -1
+    icmp_code  = -1
+  }
+
+  # DNS UDP
+  ingress {
+    rule_no    = 150
+    protocol   = "udp"
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 53
+    to_port    = 53
+  }
+
+  # DNS TCP
+  ingress {
+    rule_no    = 160
+    protocol   = "tcp"
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 53
+    to_port    = 53
+  }
+
   # Allow all outbound
   egress {
     rule_no    = 100
@@ -111,6 +143,38 @@ resource "aws_network_acl" "private_nacl" {
     cidr_block = "0.0.0.0/0"
     from_port  = 1024
     to_port    = 65535
+  }
+
+  # ICMP
+  ingress {
+    rule_no    = 120
+    protocol   = "icmp"
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 0
+    to_port    = 0
+    icmp_type  = -1
+    icmp_code  = -1
+  }
+
+  # DNS UDP
+  ingress {
+    rule_no    = 130
+    protocol   = "udp"
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 53
+    to_port    = 53
+  }
+
+  # DNS TCP
+  ingress {
+    rule_no    = 140
+    protocol   = "tcp"
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 53
+    to_port    = 53
   }
 
   # Allow all outbound (for internet access via NAT)
