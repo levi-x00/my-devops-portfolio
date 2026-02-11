@@ -99,11 +99,21 @@ variable "node_groups" {
     labels         = map(string)
   }))
   default = {
-    general = {
+    medium = {
       desired_size   = 1
       max_size       = 2
       min_size       = 1
       instance_types = ["t3.medium"]
+      capacity_type  = "ON_DEMAND"
+      labels = {
+        Type = "ON_DEMAND"
+      }
+    },
+    small = {
+      desired_size   = 1
+      max_size       = 2
+      min_size       = 1
+      instance_types = ["t3.small"]
       capacity_type  = "ON_DEMAND"
       labels = {
         Type = "ON_DEMAND"

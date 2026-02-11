@@ -38,7 +38,9 @@ resource "aws_eks_cluster" "this" {
 }
 
 resource "aws_launch_template" "cluster_al2023" {
-  name = "${var.cluster_name}-node-group-lt"
+  for_each = var.node_groups
+
+  name = "${var.cluster_name}-${each.key}-lt"
 
   image_id               = data.aws_ssm_parameter.eks_al2023.value
   update_default_version = true
@@ -61,7 +63,7 @@ resource "aws_launch_template" "cluster_al2023" {
       resource_type = tag_specifications.value
 
       tags = {
-        Name = "${var.cluster_name}-worker-node"
+        Name = "${var.cluster_name}-${each.key}"
       }
     }
   }
@@ -79,12 +81,10 @@ resource "aws_launch_template" "cluster_al2023" {
     API_SERVER_URL       = aws_eks_cluster.this.endpoint,
     CLUSTER_SERVICE_CIDR = var.eks_cluster_cidr
     CLUSTER_DNS_IP       = var.cluster_dns_ip
-    IMAGE_ID             = data.aws_ssm_parameter.eks_al2023.value
-    NODE_GROUP_NAME      = "${var.cluster_name}-node-group"
   }))
 
   tags = {
-    Name = "${var.cluster_name}-node-group-lt"
+    Name = "${var.cluster_name}-${each.key}-lt"
   }
 }
 
@@ -103,8 +103,8 @@ resource "aws_eks_node_group" "this" {
   }
 
   launch_template {
-    id      = aws_launch_template.cluster_al2023.id
-    version = aws_launch_template.cluster_al2023.latest_version
+    id      = aws_launch_template.cluster_al2023[each.key].id
+    version = aws_launch_template.cluster_al2023[each.key].latest_version
   }
 
   update_config {
