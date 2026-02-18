@@ -16,7 +16,7 @@ resource "aws_eks_addon" "main" {
   resolve_conflicts_on_create = "OVERWRITE"
   resolve_conflicts_on_update = "OVERWRITE"
   depends_on = [
-    aws_eks_node_group.main
+    aws_eks_node_group.this
   ]
 }
 
@@ -94,8 +94,8 @@ module "amzn_cw_observability_irsa" {
 
 resource "helm_release" "secrets_store_csi_driver" {
   depends_on = [
-    aws_eks_addon.podidentity,
-    aws_eks_node_group.private_nodes
+    aws_eks_addon.main,
+    aws_eks_node_group.this
   ]
 
   name       = "csi-secrets-store"
@@ -118,8 +118,8 @@ resource "helm_release" "secrets_store_csi_driver" {
 
 resource "helm_release" "aws_secrets_provider" {
   depends_on = [
-    aws_eks_addon.podidentity,
-    aws_eks_node_group.private_nodes,
+    aws_eks_addon.main,
+    aws_eks_node_group.this,
     helm_release.secrets_store_csi_driver
   ]
 
