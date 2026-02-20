@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Simple CRUD Application</h1>
+        
+        <div class="form-section">
+            <h2>Add/Edit Item</h2>
+            <form id="itemForm">
+                <input type="hidden" id="itemId">
+                <input type="text" id="itemName" placeholder="Name" required>
+                <textarea id="itemDescription" placeholder="Description" required></textarea>
+                <input type="file" id="itemImage" accept="image/*" required>
+                <button type="submit" id="submitBtn">Add Item</button>
+                <button type="button" id="cancelBtn" style="display:none;">Cancel</button>
+            </form>
+        </div>
+
+        <div class="items-section">
+            <h2>Items</h2>
+            <div id="itemsList"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

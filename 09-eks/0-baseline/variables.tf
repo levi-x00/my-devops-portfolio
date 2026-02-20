@@ -7,7 +7,7 @@ variable "environment" {
 variable "cluster_addons" {
   description = "List of EKS cluster addons to install"
   type        = list(string)
-  default     = ["kube-proxy", "coredns", "eks-pod-identity-agent"]
+  default     = ["kube-proxy", "coredns", "eks-pod-identity-agent", "metrics-server"]
 }
 
 variable "application" {
