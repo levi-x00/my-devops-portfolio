@@ -103,32 +103,18 @@ aws iam create-role \
   --assume-role-policy-document file://trust-policy.json
 ```
 
-**Attach permissions** to the role:
+**Attach AWS managed policies** for S3 and Secrets Manager:
 
 ```bash
-cat > permissions-policy.json << 'EOF'
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "secretsmanager:GetSecretValue",
-        "s3:PutObject"
-      ],
-      "Resource": [
-        "arn:aws:secretsmanager:<REGION>:<ACCOUNT_ID>:secret:<DB_SECRET_NAME>*",
-        "arn:aws:s3:::your-s3-bucket-name/*"
-      ]
-    }
-  ]
-}
-EOF
-
-aws iam put-role-policy \
+# Full S3 access (upload objects + generate pre-signed URLs)
+aws iam attach-role-policy \
   --role-name simple-crud-backend-role \
-  --policy-name simple-crud-backend-policy \
-  --policy-document file://permissions-policy.json
+  --policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess
+
+# Read secrets from Secrets Manager (for RDS credentials)
+aws iam attach-role-policy \
+  --role-name simple-crud-backend-role \
+  --policy-arn arn:aws:iam::aws:policy/SecretsManagerReadWrite
 ```
 
 **Create the Pod Identity Association:**
@@ -138,7 +124,7 @@ aws eks create-pod-identity-association \
   --cluster-name <CLUSTER_NAME> \
   --namespace backend \
   --service-account backend \
-  --role-arn arn:aws:iam::<ACCOUNT_ID>:role/<ROLE_NAME> \
+  --role-arn arn:aws:iam::<ACCOUNT_ID>:role/simple-crud-backend-role \
   --region $REGION
 ```
 
