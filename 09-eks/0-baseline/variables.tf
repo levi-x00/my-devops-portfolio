@@ -131,3 +131,9 @@ variable "tfstate_key" {
   description = "S3 key path for Terraform state file"
   type        = string
 }
+
+variable "db_password" {
+  description = "Master password for RDS PostgreSQL"
+  type        = string
+  sensitive   = true
+}

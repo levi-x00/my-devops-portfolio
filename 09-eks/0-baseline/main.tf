@@ -1,3 +1,58 @@
+resource "aws_security_group" "rds" {
+  name        = "${var.cluster_name}-rds"
+  description = "RDS PostgreSQL security group"
+  vpc_id      = local.vpc_id
+
+  ingress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = [local.vpc_cidr_block]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = { Name = "${var.cluster_name}-rds" }
+}
+
+resource "aws_db_subnet_group" "rds" {
+  name       = "${var.cluster_name}-rds"
+  subnet_ids = local.private_subnet_ids
+
+  tags = { Name = "${var.cluster_name}-rds" }
+}
+
+resource "aws_db_instance" "postgres" {
+  identifier        = "${var.cluster_name}-postgres"
+  engine            = "postgres"
+  engine_version    = "17"
+  instance_class    = "db.t3.micro"
+  allocated_storage = 20
+  storage_type      = "gp3"
+  storage_encrypted = true
+  kms_key_id        = local.kms_key_arn
+
+  db_name  = "appdb"
+  username = "dbadmin"
+  password = var.db_password
+
+  db_subnet_group_name   = aws_db_subnet_group.rds.name
+  vpc_security_group_ids = [aws_security_group.rds.id]
+
+  multi_az = false
+
+  publicly_accessible = false
+  skip_final_snapshot = true
+  deletion_protection = false
+
+  tags = { Name = "${var.cluster_name}-postgres" }
+}
+
 resource "aws_eks_cluster" "this" {
   name = var.cluster_name
 
