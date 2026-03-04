@@ -91,23 +91,19 @@ resource "aws_iam_role_policy_attachment" "amzn_cloudwatch_agent_server" {
 # IAM Role and Pod Identity Association for backend Service Account
 ####################################################################################
 resource "aws_iam_role" "backend" {
-  name = "${var.cluster_name}-backend-role"
+  name               = "${var.cluster_name}-backend-role"
+  assume_role_policy = data.aws_iam_policy_document.pod_assume_role_policy.json
+}
 
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Principal = {
-          Service = "pods.eks.amazonaws.com"
-        }
-        Action = [
-          "sts:AssumeRole",
-          "sts:TagSession"
-        ]
-      }
-    ]
-  })
+data "aws_iam_policy_document" "pod_assume_role_policy" {
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole", "sts:TagSession"]
+    principals {
+      type        = "Service"
+      identifiers = ["pods.eks.amazonaws.com"]
+    }
+  }
 }
 
 data "aws_iam_policy_document" "kms_inline_policy" {
@@ -146,4 +142,48 @@ resource "aws_eks_pod_identity_association" "backend" {
   namespace       = "backend"
   service_account = "backend"
   role_arn        = aws_iam_role.backend.arn
+}
+
+####################################################################################
+# IAM Role and Pod Identity Association for Cluster Autoscaler
+####################################################################################
+resource "aws_iam_role" "cluster_autoscaler" {
+  name               = "${var.cluster_name}-cluster-autoscaler-role"
+  assume_role_policy = data.aws_iam_policy_document.pod_assume_role_policy.json
+}
+
+resource "aws_iam_role_policy" "cluster_autoscaler" {
+  name = "cluster-autoscaler-inline-policy"
+  role = aws_iam_role.cluster_autoscaler.name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "autoscaling:DescribeAutoScalingGroups",
+          "autoscaling:DescribeAutoScalingInstances",
+          "autoscaling:DescribeLaunchConfigurations",
+          "autoscaling:DescribeScalingActivities",
+          "autoscaling:DescribeTags",
+          "autoscaling:SetDesiredCapacity",
+          "autoscaling:TerminateInstanceInAutoScalingGroup",
+          "ec2:DescribeImages",
+          "ec2:DescribeInstanceTypes",
+          "ec2:DescribeLaunchTemplateVersions",
+          "ec2:GetInstanceTypesFromInstanceRequirements",
+          "eks:DescribeNodegroup"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_eks_pod_identity_association" "cluster_autoscaler" {
+  cluster_name    = aws_eks_cluster.this.name
+  namespace       = "kube-system"
+  service_account = "cluster-autoscaler-aws-cluster-autoscaler"
+  role_arn        = aws_iam_role.cluster_autoscaler.arn
 }

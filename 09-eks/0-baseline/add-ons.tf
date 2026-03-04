@@ -99,3 +99,40 @@ module "amzn_cw_observability_irsa" {
 
 #   preserve = true
 # }
+
+####################################################################################
+# Cluster Autoscaler
+####################################################################################
+resource "helm_release" "cluster_autoscaler" {
+  name       = "cluster-autoscaler"
+  namespace  = "kube-system"
+  repository = "https://kubernetes.github.io/autoscaler"
+  chart      = "cluster-autoscaler"
+
+  version = "9.43.0"
+
+  values = [
+    yamlencode({
+      autoDiscovery = {
+        clusterName = aws_eks_cluster.this.name
+      }
+
+      awsRegion = var.aws_region
+
+      rbac = {
+        create = true
+      }
+
+      serviceAccount = {
+        create = true
+        name   = "cluster-autoscaler-aws-cluster-autoscaler"
+      }
+
+      extraArgs = {
+        balance-similar-node-groups   = "true"
+        skip-nodes-with-system-pods   = "false"
+        skip-nodes-with-local-storage = "false"
+      }
+    })
+  ]
+}
