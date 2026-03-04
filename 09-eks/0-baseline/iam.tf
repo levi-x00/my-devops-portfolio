@@ -86,3 +86,64 @@ resource "aws_iam_role_policy_attachment" "amzn_cloudwatch_agent_server" {
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
   role       = aws_iam_role.eks_node.name
 }
+
+####################################################################################
+# IAM Role and Pod Identity Association for backend Service Account
+####################################################################################
+resource "aws_iam_role" "backend" {
+  name = "${var.cluster_name}-backend-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "pods.eks.amazonaws.com"
+        }
+        Action = [
+          "sts:AssumeRole",
+          "sts:TagSession"
+        ]
+      }
+    ]
+  })
+}
+
+data "aws_iam_policy_document" "kms_inline_policy" {
+  statement {
+    sid = "AllowKMS"
+
+    actions = [
+      "kms:Encrypt*",
+      "kms:Decrypt*",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:Describe*"
+    ]
+
+    resources = [local.kms_key_arn]
+  }
+}
+
+resource "aws_iam_role_policy" "kms_policy" {
+  name   = "kms-inline-policy"
+  role   = aws_iam_role.backend.name
+  policy = data.aws_iam_policy_document.kms_inline_policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "backend" {
+  for_each = toset([
+    "arn:aws:iam::aws:policy/SecretsManagerReadWrite",
+    "arn:aws:iam::aws:policy/AmazonS3FullAccess",
+  ])
+  policy_arn = each.value
+  role       = aws_iam_role.backend.name
+}
+
+resource "aws_eks_pod_identity_association" "backend" {
+  cluster_name    = aws_eks_cluster.this.name
+  namespace       = "backend"
+  service_account = "backend"
+  role_arn        = aws_iam_role.backend.arn
+}

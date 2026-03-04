@@ -10,9 +10,10 @@ data "aws_eks_addon_version" "main" {
 resource "aws_eks_addon" "main" {
   for_each = toset(var.cluster_addons)
 
-  cluster_name                = aws_eks_cluster.this.name
-  addon_name                  = each.key
-  addon_version               = data.aws_eks_addon_version.main[each.key].version
+  cluster_name  = aws_eks_cluster.this.name
+  addon_name    = each.key
+  addon_version = data.aws_eks_addon_version.main[each.key].version
+
   resolve_conflicts_on_create = "OVERWRITE"
   resolve_conflicts_on_update = "OVERWRITE"
   depends_on = [
@@ -87,60 +88,6 @@ module "amzn_cw_observability_irsa" {
     Name = "amazon-cloudwatch-observability"
   }
 }
-
-####################################################################################
-# Install Secrets Store CSI Driver
-####################################################################################
-
-resource "helm_release" "secrets_store_csi_driver" {
-  depends_on = [
-    aws_eks_addon.main,
-    aws_eks_node_group.this
-  ]
-
-  name       = "csi-secrets-store"
-  repository = "https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts"
-  chart      = "secrets-store-csi-driver"
-  namespace  = "kube-system"
-
-  set = [
-    {
-      name  = "syncSecret.enabled"
-      value = "true"
-    },
-  ]
-
-  # Wait until all pods are ready
-  wait            = true
-  timeout         = 600
-  cleanup_on_fail = true
-}
-
-resource "helm_release" "aws_secrets_provider" {
-  depends_on = [
-    aws_eks_addon.main,
-    aws_eks_node_group.this,
-    helm_release.secrets_store_csi_driver
-  ]
-
-  name       = "secrets-store-csi-driver-provider-aws"
-  repository = "https://aws.github.io/secrets-store-csi-driver-provider-aws"
-  chart      = "secrets-store-csi-driver-provider-aws"
-  namespace  = "kube-system"
-
-  set = [
-    {
-      name  = "secrets-store-csi-driver.install"
-      value = "false"
-    }
-  ]
-
-  wait            = true
-  timeout         = 600
-  cleanup_on_fail = true
-}
-
-
 
 # resource "aws_eks_addon" "guardduty" {
 #   cluster_name  = aws_eks_cluster.this.name
