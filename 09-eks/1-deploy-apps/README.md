@@ -4,7 +4,8 @@
 
 - EKS cluster running with:
   - AWS Load Balancer Controller
-  - Secrets Store CSI Driver + AWS Provider
+  - Secrets Store CSI Driver + AWS Provider (`aws-secrets-manager` namespace)
+  - EKS Pod Identity Agent
 - `kubectl` configured to the cluster
 - AWS CLI configured
 - Docker
@@ -15,158 +16,81 @@
 1-deploy-apps/
 ├── backend/        # Flask API
 ├── frontend/       # Nginx + static JS
-├── postgres/       # DB init SQL
 └── k8s/
     ├── namespace.yaml
     ├── secret-provider-class.yaml
-    ├── postgres.yaml
-    ├── postgres-secret.yaml
     ├── backend.yaml
-    └── frontend.yaml
+    ├── frontend.yaml
+    └── ingress.yaml
 ```
 
 ## Step 1: Prepare Variables
 
 ```bash
-ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-REGION=ap-southeast-1   # change to your region
+PROFILE=""  # set to "--profile <name>" if using named profile, otherwise leave empty
+ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text $PROFILE)
+REGION=ap-southeast-1
 REGISTRY=$ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com
 ```
 
 ## Step 2: Create ECR Repositories
 
 ```bash
-aws ecr create-repository --repository-name simple-crud-app2-backend --region $REGION
-aws ecr create-repository --repository-name simple-crud-app2-frontend --region $REGION
+aws ecr create-repository --repository-name backend --region $REGION $PROFILE
+aws ecr create-repository --repository-name frontend --region $REGION $PROFILE
 ```
 
 ## Step 3: Build and Push Images
 
 ```bash
-aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $REGISTRY
-
-docker build -t $REGISTRY/simple-crud-app2-backend:latest ./backend
-docker push $REGISTRY/simple-crud-app2-backend:latest
-
-docker build -t $REGISTRY/simple-crud-app2-frontend:latest ./frontend
-docker push $REGISTRY/simple-crud-app2-frontend:latest
+aws ecr get-login-password --region $REGION $PROFILE | docker login --username AWS --password-stdin $REGISTRY
+docker build -t $REGISTRY/backend:v1 ./backend && docker push $REGISTRY/backend:v1
+docker build -t $REGISTRY/frontend:v1 ./frontend && docker push $REGISTRY/frontend:v1
 ```
 
-## Step 4: Update Manifests
-
-Replace placeholders in `k8s/backend.yaml` and `k8s/frontend.yaml`:
+## Step 4: Store Secrets in AWS Secrets Manager
 
 ```bash
-sed -i "s/<ACCOUNT_ID>/$ACCOUNT_ID/g" k8s/backend.yaml k8s/frontend.yaml
-sed -i "s/<REGION>/$REGION/g" k8s/backend.yaml k8s/frontend.yaml
-```
-
-Replace `<DB_SECRET_NAME>` in `k8s/secret-provider-class.yaml` with your Secrets Manager secret name:
-
-```bash
-sed -i "s/<DB_SECRET_NAME>/your-secret-name/g" k8s/secret-provider-class.yaml
-```
-
-Also add `AWS_REGION` and `S3_BUCKET` env vars to `k8s/backend.yaml` under the `env` section:
-
-```yaml
-- name: AWS_REGION
-  value: "ap-southeast-1"
-- name: S3_BUCKET
-  value: "your-s3-bucket-name"
+aws secretsmanager create-secret --name test-eks-secrets --region $REGION $PROFILE --secret-string '{"DB_HOST":"<rds-endpoint>","DB_NAME":"appdb","DB_USER":"<db-user>","DB_PASSWORD":"<db-password>","AWS_REGION":"ap-southeast-1","S3_BUCKET":"<s3-bucket-name>"}'
 ```
 
 ## Step 5: IAM — Pod Identity for Backend
 
-Since the cluster has `pod-identity-agent` installed, create a Pod Identity Association instead of IRSA.
+> Already provisioned via Terraform. Ensure the Pod Identity Association is created for the `backend` service account in the `backend` namespace.
 
-**Create the IAM role** with a trust policy for EKS Pod Identity:
+## Step 6: Update ingress.yaml
 
-```bash
-cat > trust-policy.json << 'EOF'
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "pods.eks.amazonaws.com"
-      },
-      "Action": ["sts:AssumeRole", "sts:TagSession"]
-    }
-  ]
-}
-EOF
+The ingress is pre-configured with subnets, security group, and ACM certificate. No placeholders to replace.
 
-aws iam create-role \
-  --role-name simple-crud-backend-role \
-  --assume-role-policy-document file://trust-policy.json
-```
-
-**Attach AWS managed policies** for S3 and Secrets Manager:
+## Step 7: Deploy
 
 ```bash
-# Full S3 access (upload objects + generate pre-signed URLs)
-aws iam attach-role-policy \
-  --role-name simple-crud-backend-role \
-  --policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess
-
-# Read secrets from Secrets Manager (for RDS credentials)
-aws iam attach-role-policy \
-  --role-name simple-crud-backend-role \
-  --policy-arn arn:aws:iam::aws:policy/SecretsManagerReadWrite
-```
-
-**Create the Pod Identity Association:**
-
-```bash
-aws eks create-pod-identity-association \
-  --cluster-name <CLUSTER_NAME> \
-  --namespace backend \
-  --service-account backend \
-  --role-arn arn:aws:iam::<ACCOUNT_ID>:role/simple-crud-backend-role \
-  --region $REGION
-```
-
-Make sure your backend deployment uses a service account named `backend` in the `backend` namespace.
-
-## Step 6: Deploy
-
-```bash
-# Namespaces
 kubectl apply -f k8s/namespace.yaml
-
-# Secrets Store CSI
 kubectl apply -f k8s/secret-provider-class.yaml
-
-# PostgreSQL
-kubectl apply -f k8s/postgres-secret.yaml
-kubectl apply -f k8s/postgres.yaml
-kubectl wait --for=condition=ready pod -l app=postgres -n backend --timeout=120s
-
-# Backend
 kubectl apply -f k8s/backend.yaml
-kubectl wait --for=condition=available deployment/backend -n backend --timeout=120s
-
-# Frontend
 kubectl apply -f k8s/frontend.yaml
+kubectl apply -f k8s/ingress.yaml
 ```
 
-## Step 7: Get the App URL
+## Step 8: Get the App URL
 
 ```bash
-kubectl get ingress -n frontend
+kubectl get ingress frontend -n frontend
 ```
 
-Use the `ADDRESS` from the output to access the app in your browser.
+## Architecture
+
+```
+Internet → ALB → frontend (nginx) → /api/* proxied to backend (ClusterIP)
+```
+
+- Frontend is exposed publicly via ALB
+- Backend is internal only (ClusterIP), accessible only through nginx proxy
+- Secrets are injected via Secrets Store CSI Driver from AWS Secrets Manager
 
 ## Verify
 
 ```bash
-# Check all pods are running
-kubectl get pods -n backend
-kubectl get pods -n frontend
-
-# Check backend health
-kubectl exec -n backend deploy/backend -- curl -s localhost:5000/health
+kubectl get pods -n backend && kubectl get pods -n frontend
+kubectl exec -n backend deploy/backend -- curl -s localhost:5000/health/ready
 ```
