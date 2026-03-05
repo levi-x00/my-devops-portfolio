@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5000/api';
+const API_URL = '/api';
 
 let editingId = null;
 
@@ -7,10 +7,10 @@ document.getElementById('cancelBtn').addEventListener('click', cancelEdit);
 
 async function handleSubmit(e) {
     e.preventDefault();
-    
+
     const name = document.getElementById('itemName').value;
     const description = document.getElementById('itemDescription').value;
-    
+
     try {
         if (editingId) {
             await fetch(`${API_URL}/items/${editingId}`, {
@@ -30,7 +30,7 @@ async function handleSubmit(e) {
                 body: JSON.stringify({ name, description, image_url: url })
             });
         }
-        
+
         resetForm();
         loadItems();
     } catch (error) {
@@ -42,7 +42,7 @@ async function loadItems() {
     try {
         const response = await fetch(`${API_URL}/items`);
         const items = await response.json();
-        
+
         const itemsList = document.getElementById('itemsList');
         itemsList.innerHTML = items.map(item => `
             <div class="item">
@@ -72,7 +72,7 @@ function editItem(id, name, description) {
 
 async function deleteItem(id) {
     if (!confirm('Are you sure you want to delete this item?')) return;
-    
+
     try {
         await fetch(`${API_URL}/items/${id}`, { method: 'DELETE' });
         loadItems();
