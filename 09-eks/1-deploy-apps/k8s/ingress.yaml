@@ -1,0 +1,35 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: frontend-alb
+spec:
+  controller: ingress.k8s.aws/alb
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: frontend
+  namespace: frontend
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/subnets: subnet-02af25d286f23b610,subnet-0155ad7d69bce0039
+    alb.ingress.kubernetes.io/security-groups: sg-0677958a993196eac
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-southeast-1:339712808680:certificate/accc495f-b745-4eac-ab49-2605e7ca1bef
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+    alb.ingress.kubernetes.io/load-balancer-attributes: routing.http.drop_invalid_header_fields.enabled=true
+spec:
+  ingressClassName: frontend-alb
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
