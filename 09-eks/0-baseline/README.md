@@ -112,15 +112,15 @@ This Terraform configuration provisions a production-ready Amazon EKS cluster wi
 
 | Name | Type | Version |
 |------|------|---------|
-| kube-proxy | EKS Managed Add-on | latest for cluster version |
-| coredns | EKS Managed Add-on | latest for cluster version |
-| eks-pod-identity-agent | EKS Managed Add-on | latest for cluster version |
-| metrics-server | EKS Managed Add-on | latest for cluster version |
-| aws-secrets-store-csi-driver-provider | EKS Managed Add-on | latest for cluster version |
-| aws-ebs-csi-driver | EKS Managed Add-on | latest for cluster version |
-| aws-load-balancer-controller | Helm | latest |
-| secrets-store-csi-driver | Helm | latest |
-| cluster-autoscaler | Helm | 9.43.0 |
+| kube-proxy | EKS Managed Add-on | v1.33.8-eksbuild.4 |
+| coredns | EKS Managed Add-on | v1.13.2-eksbuild.1 |
+| eks-pod-identity-agent | EKS Managed Add-on | v0.1.36 |
+| metrics-server | EKS Managed Add-on | v0.8.1-eksbuild.1 |
+| aws-secrets-store-csi-driver-provider | EKS Managed Add-on | v2.2.1-eksbuild.1 |
+| aws-ebs-csi-driver | EKS Managed Add-on | v1.56.0 |
+| secrets-store-csi-driver | Helm | v1.5.5-eksbuild.1 |
+| aws-load-balancer-controller | Helm | v3.1.0 |
+| cluster-autoscaler | Helm | v1.31.0 (chart 9.43.0) |
 
 ## Usage
 
