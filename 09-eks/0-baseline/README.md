@@ -106,12 +106,21 @@ This Terraform configuration provisions a production-ready Amazon EKS cluster wi
 - **Observability**: 
   - CloudWatch Container Insights
   - Control plane logging enabled
-- **Add-ons**:
-  - AWS EBS CSI Driver
-  - AWS Load Balancer Controller
-  - Secrets Store CSI Driver
-  - Core DNS, kube-proxy, Pod Identity Agent
 - **Custom User Data**: AL2023 optimized AMI with custom bootstrap configuration
+
+## Add-ons
+
+| Name | Type | Version |
+|------|------|---------|
+| kube-proxy | EKS Managed Add-on | latest for cluster version |
+| coredns | EKS Managed Add-on | latest for cluster version |
+| eks-pod-identity-agent | EKS Managed Add-on | latest for cluster version |
+| metrics-server | EKS Managed Add-on | latest for cluster version |
+| aws-secrets-store-csi-driver-provider | EKS Managed Add-on | latest for cluster version |
+| aws-ebs-csi-driver | EKS Managed Add-on | latest for cluster version |
+| aws-load-balancer-controller | Helm | latest |
+| secrets-store-csi-driver | Helm | latest |
+| cluster-autoscaler | Helm | 9.43.0 |
 
 ## Usage
 
