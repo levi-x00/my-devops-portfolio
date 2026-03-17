@@ -9,11 +9,6 @@ variable "aws_region" {
   default     = ""
 }
 
-variable "cluster_name" {
-  description = "EKS cluster name"
-  default     = ""
-}
-
 variable "vpc_cidr_block" {
   description = "The VPC CIDR network"
   type        = string
