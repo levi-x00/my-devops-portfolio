@@ -47,10 +47,6 @@ output "openid_connect_provider_url" {
   value = aws_iam_openid_connect_provider.cluster.url
 }
 
-output "codepipeline_role_arn" {
-  value = aws_iam_role.codepipeline.arn
-}
-
 output "node_role_arn" {
   value = aws_iam_role.eks_node.arn
 }

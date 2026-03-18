@@ -109,11 +109,6 @@ resource "kubernetes_config_map_v1_data" "aws_auth" {
           rolearn  = aws_iam_role.eks_node.arn
           username = "system:node:{{EC2PrivateDNSName}}"
           groups   = ["system:bootstrappers", "system:nodes"]
-        },
-        {
-          rolearn  = aws_iam_role.codepipeline.arn
-          username = "codepipeline"
-          groups   = ["system:masters"]
         }
       ],
       var.map_roles
