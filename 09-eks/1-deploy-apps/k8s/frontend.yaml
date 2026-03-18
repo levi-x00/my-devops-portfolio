@@ -38,7 +38,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: 339712808680.dkr.ecr.ap-southeast-1.amazonaws.com/frontend:v3
+          image: 339712808680.dkr.ecr.ap-southeast-1.amazonaws.com/frontend:v1
           ports:
             - containerPort: 80
           resources:
@@ -49,8 +49,8 @@ spec:
               cpu: 200m
               memory: 256Mi
           securityContext:
-            runAsNonRoot: true
-            runAsUser: 101
+            runAsNonRoot: false
+            runAsUser: 0
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
           volumeMounts:

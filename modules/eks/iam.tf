@@ -82,6 +82,11 @@ resource "aws_iam_role_policy_attachment" "amzn_cloudwatch_agent_server" {
   role       = aws_iam_role.eks_node.name
 }
 
+resource "aws_iam_role_policy_attachment" "amzn_ec2_role_for_ssm" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM"
+  role       = aws_iam_role.eks_node.name
+}
+
 ####################################################################################
 # IAM Role for Pod Identity (shared assume role policy)
 ####################################################################################

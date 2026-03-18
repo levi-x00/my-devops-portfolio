@@ -76,6 +76,33 @@ module "amzn_cw_observability_irsa" {
   tags = merge({ Name = "amazon-cloudwatch-observability" }, var.tags)
 }
 
+resource "helm_release" "secrets_store_csi_driver" {
+  name       = "secrets-store-csi-driver"
+  namespace  = "aws-secrets-manager"
+  repository = "https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts"
+  chart      = "secrets-store-csi-driver"
+  version    = "1.5.6"
+
+  depends_on = [
+    aws_eks_node_group.this
+  ]
+
+  set = [
+    { name = "syncSecret.enabled", value = "true" },
+    { name = "enableSecretRotation", value = "true" }
+  ]
+}
+
+resource "helm_release" "secrets_store_csi_driver_aws_provider" {
+  name       = "secrets-store-csi-driver-provider-aws"
+  namespace  = "aws-secrets-manager"
+  repository = "https://aws.github.io/secrets-store-csi-driver-provider-aws"
+  chart      = "secrets-store-csi-driver-provider-aws"
+  version    = "2.2.2"
+
+  depends_on = [helm_release.secrets_store_csi_driver]
+}
+
 ####################################################################################
 # Cluster Autoscaler
 ####################################################################################

@@ -43,3 +43,58 @@ resource "aws_iam_role_policy_attachment" "codepipeline" {
   policy_arn = each.value
   role       = aws_iam_role.codepipeline.name
 }
+
+####################################################################################
+# IAM Role and Pod Identity Association for backend Service Account
+####################################################################################
+data "aws_iam_policy_document" "pod_assume_role_policy" {
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole", "sts:TagSession"]
+    principals {
+      type        = "Service"
+      identifiers = ["pods.eks.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "backend" {
+  name               = "${var.cluster_name}-backend-role"
+  assume_role_policy = data.aws_iam_policy_document.pod_assume_role_policy.json
+}
+
+data "aws_iam_policy_document" "kms_inline_policy" {
+  statement {
+    sid = "AllowKMS"
+    actions = [
+      "kms:Encrypt*",
+      "kms:Decrypt*",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:Describe*"
+    ]
+    resources = [local.kms_key_arn]
+  }
+}
+
+resource "aws_iam_role_policy" "kms_policy" {
+  name   = "kms-inline-policy"
+  role   = aws_iam_role.backend.name
+  policy = data.aws_iam_policy_document.kms_inline_policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "backend" {
+  for_each = toset([
+    "arn:aws:iam::aws:policy/SecretsManagerReadWrite",
+    "arn:aws:iam::aws:policy/AmazonS3FullAccess",
+  ])
+  policy_arn = each.value
+  role       = aws_iam_role.backend.name
+}
+
+resource "aws_eks_pod_identity_association" "backend" {
+  cluster_name    = module.eks.cluster_id
+  namespace       = "backend"
+  service_account = "backend"
+  role_arn        = aws_iam_role.backend.arn
+}

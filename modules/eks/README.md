@@ -31,6 +31,7 @@ Terraform module to provision a production-ready Amazon EKS cluster with managed
 |---|---|
 | cluster-autoscaler | `9.43.0` |
 | aws-load-balancer-controller | `3.1.0` |
+| secrets-store-csi-driver | `1.5.6` |
 
 ## Usage
 
