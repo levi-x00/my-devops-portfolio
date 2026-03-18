@@ -1,38 +1,12 @@
-data "terraform_remote_state" "network" {
-  backend = "s3"
-  config = {
-    bucket = "s3-backend-tfstate-hd47u4l"
-    key    = "${var.environment}/network.tfstate"
-    region = "us-east-1"
-  }
+data "aws_caller_identity" "current" {}
+
+data "aws_region" "current" {}
+
+data "aws_ssm_parameter" "eks_al2023" {
+  name            = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2023/x86_64/standard/recommended/image_id"
+  with_decryption = true
 }
 
-data "http" "ebs_csi_iam_policy" {
-  url = "https://raw.githubusercontent.com/kubernetes-sigs/aws-ebs-csi-driver/master/docs/example-iam-policy.json"
-
-  # Optional request headers
-  request_headers = {
-    Accept = "application/json"
-  }
-}
-
-data "aws_ami" "amzlinux2" {
-  most_recent = true
-  owners      = ["amazon"]
-  filter {
-    name   = "name"
-    values = ["amzn2-ami-hvm-*-gp2"]
-  }
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-  filter {
-    name   = "architecture"
-    values = ["x86_64"]
-  }
+data "tls_certificate" "cluster" {
+  url = aws_eks_cluster.this.identity[0].oidc[0].issuer
 }

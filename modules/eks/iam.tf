@@ -1,128 +1,187 @@
-############################# eks iam role #############################
-resource "aws_iam_role" "eks-cluster-role" {
-  name = "eks-cluster-${var.cluster_name}"
-
-  assume_role_policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "eks.amazonaws.com"
-      },
-      "Action": "sts:AssumeRole"
-    }
-  ]
-}
-POLICY
-}
-
-resource "aws_iam_role" "eks-fargate-profile" {
-  name = "eks-fargate-profile"
-
-  assume_role_policy = jsonencode({
-    Statement = [{
-      Action = "sts:AssumeRole"
-      Effect = "Allow"
-      Principal = {
-        Service = "eks-fargate-pods.amazonaws.com"
-      }
-    }]
-    Version = "2012-10-17"
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "vpc-resource-controller" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
-  role       = aws_iam_role.eks-cluster-role.name
-}
-
-resource "aws_iam_role_policy_attachment" "pod-exec-role" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy"
-  role       = aws_iam_role.eks-fargate-profile.name
-}
-
-resource "aws_iam_role_policy_attachment" "eks-cluster-policy" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-  role       = aws_iam_role.eks-cluster-role.name
-}
-
-############################# Create EBS CSI IAM Policy #############################
-resource "aws_iam_policy" "ebs_csi_iam_policy" {
-  name        = "${var.cluster_name}-AmazonEKS_EBS_CSI_Driver_Policy"
-  path        = "/"
-  description = "EBS CSI IAM Policy"
-  policy      = data.http.ebs_csi_iam_policy.response_body
-}
-
-resource "aws_iam_role" "ebs_csi_iam_role" {
-  name = "${var.cluster_name}-ebs-csi-iam-role"
+####################################################################################
+# IAM Role and Policy for EKS Cluster
+####################################################################################
+resource "aws_iam_role" "eks_cluster" {
+  name        = "${var.cluster_name}-role"
+  description = "Allows the cluster Kubernetes control plane to manage AWS resources on your behalf."
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
-        Action = "sts:AssumeRoleWithWebIdentity"
+        Action = ["sts:AssumeRole", "sts:TagSession"]
         Effect = "Allow"
-        Sid    = ""
         Principal = {
-          Federated = "${data.terraform_remote_state.eks.outputs.aws_iam_openid_connect_provider_arn}"
+          Service = "eks.amazonaws.com"
         }
-        Condition = {
-          StringEquals = {
-            "${data.terraform_remote_state.eks.outputs.aws_iam_openid_connect_provider_extract_from_arn}:sub" : "system:serviceaccount:kube-system:ebs-csi-controller-sa"
-          }
-        }
-
-      },
+      }
     ]
   })
+}
 
-  tags = {
-    tag-key = "${var.cluster_name}-ebs-csi-iam-role"
+resource "aws_iam_role_policy_attachment" "amzn_eks_cluster" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+  role       = aws_iam_role.eks_cluster.name
+}
+
+resource "aws_iam_role_policy_attachment" "amzn_eks_vpc_resource_controller" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
+  role       = aws_iam_role.eks_cluster.name
+}
+
+resource "aws_iam_role_policy_attachment" "amzn_eks_compute" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSComputePolicy"
+  role       = aws_iam_role.eks_cluster.name
+}
+
+resource "aws_iam_role_policy_attachment" "amzn_eks_block_storage" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSBlockStoragePolicy"
+  role       = aws_iam_role.eks_cluster.name
+}
+
+resource "aws_iam_role_policy_attachment" "amzn_eks_networking" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSNetworkingPolicy"
+  role       = aws_iam_role.eks_cluster.name
+}
+
+####################################################################################
+# IAM Role and Policy for EKS Worker Nodes
+####################################################################################
+resource "aws_iam_role" "eks_node" {
+  name = "${var.cluster_name}-node-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action    = "sts:AssumeRole"
+        Effect    = "Allow"
+        Principal = { Service = "ec2.amazonaws.com" }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "amzn_eks_worker_node" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodeMinimalPolicy"
+  role       = aws_iam_role.eks_node.name
+}
+
+resource "aws_iam_role_policy_attachment" "amzn_eks_cni" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+  role       = aws_iam_role.eks_node.name
+}
+
+resource "aws_iam_role_policy_attachment" "amzn_ec2_container_registry_pull_only" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPullOnly"
+  role       = aws_iam_role.eks_node.name
+}
+
+resource "aws_iam_role_policy_attachment" "amzn_cloudwatch_agent_server" {
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+  role       = aws_iam_role.eks_node.name
+}
+
+####################################################################################
+# IAM Role for CodePipeline CI/CD to access EKS cluster
+####################################################################################
+resource "aws_iam_role" "codepipeline" {
+  name        = "${var.cluster_name}-codepipeline-role"
+  description = "Allows CodePipeline to deploy to the EKS cluster."
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action    = ["sts:AssumeRole", "sts:TagSession"]
+        Effect    = "Allow"
+        Principal = { Service = "codebuild.amazonaws.com" }
+      }
+    ]
+  })
+}
+
+data "aws_iam_policy_document" "codepipeline_eks_policy" {
+  statement {
+    sid    = "AllowEKSAccess"
+    effect = "Allow"
+    actions = [
+      "eks:DescribeCluster",
+      "eks:ListClusters"
+    ]
+    resources = [aws_eks_cluster.this.arn]
   }
 }
 
-# Associate EBS CSI IAM Policy to EBS CSI IAM Role
-resource "aws_iam_role_policy_attachment" "ebs_csi_iam_role_policy_attach" {
-  policy_arn = aws_iam_policy.ebs_csi_iam_policy.arn
-  role       = aws_iam_role.ebs_csi_iam_role.name
+resource "aws_iam_role_policy" "codepipeline_eks" {
+  name   = "eks-access-inline-policy"
+  role   = aws_iam_role.codepipeline.name
+  policy = data.aws_iam_policy_document.codepipeline_eks_policy.json
 }
 
-output "ebs_csi_iam_role_arn" {
-  description = "EBS CSI IAM Role ARN"
-  value       = aws_iam_role.ebs_csi_iam_role.arn
+resource "aws_iam_role_policy_attachment" "codepipeline" {
+  for_each = toset([
+    "arn:aws:iam::aws:policy/AWSCodeBuildDeveloperAccess",
+    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser",
+  ])
+  policy_arn = each.value
+  role       = aws_iam_role.codepipeline.name
 }
 
+####################################################################################
+# IAM Role for Pod Identity (shared assume role policy)
+####################################################################################
+data "aws_iam_policy_document" "pod_assume_role_policy" {
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole", "sts:TagSession"]
+    principals {
+      type        = "Service"
+      identifiers = ["pods.eks.amazonaws.com"]
+    }
+  }
+}
 
-############################# node group iam role #############################
-resource "aws_iam_role" "eks_ng_role" {
-  name = "eks-ng-role"
+####################################################################################
+# IAM Role and Pod Identity Association for Cluster Autoscaler
+####################################################################################
+resource "aws_iam_role" "cluster_autoscaler" {
+  name               = "${var.cluster_name}-cluster-autoscaler-role"
+  assume_role_policy = data.aws_iam_policy_document.pod_assume_role_policy.json
+}
 
-  assume_role_policy = jsonencode({
-    Statement = [{
-      Action = "sts:AssumeRole"
-      Effect = "Allow"
-      Principal = {
-        Service = "ec2.amazonaws.com"
-      }
-    }]
+resource "aws_iam_role_policy" "cluster_autoscaler" {
+  name = "cluster-autoscaler-inline-policy"
+  role = aws_iam_role.cluster_autoscaler.name
+
+  policy = jsonencode({
     Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "autoscaling:DescribeAutoScalingGroups",
+          "autoscaling:DescribeAutoScalingInstances",
+          "autoscaling:DescribeLaunchConfigurations",
+          "autoscaling:DescribeScalingActivities",
+          "autoscaling:DescribeTags",
+          "autoscaling:SetDesiredCapacity",
+          "autoscaling:TerminateInstanceInAutoScalingGroup",
+          "ec2:DescribeImages",
+          "ec2:DescribeInstanceTypes",
+          "ec2:DescribeLaunchTemplateVersions",
+          "ec2:GetInstanceTypesFromInstanceRequirements",
+          "eks:DescribeNodegroup"
+        ]
+        Resource = "*"
+      }
+    ]
   })
 }
 
-resource "aws_iam_role_policy_attachment" "worker_node" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
-  role       = aws_iam_role.eks_ng_role.name
-}
-
-resource "aws_iam_role_policy_attachment" "cni" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-  role       = aws_iam_role.eks_ng_role.name
-}
-
-resource "aws_iam_role_policy_attachment" "ec2_container_reg_read_only" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-  role       = aws_iam_role.eks_ng_role.name
+resource "aws_eks_pod_identity_association" "cluster_autoscaler" {
+  cluster_name    = aws_eks_cluster.this.name
+  namespace       = "kube-system"
+  service_account = "cluster-autoscaler-aws-cluster-autoscaler"
+  role_arn        = aws_iam_role.cluster_autoscaler.arn
 }
