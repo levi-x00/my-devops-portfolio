@@ -89,7 +89,7 @@ resource "helm_release" "cluster_autoscaler" {
   values = [
     yamlencode({
       autoDiscovery = { clusterName = aws_eks_cluster.this.name }
-      awsRegion     = data.aws_region.current.name
+      awsRegion     = data.aws_region.current.region
       rbac          = { create = true }
       serviceAccount = {
         create = true
@@ -143,6 +143,6 @@ resource "helm_release" "loadbalancer_controller" {
     { name = "serviceAccount.name", value = "aws-load-balancer-controller" },
     { name = "clusterName", value = aws_eks_cluster.this.id },
     { name = "vpcId", value = var.vpc_id },
-    { name = "region", value = data.aws_region.current.name }
+    { name = "region", value = data.aws_region.current.region }
   ]
 }
