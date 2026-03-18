@@ -1,9 +1,9 @@
 output "account_id" {
-  value = data.aws_caller_identity.current.account_id
+  value = module.eks.account_id
 }
 
 output "cluster_id" {
-  value = aws_eks_cluster.this.id
+  value = module.eks.cluster_id
 }
 
 output "cluster_vpc_id" {
@@ -11,42 +11,46 @@ output "cluster_vpc_id" {
 }
 
 output "cluster_arn" {
-  value = aws_eks_cluster.this.arn
+  value = module.eks.cluster_arn
 }
 
 output "cluster_certificate_authority_data" {
-  value     = aws_eks_cluster.this.certificate_authority[0].data
+  value     = module.eks.cluster_certificate_authority_data
   sensitive = true
 }
 
 output "cluster_endpoint" {
-  value = aws_eks_cluster.this.endpoint
+  value = module.eks.cluster_endpoint
 }
 
 output "cluster_version" {
-  value = aws_eks_cluster.this.version
+  value = module.eks.cluster_version
 }
 
 output "cluster_iam_role_name" {
-  value = aws_iam_role.eks_cluster.name
+  value = module.eks.cluster_iam_role_name
 }
 
 output "cluster_iam_role_arn" {
-  value = aws_iam_role.eks_cluster.arn
+  value = module.eks.cluster_iam_role_arn
 }
 
 output "cluster_oidc_issuer_url" {
-  value = aws_eks_cluster.this.identity[0].oidc[0].issuer
+  value = module.eks.cluster_oidc_issuer_url
 }
 
 output "cluster_primary_security_group_id" {
-  value = aws_eks_cluster.this.vpc_config[0].cluster_security_group_id
+  value = module.eks.cluster_primary_security_group_id
 }
 
 output "openid_connect_provider_cluster_arn" {
-  value = aws_iam_openid_connect_provider.cluster.arn
+  value = module.eks.openid_connect_provider_arn
 }
 
 output "openid_connect_provider_cluster_url" {
-  value = aws_iam_openid_connect_provider.cluster.url
+  value = module.eks.openid_connect_provider_url
+}
+
+output "codepipeline_role_arn" {
+  value = aws_iam_role.codepipeline.arn
 }

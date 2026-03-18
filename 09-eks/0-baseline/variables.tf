@@ -4,12 +4,6 @@ variable "environment" {
   default     = "dev"
 }
 
-variable "cluster_addons" {
-  description = "List of EKS cluster addons to install"
-  type        = list(string)
-  default     = ["kube-proxy", "coredns", "eks-pod-identity-agent", "metrics-server"]
-}
-
 variable "application" {
   description = "Application name"
   type        = string
@@ -40,16 +34,16 @@ variable "cluster_version" {
   default     = "1.33"
 }
 
+variable "cluster_addons" {
+  description = "List of EKS cluster addons to install"
+  type        = list(string)
+  default     = ["kube-proxy", "coredns", "eks-pod-identity-agent", "metrics-server"]
+}
+
 variable "retention_in_days" {
   description = "CloudWatch log retention period in days"
   type        = number
   default     = 30
-}
-
-variable "instance_type" {
-  description = "EC2 instance type for EKS nodes"
-  type        = string
-  default     = "t3.medium"
 }
 
 variable "volume_size" {
@@ -64,12 +58,6 @@ variable "volume_type" {
   default     = "gp3"
 }
 
-variable "ami_release_version" {
-  description = "AMI release version for EKS nodes"
-  type        = string
-  default     = "AL2023_x86_64_STANDARD"
-}
-
 variable "eks_cluster_cidr" {
   description = "CIDR block for EKS cluster pod networking"
   type        = string
@@ -80,12 +68,6 @@ variable "cluster_dns_ip" {
   description = "IP address for cluster DNS service"
   type        = string
   default     = "172.20.0.10"
-}
-
-variable "instance_types" {
-  description = "List of EC2 instance types for EKS node groups"
-  type        = list(string)
-  default     = ["t3.medium"]
 }
 
 variable "node_groups" {
@@ -105,19 +87,7 @@ variable "node_groups" {
       min_size       = 1
       instance_types = ["t3.medium"]
       capacity_type  = "ON_DEMAND"
-      labels = {
-        Type = "ON_DEMAND"
-      }
-    },
-    small = {
-      desired_size   = 1
-      max_size       = 2
-      min_size       = 1
-      instance_types = ["t3.small"]
-      capacity_type  = "ON_DEMAND"
-      labels = {
-        Type = "ON_DEMAND"
-      }
+      labels         = { Type = "ON_DEMAND" }
     }
   }
 }
@@ -136,4 +106,14 @@ variable "db_password" {
   description = "Master password for RDS PostgreSQL"
   type        = string
   sensitive   = true
+}
+
+variable "map_users" {
+  description = "List of IAM users to grant access to the EKS cluster"
+  type = list(object({
+    userarn  = string
+    username = string
+    groups   = list(string)
+  }))
+  default = []
 }

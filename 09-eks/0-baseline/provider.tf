@@ -18,6 +18,10 @@ terraform {
       source  = "hashicorp/http"
       version = "~> 3.5.0"
     }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "~> 4.0"
+    }
   }
   required_version = ">=1.6.0"
 }
@@ -35,21 +39,21 @@ provider "aws" {
 }
 
 data "aws_eks_cluster_auth" "cluster" {
-  name = aws_eks_cluster.this.id
+  name = module.eks.cluster_id
 }
 
 provider "helm" {
   kubernetes = {
-    host  = aws_eks_cluster.this.endpoint
+    host  = module.eks.cluster_endpoint
     token = data.aws_eks_cluster_auth.cluster.token
 
-    cluster_ca_certificate = base64decode(aws_eks_cluster.this.certificate_authority[0].data)
+    cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
   }
 }
 
 provider "kubernetes" {
-  host  = aws_eks_cluster.this.endpoint
+  host  = module.eks.cluster_endpoint
   token = data.aws_eks_cluster_auth.cluster.token
 
-  cluster_ca_certificate = base64decode(aws_eks_cluster.this.certificate_authority[0].data)
+  cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
 }
