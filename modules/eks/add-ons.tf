@@ -104,8 +104,6 @@ resource "helm_release" "secrets_store_csi_driver_aws_provider" {
 }
 
 ####################################################################################
-# Cluster Autoscaler
-####################################################################################
 resource "helm_release" "cluster_autoscaler" {
   name       = "cluster-autoscaler"
   namespace  = "kube-system"
