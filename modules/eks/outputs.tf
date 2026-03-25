@@ -50,3 +50,7 @@ output "openid_connect_provider_url" {
 output "node_role_arn" {
   value = aws_iam_role.eks_node.arn
 }
+
+output "node_security_group_id" {
+  value = aws_security_group.node.id
+}

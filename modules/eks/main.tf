@@ -42,13 +42,33 @@ resource "aws_eks_cluster" "this" {
   depends_on = [
     aws_ec2_tag.private_subnet,
     aws_ec2_tag.public_subnet,
-    aws_iam_role_policy_attachment.amzn_eks_cluster,
-    aws_iam_role_policy_attachment.amzn_eks_compute,
-    aws_iam_role_policy_attachment.amzn_eks_block_storage,
-    aws_iam_role_policy_attachment.amzn_eks_networking
+    aws_iam_role_policy_attachment.eks_cluster
   ]
 
   tags = merge({ Name = var.cluster_name }, var.tags)
+}
+
+resource "aws_security_group" "node" {
+  name        = "${var.cluster_name}-node"
+  description = "EKS node security group"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    description = "HTTP from VPC"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = [var.vpc_cidr_block]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = merge({ Name = "${var.cluster_name}-node" }, var.tags)
 }
 
 resource "aws_launch_template" "this" {
@@ -83,6 +103,10 @@ resource "aws_launch_template" "this" {
     http_tokens                 = "required"
     instance_metadata_tags      = "enabled"
     http_put_response_hop_limit = 2
+  }
+
+  network_interfaces {
+    security_groups = [aws_security_group.node.id, aws_eks_cluster.this.vpc_config[0].cluster_security_group_id]
   }
 
   user_data = base64encode(templatefile("${path.module}/userdata.tpl", {
@@ -154,9 +178,7 @@ resource "aws_eks_node_group" "this" {
   }
 
   depends_on = [
-    aws_iam_role_policy_attachment.amzn_eks_worker_node,
-    aws_iam_role_policy_attachment.amzn_eks_cni,
-    aws_iam_role_policy_attachment.amzn_ec2_container_registry_pull_only,
+    aws_iam_role_policy_attachment.eks_node
   ]
 
   tags = merge(
