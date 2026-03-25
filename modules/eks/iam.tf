@@ -19,28 +19,15 @@ resource "aws_iam_role" "eks_cluster" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "amzn_eks_cluster" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-  role       = aws_iam_role.eks_cluster.name
-}
-
-resource "aws_iam_role_policy_attachment" "amzn_eks_vpc_resource_controller" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
-  role       = aws_iam_role.eks_cluster.name
-}
-
-resource "aws_iam_role_policy_attachment" "amzn_eks_compute" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSComputePolicy"
-  role       = aws_iam_role.eks_cluster.name
-}
-
-resource "aws_iam_role_policy_attachment" "amzn_eks_block_storage" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSBlockStoragePolicy"
-  role       = aws_iam_role.eks_cluster.name
-}
-
-resource "aws_iam_role_policy_attachment" "amzn_eks_networking" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSNetworkingPolicy"
+resource "aws_iam_role_policy_attachment" "eks_cluster" {
+  for_each = toset([
+    "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy",
+    "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController",
+    "arn:aws:iam::aws:policy/AmazonEKSComputePolicy",
+    "arn:aws:iam::aws:policy/AmazonEKSBlockStoragePolicy",
+    "arn:aws:iam::aws:policy/AmazonEKSNetworkingPolicy",
+  ])
+  policy_arn = each.value
   role       = aws_iam_role.eks_cluster.name
 }
 
@@ -62,28 +49,15 @@ resource "aws_iam_role" "eks_node" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "amzn_eks_worker_node" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodeMinimalPolicy"
-  role       = aws_iam_role.eks_node.name
-}
-
-resource "aws_iam_role_policy_attachment" "amzn_eks_cni" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-  role       = aws_iam_role.eks_node.name
-}
-
-resource "aws_iam_role_policy_attachment" "amzn_ec2_container_registry_pull_only" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPullOnly"
-  role       = aws_iam_role.eks_node.name
-}
-
-resource "aws_iam_role_policy_attachment" "amzn_cloudwatch_agent_server" {
-  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
-  role       = aws_iam_role.eks_node.name
-}
-
-resource "aws_iam_role_policy_attachment" "amzn_ec2_role_for_ssm" {
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM"
+resource "aws_iam_role_policy_attachment" "eks_node" {
+  for_each = toset([
+    "arn:aws:iam::aws:policy/AmazonEKSWorkerNodeMinimalPolicy",
+    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
+    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPullOnly",
+    "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy",
+    "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM",
+  ])
+  policy_arn = each.value
   role       = aws_iam_role.eks_node.name
 }
 

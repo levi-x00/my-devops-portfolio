@@ -129,8 +129,6 @@ resource "helm_release" "aws_secrets_provider" {
 }
 
 ####################################################################################
-# Cluster Autoscaler
-####################################################################################
 resource "helm_release" "cluster_autoscaler" {
   name       = "cluster-autoscaler"
   namespace  = "kube-system"
