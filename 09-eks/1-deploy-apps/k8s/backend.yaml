@@ -39,37 +39,9 @@ spec:
             runAsUser: 1000
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
-          env:
-            - name: DB_HOST
-              valueFrom:
-                secretKeyRef:
-                  name: backend-secrets
-                  key: DB_HOST
-            - name: DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: backend-secrets
-                  key: DB_NAME
-            - name: DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: backend-secrets
-                  key: DB_USER
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: backend-secrets
-                  key: DB_PASSWORD
-            - name: AWS_REGION
-              valueFrom:
-                secretKeyRef:
-                  name: backend-secrets
-                  key: AWS_REGION
-            - name: S3_BUCKET
-              valueFrom:
-                secretKeyRef:
-                  name: backend-secrets
-                  key: S3_BUCKET
+          envFrom:
+            - secretRef:
+                name: backend-secrets
           volumeMounts:
             - name: secrets-store
               mountPath: /mnt/secrets

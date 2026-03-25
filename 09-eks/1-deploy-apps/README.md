@@ -62,6 +62,40 @@ aws secretsmanager create-secret --name test-eks-secrets --region $REGION $PROFI
 
 The ingress is pre-configured with subnets, security group, and ACM certificate. No placeholders to replace.
 
+## Step 6.5: Create Database Table
+
+RDS is in a private subnet, so connect via AWS CloudShell with a VPC environment.
+
+1. Open **AWS CloudShell** in the console
+2. Click **Actions → Create VPC environment** and select the VPC and a private subnet
+3. Once connected, follow the following commands:
+
+```bash
+curl -o global-bundle.pem https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem
+
+export RDSHOST="<UPDATE_RDS_HOST>" 
+psql "host=$RDSHOST port=5432 dbname=appdb user=dbadmin sslmode=verify-full sslrootcert=./global-bundle.pem"
+```
+
+Then run:
+
+```sql
+CREATE TABLE IF NOT EXISTS items (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    image_url TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+Verify:
+
+```sql
+\dt
+\q
+```
+
 ## Step 7: Deploy
 
 ```bash
