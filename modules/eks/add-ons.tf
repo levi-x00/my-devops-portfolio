@@ -76,31 +76,56 @@ module "amzn_cw_observability_irsa" {
   tags = merge({ Name = "amazon-cloudwatch-observability" }, var.tags)
 }
 
+####################################################################################
+# Secrets Store CSI Driver
+####################################################################################
 resource "helm_release" "secrets_store_csi_driver" {
-  name       = "secrets-store-csi-driver"
-  namespace  = "aws-secrets-manager"
-  repository = "https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts"
-  chart      = "secrets-store-csi-driver"
-  version    = "1.5.6"
-
   depends_on = [
+    aws_eks_addon.main,
     aws_eks_node_group.this
   ]
 
+  name       = "csi-secrets-store"
+  repository = "https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts"
+  chart      = "secrets-store-csi-driver"
+  namespace  = "kube-system"
+
   set = [
-    { name = "syncSecret.enabled", value = "true" },
-    { name = "enableSecretRotation", value = "true" }
+    {
+      name  = "syncSecret.enabled"
+      value = "true"
+    },
   ]
+
+  # Wait until all pods are ready
+  wait            = true
+  timeout         = 600
+  cleanup_on_fail = true
 }
 
-resource "helm_release" "secrets_store_csi_driver_aws_provider" {
-  name       = "secrets-store-csi-driver-provider-aws"
-  namespace  = "aws-secrets-manager"
+resource "helm_release" "aws_secrets_provider" {
+  depends_on = [
+    helm_release.secrets_store_csi_driver
+  ]
+
+
+  name       = "secrets-provider-aws"
   repository = "https://aws.github.io/secrets-store-csi-driver-provider-aws"
   chart      = "secrets-store-csi-driver-provider-aws"
-  version    = "2.2.2"
+  namespace  = "kube-system"
 
-  depends_on = [helm_release.secrets_store_csi_driver]
+  # Disable re-installation of CSI driver (already installed separately)
+  set = [
+    {
+      name  = "secrets-store-csi-driver.install"
+      value = "false"
+    }
+  ]
+
+  # Wait for all pods to become ready
+  wait            = true
+  timeout         = 600
+  cleanup_on_fail = true
 }
 
 ####################################################################################
