@@ -22,7 +22,7 @@ module "eks" {
 
   map_roles = [
     {
-      rolearn  = aws_iam_role.codepipeline.arn
+      rolearn  = aws_iam_role.codebuild.arn
       username = "codepipeline"
       groups   = ["system:masters"]
     }

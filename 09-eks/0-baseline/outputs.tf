@@ -51,6 +51,6 @@ output "openid_connect_provider_cluster_url" {
   value = module.eks.openid_connect_provider_url
 }
 
-output "codepipeline_role_arn" {
-  value = aws_iam_role.codepipeline.arn
+output "codebuild_role_arn" {
+  value = aws_iam_role.codebuild.arn
 }

@@ -1,9 +1,9 @@
 ####################################################################################
-# IAM Role for CodePipeline CI/CD to access EKS cluster
+# IAM Role for CodeBuild CI/CD to access EKS cluster
 ####################################################################################
-resource "aws_iam_role" "codepipeline" {
-  name        = "${var.cluster_name}-codepipeline-role"
-  description = "Allows CodePipeline to deploy to the EKS cluster."
+resource "aws_iam_role" "codebuild" {
+  name        = "${var.cluster_name}-codebuild-role"
+  description = "Allows CodeBuild to deploy to the EKS cluster."
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -17,31 +17,51 @@ resource "aws_iam_role" "codepipeline" {
   })
 }
 
-data "aws_iam_policy_document" "codepipeline_eks_policy" {
+data "aws_iam_policy_document" "codebuild_policy" {
   statement {
-    sid    = "AllowEKSAccess"
-    effect = "Allow"
+    sid = "AllowECR"
     actions = [
-      "eks:DescribeCluster",
-      "eks:ListClusters"
+      "ecr:GetAuthorizationToken",
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:BatchGetImage",
+      "ecr:InitiateLayerUpload",
+      "ecr:UploadLayerPart",
+      "ecr:CompleteLayerUpload",
+      "ecr:PutImage"
     ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid     = "AllowEKS"
+    actions = ["eks:DescribeCluster", "eks:ListClusters"]
     resources = [module.eks.cluster_arn]
+  }
+
+  statement {
+    sid     = "AllowCloudWatchLogs"
+    actions = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"]
+    resources = ["*"]
+  }
+
+  statement {
+    sid = "AllowKMS"
+    actions = [
+      "kms:Encrypt*",
+      "kms:Decrypt*",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:Describe*"
+    ]
+    resources = [local.kms_key_arn]
   }
 }
 
-resource "aws_iam_role_policy" "codepipeline_eks" {
-  name   = "eks-access-inline-policy"
-  role   = aws_iam_role.codepipeline.name
-  policy = data.aws_iam_policy_document.codepipeline_eks_policy.json
-}
-
-resource "aws_iam_role_policy_attachment" "codepipeline" {
-  for_each = toset([
-    "arn:aws:iam::aws:policy/AWSCodeBuildDeveloperAccess",
-    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser",
-  ])
-  policy_arn = each.value
-  role       = aws_iam_role.codepipeline.name
+resource "aws_iam_role_policy" "codebuild" {
+  name   = "codebuild-inline-policy"
+  role   = aws_iam_role.codebuild.name
+  policy = data.aws_iam_policy_document.codebuild_policy.json
 }
 
 ####################################################################################
