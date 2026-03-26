@@ -40,6 +40,17 @@ data "aws_iam_policy_document" "codebuild_policy" {
   }
 
   statement {
+    sid     = "AllowS3Artifacts"
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:GetObjectVersion",
+      "s3:GetBucketVersioning"
+    ]
+    resources = ["arn:aws:s3:::*"]
+  }
+
+  statement {
     sid     = "AllowCloudWatchLogs"
     actions = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"]
     resources = ["*"]
