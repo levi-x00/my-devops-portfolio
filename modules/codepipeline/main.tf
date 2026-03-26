@@ -1,5 +1,9 @@
+locals {
+  create_role = var.create_role
+}
+
 data "aws_iam_policy_document" "assume_role" {
-  count = var.iam_role_arn == null ? 1 : 0
+  count = local.create_role ? 1 : 0
 
   statement {
     actions = ["sts:AssumeRole"]
@@ -11,14 +15,14 @@ data "aws_iam_policy_document" "assume_role" {
 }
 
 resource "aws_iam_role" "this" {
-  count              = var.iam_role_arn == null ? 1 : 0
+  count              = local.create_role ? 1 : 0
   name               = "${var.name}-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role[0].json
   tags               = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "this" {
-  for_each = var.iam_role_arn == null ? toset(var.policy_arns) : toset([])
+  for_each = local.create_role ? toset(var.policy_arns) : toset([])
 
   role       = aws_iam_role.this[0].name
   policy_arn = each.value
@@ -26,7 +30,7 @@ resource "aws_iam_role_policy_attachment" "this" {
 
 resource "aws_codepipeline" "this" {
   name     = var.name
-  role_arn = var.iam_role_arn != null ? var.iam_role_arn : aws_iam_role.this[0].arn
+  role_arn = local.create_role ? aws_iam_role.this[0].arn : var.iam_role_arn
 
   dynamic "artifact_store" {
     for_each = length(var.artifact_store) > 0 ? var.artifact_store : []

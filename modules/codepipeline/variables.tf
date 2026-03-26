@@ -3,6 +3,12 @@ variable "name" {
   type        = string
 }
 
+variable "create_role" {
+  description = "Whether to create an IAM role for the pipeline. Set to false when providing iam_role_arn."
+  type        = bool
+  default     = false
+}
+
 variable "iam_role_arn" {
   type        = string
   default     = null
