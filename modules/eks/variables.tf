@@ -108,6 +108,12 @@ variable "map_roles" {
   default = []
 }
 
+variable "public_access_cidrs" {
+  description = "CIDR blocks allowed to access the EKS public API endpoint"
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
+}
+
 variable "tags" {
   description = "Additional tags to apply to all resources"
   type        = map(string)

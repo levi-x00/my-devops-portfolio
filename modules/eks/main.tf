@@ -35,7 +35,7 @@ resource "aws_eks_cluster" "this" {
   vpc_config {
     endpoint_private_access = true
     endpoint_public_access  = true
-    public_access_cidrs     = ["0.0.0.0/0"]
+    public_access_cidrs     = var.public_access_cidrs
     subnet_ids              = var.private_subnet_ids
   }
 
@@ -59,6 +59,30 @@ resource "aws_security_group" "node" {
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = [var.vpc_cidr_block]
+  }
+
+  ingress {
+    description = "HTTPS from VPC (control plane to node kubelets)"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [var.vpc_cidr_block]
+  }
+
+  ingress {
+    description = "Ephemeral ports for node-to-node and control plane communication"
+    from_port   = 1025
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = [var.vpc_cidr_block]
+  }
+
+  ingress {
+    description = "Inter-node communication"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    self        = true
   }
 
   egress {
@@ -120,7 +144,7 @@ resource "aws_launch_template" "this" {
   tags = merge({ Name = "${var.cluster_name}-${each.key}-lt" }, var.tags)
 }
 
-resource "kubernetes_config_map_v1_data" "aws_auth" {
+resource "kubernetes_config_map_v1" "aws_auth" {
   metadata {
     name      = "aws-auth"
     namespace = "kube-system"
@@ -140,7 +164,11 @@ resource "kubernetes_config_map_v1_data" "aws_auth" {
     mapUsers = yamlencode(var.map_users)
   }
 
-  force = true
+  lifecycle {
+    # Ignore metadata managed by EKS/Kubernetes internally.
+    # On existing clusters, import first: terraform import module.eks.kubernetes_config_map_v1.aws_auth kube-system/aws-auth
+    ignore_changes = [metadata[0].annotations, metadata[0].labels]
+  }
 
   depends_on = [aws_eks_cluster.this]
 }

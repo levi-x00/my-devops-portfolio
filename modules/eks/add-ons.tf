@@ -136,6 +136,8 @@ resource "helm_release" "cluster_autoscaler" {
   chart      = "cluster-autoscaler"
   version    = "9.43.0"
 
+  depends_on = [aws_eks_node_group.this]
+
   values = [
     yamlencode({
       autoDiscovery = { clusterName = aws_eks_cluster.this.name }
