@@ -34,13 +34,13 @@ data "aws_iam_policy_document" "codebuild_policy" {
   }
 
   statement {
-    sid     = "AllowEKS"
-    actions = ["eks:DescribeCluster", "eks:ListClusters"]
+    sid       = "AllowEKS"
+    actions   = ["eks:DescribeCluster", "eks:ListClusters"]
     resources = [module.eks.cluster_arn]
   }
 
   statement {
-    sid     = "AllowS3Artifacts"
+    sid = "AllowS3Artifacts"
     actions = [
       "s3:GetObject",
       "s3:PutObject",
@@ -51,8 +51,8 @@ data "aws_iam_policy_document" "codebuild_policy" {
   }
 
   statement {
-    sid     = "AllowCloudWatchLogs"
-    actions = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"]
+    sid       = "AllowCloudWatchLogs"
+    actions   = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"]
     resources = ["*"]
   }
 
@@ -115,11 +115,7 @@ resource "aws_iam_role_policy" "kms_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "backend" {
-  for_each = toset([
-    "arn:aws:iam::aws:policy/SecretsManagerReadWrite",
-    "arn:aws:iam::aws:policy/AmazonS3FullAccess",
-  ])
-  policy_arn = each.value
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
   role       = aws_iam_role.backend.name
 }
 

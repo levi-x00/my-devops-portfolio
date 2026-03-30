@@ -54,3 +54,7 @@ output "openid_connect_provider_cluster_url" {
 output "codebuild_role_arn" {
   value = aws_iam_role.codebuild.arn
 }
+
+output "db_secret_arn" {
+  value = aws_secretsmanager_secret.db.arn
+}

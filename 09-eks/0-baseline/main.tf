@@ -34,6 +34,12 @@ module "eks" {
   }
 }
 
+resource "random_password" "db" {
+  length           = 16
+  special          = true
+  override_special = "!#$%&*()-_=+[]{}<>:?"
+}
+
 ########################################################################
 # RDS PostgreSQL
 ########################################################################
@@ -78,7 +84,7 @@ resource "aws_db_instance" "postgres" {
 
   db_name  = "appdb"
   username = "dbadmin"
-  password = var.db_password
+  password = var.db_password != "" ? var.db_password : random_password.db.result
 
   db_subnet_group_name   = aws_db_subnet_group.rds.name
   vpc_security_group_ids = [aws_security_group.rds.id]

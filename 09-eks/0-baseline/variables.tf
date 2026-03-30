@@ -103,9 +103,10 @@ variable "tfstate_key" {
 }
 
 variable "db_password" {
-  description = "Master password for RDS PostgreSQL"
+  description = "Master password for RDS PostgreSQL. If empty, a random password is generated."
   type        = string
   sensitive   = true
+  default     = ""
 }
 
 variable "map_users" {
