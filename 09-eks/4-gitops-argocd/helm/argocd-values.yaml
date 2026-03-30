@@ -1,0 +1,15 @@
+server:
+  service:
+    type: ClusterIP
+
+  ingress:
+    enabled: false
+
+configs:
+  params:
+    server.insecure: true
+
+repoServer:
+  env:
+    - name: AWS_REGION
+      value: ${region}

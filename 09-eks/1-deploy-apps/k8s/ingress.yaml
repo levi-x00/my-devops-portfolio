@@ -15,9 +15,9 @@ metadata:
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/subnets: subnet-0595faba169b576f8,subnet-03bd07c6e09a44a5a
-    alb.ingress.kubernetes.io/security-groups: sg-0ded7548101ba3a47
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-southeast-1:339712808680:certificate/78cb8da0-6231-4849-8497-385a25ec3b6e
+    alb.ingress.kubernetes.io/subnets: subnet-059a6c1acbdb69600,subnet-01ce50a9b71b17116
+    alb.ingress.kubernetes.io/security-groups: sg-0352600380722ee0a
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-southeast-1:339712808680:certificate/04d48ecc-7b63-4176-87fd-b2b5c958ea47
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
     alb.ingress.kubernetes.io/ssl-redirect: "443"
     alb.ingress.kubernetes.io/load-balancer-attributes: routing.http.drop_invalid_header_fields.enabled=true
