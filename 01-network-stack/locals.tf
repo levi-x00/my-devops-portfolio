@@ -4,10 +4,10 @@ locals {
   account_id = data.aws_caller_identity.current.account_id
   az_count   = length(var.availability_zones)
 
-  # Calculate subnet CIDRs automatically
-  private_subnets = [for i, az in var.availability_zones : cidrsubnet(var.vpc_cidr_block, var.subnet_newbits, i)]
-  public_subnets  = [for i, az in var.availability_zones : cidrsubnet(var.vpc_cidr_block, var.subnet_newbits, i + local.az_count)]
-  db_subnets      = [for i, az in var.availability_zones : cidrsubnet(var.vpc_cidr_block, var.subnet_newbits, i + (local.az_count * 2))]
+  # Use custom CIDRs if provided, otherwise auto-calculate from vpc_cidr_block + subnet_newbits
+  private_subnets = length(var.private_subnet_cidrs) > 0 ? var.private_subnet_cidrs : [for i, az in var.availability_zones : cidrsubnet(var.vpc_cidr_block, var.subnet_newbits, i)]
+  public_subnets  = length(var.public_subnet_cidrs) > 0 ? var.public_subnet_cidrs : [for i, az in var.availability_zones : cidrsubnet(var.vpc_cidr_block, var.subnet_newbits, i + local.az_count)]
+  db_subnets      = length(var.db_subnet_cidrs) > 0 ? var.db_subnet_cidrs : [for i, az in var.availability_zones : cidrsubnet(var.vpc_cidr_block, var.subnet_newbits, i + (local.az_count * 2))]
 
   public_nacl_rules = {
     ingress = [

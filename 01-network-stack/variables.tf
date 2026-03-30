@@ -60,3 +60,21 @@ variable "map_public_ip_on_launch" {
 
 variable "aws_profile" {}
 variable "enable_two_nats" {}
+
+variable "private_subnet_cidrs" {
+  description = "Custom CIDR blocks for private subnets. If empty, auto-calculated from vpc_cidr_block + subnet_newbits."
+  type        = list(string)
+  default     = []
+}
+
+variable "public_subnet_cidrs" {
+  description = "Custom CIDR blocks for public subnets. If empty, auto-calculated from vpc_cidr_block + subnet_newbits."
+  type        = list(string)
+  default     = []
+}
+
+variable "db_subnet_cidrs" {
+  description = "Custom CIDR blocks for db subnets. If empty, auto-calculated from vpc_cidr_block + subnet_newbits."
+  type        = list(string)
+  default     = []
+}
