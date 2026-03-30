@@ -115,7 +115,11 @@ resource "aws_iam_role_policy" "kms_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "backend" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+  for_each = toset([
+    "arn:aws:iam::aws:policy/AmazonS3FullAccess",
+    "arn:aws:iam::aws:policy/SecretsManagerReadWrite",
+  ])
+  policy_arn = each.value
   role       = aws_iam_role.backend.name
 }
 
