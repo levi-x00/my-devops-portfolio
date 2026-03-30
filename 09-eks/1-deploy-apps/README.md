@@ -48,21 +48,15 @@ docker build -t $REGISTRY/backend:v1 ./backend && docker push $REGISTRY/backend:
 docker build -t $REGISTRY/frontend:v1 ./frontend && docker push $REGISTRY/frontend:v1
 ```
 
-## Step 4: Store Secrets in AWS Secrets Manager
-
-```bash
-aws secretsmanager create-secret --name test-eks-secrets --region $REGION $PROFILE --secret-string '{"DB_HOST":"<rds-endpoint>","DB_NAME":"appdb","DB_USER":"<db-user>","DB_PASSWORD":"<db-password>","AWS_REGION":"ap-southeast-1","S3_BUCKET":"<s3-bucket-name>"}'
-```
-
-## Step 5: IAM — Pod Identity for Backend
+## Step 4: IAM — Pod Identity for Backend
 
 > Already provisioned via Terraform. Ensure the Pod Identity Association is created for the `backend` service account in the `backend` namespace.
 
-## Step 6: Update ingress.yaml
+## Step 5: Update ingress.yaml
 
 The ingress is pre-configured with subnets, security group, and ACM certificate. No placeholders to replace.
 
-## Step 6.5: Create Database Table
+## Step 6: Create Database Table
 
 RDS is in a private subnet, so connect via AWS CloudShell with a VPC environment.
 
