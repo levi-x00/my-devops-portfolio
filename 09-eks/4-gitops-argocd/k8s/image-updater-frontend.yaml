@@ -1,0 +1,15 @@
+apiVersion: argocd-image-updater.argoproj.io/v1alpha1
+kind: ImageUpdater
+metadata:
+  name: frontend
+  namespace: argocd
+spec:
+  writeBackConfig:
+    method: argocd
+  applicationRefs:
+    - namePattern: frontend
+      images:
+        - alias: frontend
+          imageName: 339712808680.dkr.ecr.ap-southeast-1.amazonaws.com/frontend
+          commonUpdateSettings:
+            updateStrategy: newest-build

@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ecr-token-refresher
+  namespace: argocd
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: ecr-token-refresher
+  namespace: argocd
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "create", "patch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ecr-token-refresher
+  namespace: argocd
+subjects:
+  - kind: ServiceAccount
+    name: ecr-token-refresher
+    namespace: argocd
+roleRef:
+  kind: Role
+  name: ecr-token-refresher
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ecr-token-refresher
+  namespace: argocd
+spec:
+  schedule: "0 */6 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: ecr-token-refresher
+          restartPolicy: OnFailure
+          containers:
+            - name: refresher
+              image: public.ecr.aws/aws-cli/aws-cli:latest
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  curl -sLO "https://dl.k8s.io/release/$(curl -sL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+                  chmod +x kubectl && mv kubectl /usr/local/bin/
+                  TOKEN=$(aws ecr get-login-password --region ap-southeast-1)
+                  kubectl create secret docker-registry ecr-credentials \
+                    --docker-server=339712808680.dkr.ecr.ap-southeast-1.amazonaws.com \
+                    --docker-username=AWS \
+                    --docker-password="$TOKEN" \
+                    -n argocd \
+                    --dry-run=client -o yaml | kubectl apply -f -

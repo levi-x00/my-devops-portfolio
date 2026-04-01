@@ -5,12 +5,17 @@ metadata:
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: frontend=339712808680.dkr.ecr.ap-southeast-1.amazonaws.com/frontend
+    argocd-image-updater.argoproj.io/frontend.update-strategy: latest
+    argocd-image-updater.argoproj.io/frontend.platform: linux/amd64
 spec:
   project: default
   source:
-    repoURL: GITOPS_REPO_URL
+    repoURL: ssh://APKAU6GDWC3UC5MB4S7D@git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/frontend-repo
     targetRevision: main
-    path: frontend
+    path: k8s
+    kustomize: {}
   destination:
     server: https://kubernetes.default.svc
     namespace: frontend
