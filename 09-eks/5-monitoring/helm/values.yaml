@@ -1,0 +1,105 @@
+####################################################################################
+# Prometheus
+####################################################################################
+prometheus:
+  prometheusSpec:
+    retention: ${prometheus_retention}
+    retentionSize: "45GB"
+
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: gp3
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: ${prometheus_storage_size}
+
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 2000m
+        memory: 4Gi
+
+    podMonitorNamespaceSelector: {}
+    serviceMonitorNamespaceSelector: {}
+    ruleNamespaceSelector: {}
+
+  service:
+    type: ClusterIP
+
+####################################################################################
+# Alertmanager
+####################################################################################
+alertmanager:
+  alertmanagerSpec:
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: gp3
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: ${alertmanager_storage_size}
+
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+
+####################################################################################
+# Grafana
+####################################################################################
+grafana:
+  adminPassword: "${grafana_admin_password}"
+
+  persistence:
+    enabled: true
+    storageClassName: gp3
+    size: ${grafana_storage_size}
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  defaultDashboardsEnabled: true
+  defaultDashboardsTimezone: Asia/Singapore
+
+  sidecar:
+    dashboards:
+      enabled: true
+      searchNamespace: ALL
+    datasources:
+      enabled: true
+
+  service:
+    type: ClusterIP
+
+####################################################################################
+# Node Exporter
+####################################################################################
+nodeExporter:
+  enabled: true
+
+####################################################################################
+# Kube State Metrics
+####################################################################################
+kubeStateMetrics:
+  enabled: true
+
+####################################################################################
+# Misc
+####################################################################################
+prometheus-node-exporter:
+  priorityClassName: system-node-critical
+  hostRootFsMount:
+    enabled: false
