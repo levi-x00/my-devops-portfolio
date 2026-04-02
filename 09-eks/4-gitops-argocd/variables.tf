@@ -34,19 +34,20 @@ variable "argo_rollouts_version" {
   default     = "2.39.5"
 }
 
-variable "gitops_repository_name" {
-  description = "CodeCommit repository name for GitOps manifests"
+variable "backend_repository_name" {
+  description = "CodeCommit repository name for backend app"
   type        = string
-  default     = "gitops-repo"
+  default     = "backend-repo"
 }
 
-variable "git_user_email" {
-  description = "Git user email for initial commit"
+variable "frontend_repository_name" {
+  description = "CodeCommit repository name for frontend app"
   type        = string
+  default     = "frontend-repo"
 }
 
-variable "git_user_name" {
-  description = "Git user name for initial commit"
+variable "argocd_ssh_public_key" {
+  description = "SSH public key for ArgoCD IAM user to access CodeCommit"
   type        = string
 }
 
