@@ -13,9 +13,12 @@
 ## Project Structure
 
 ```
-1-deploy-apps/
-├── backend/        # Flask API
-├── frontend/       # Nginx + static JS
+apps/                   # repo root
+├── backend/            # Flask API
+├── frontend/           # Nginx + static JS
+└── postgres/           # DB init SQL
+
+09-eks/1-deploy-apps/
 └── k8s/
     ├── namespace.yaml
     ├── secret-provider-class.yaml
@@ -44,8 +47,8 @@ aws ecr create-repository --repository-name frontend --region $REGION $PROFILE
 
 ```bash
 aws ecr get-login-password --region $REGION $PROFILE | docker login --username AWS --password-stdin $REGISTRY
-docker build -t $REGISTRY/backend:v1 ./backend && docker push $REGISTRY/backend:v1
-docker build -t $REGISTRY/frontend:v1 ./frontend && docker push $REGISTRY/frontend:v1
+docker build -t $REGISTRY/backend:v1 ../../apps/backend && docker push $REGISTRY/backend:v1
+docker build -t $REGISTRY/frontend:v1 ../../apps/frontend && docker push $REGISTRY/frontend:v1
 ```
 
 ## Step 4: IAM — Pod Identity for Backend

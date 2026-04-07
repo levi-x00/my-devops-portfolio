@@ -26,7 +26,7 @@ resource "null_resource" "push_backend" {
   provisioner "local-exec" {
     command = <<-EOT
       export AWS_PROFILE=${var.aws_profile}
-      cd ${abspath(path.module)}/../1-deploy-apps/backend
+      cd ${abspath(path.module)}/../../apps/backend
       git init -b main
       git config credential.helper '!aws codecommit credential-helper $@'
       git config credential.UseHttpPath true
@@ -52,7 +52,7 @@ resource "null_resource" "push_frontend" {
   provisioner "local-exec" {
     command = <<-EOT
       export AWS_PROFILE=${var.aws_profile}
-      cd ${abspath(path.module)}/../1-deploy-apps/frontend
+      cd ${abspath(path.module)}/../../apps/frontend
       git init -b main
       git config credential.helper '!aws codecommit credential-helper $@'
       git config credential.UseHttpPath true

@@ -11,7 +11,7 @@ End-to-end EKS setup broken into 5 progressive stacks:
 | Stack | Description |
 |---|---|
 | `0-baseline` | EKS cluster, managed node groups, add-ons, RDS PostgreSQL, IAM roles |
-| `1-deploy-apps` | Flask backend + Nginx frontend deployed via K8s manifests |
+| `1-deploy-apps` | K8s manifests to deploy Flask backend + Nginx frontend (app source in `apps/`) |
 | `2-hpa` | Horizontal Pod Autoscaler + Pod Disruption Budget |
 | `3-cicd` | CodeCommit → CodePipeline → CodeBuild → ECR → EKS |
 | `4-gitops-argocd` | ArgoCD + Argo Rollouts (blue/green) + ArgoCD Image Updater |
