@@ -10,7 +10,7 @@ This creates the S3 bucket used as the Terraform remote backend to store and sha
 
 ## Prerequisites
 
-- Terraform `>= 1.10.0`
+- Terraform `>=1.14.0`
 - AWS provider `6.42.0`
 - AWS profile configured (default: `ics-sandbox`)
 

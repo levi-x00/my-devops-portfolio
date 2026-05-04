@@ -9,7 +9,7 @@ terraform {
       version = "~> 3.0"
     }
   }
-  required_version = ">=1.10.0"
+  required_version = ">=1.14.0"
 }
 
 provider "aws" {
@@ -31,6 +31,18 @@ resource "aws_s3_bucket" "s3_backend" {
 
   tags = {
     Name = "s3-backend-tfstate-${random_string.random.id}"
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "s3_backend" {
+  bucket = aws_s3_bucket.s3_backend.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm     = "aws:kms"
+      kms_master_key_id = aws_kms_key.kms.arn
+    }
+    bucket_key_enabled = true
   }
 }
 
