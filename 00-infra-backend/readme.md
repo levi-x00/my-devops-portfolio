@@ -25,7 +25,7 @@ This creates the S3 bucket used as the Terraform remote backend to store and sha
 | `environment` | `dev` | Environment tag |
 | `application` | `infra-prerequisites` | Application tag |
 
-## .tfvars
+## terraform.tfvars
 ```
 aws_profile = "my-sandbox"
 aws_region  = "ap-southeast-1"
