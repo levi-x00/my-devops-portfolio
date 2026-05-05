@@ -61,6 +61,12 @@ variable "map_public_ip_on_launch" {
 variable "aws_profile" {}
 variable "enable_two_nats" {}
 
+variable "kms_arn" {
+  description = "KMS key ARN from 00-infra-backend"
+  type        = string
+  default     = ""
+}
+
 variable "private_subnet_cidrs" {
   description = "Custom CIDR blocks for private subnets. If empty, auto-calculated from vpc_cidr_block + subnet_newbits."
   type        = list(string)

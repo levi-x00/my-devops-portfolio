@@ -31,11 +31,7 @@ output "aws_region" {
 }
 
 output "kms_key_arn" {
-  value = aws_kms_key.kms.arn
-}
-
-output "kms_key_id" {
-  value = aws_kms_alias.kms.id
+  value = var.kms_arn
 }
 
 output "vpc_cidr_block" {
