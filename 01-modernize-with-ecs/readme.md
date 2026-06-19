@@ -22,11 +22,11 @@ In short:
 
 ## Deploy ECS Cluster
 
-- Apply the infra backend for the network infrastructure in `00-infra-backend`, once it's done copy the s3 backend & dynamodb table
+- Apply the infra backend for the network infrastructure in `archived/00-infra-backend`, once it's done copy the s3 backend & dynamodb table
 
-- In `01-network-stack`, deploy the VPC and the subnets
+- In `archived/01-network-stack`, deploy the VPC and the subnets
 
-- Now in `04-ecs`, create `backend.config` file and `terraform.tfvars`, for example:
+- Now in `01-modernize-with-ecs`, create `backend.config` file and `terraform.tfvars`, for example:
 
 ```
 # backend.config

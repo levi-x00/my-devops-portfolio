@@ -19,13 +19,13 @@ End-to-end EKS setup broken into 5 progressive stacks:
 
 ## Prerequisites
 
-- `01-network-stack` applied (VPC, subnets, KMS key, NAT gateway)
-- S3 backend for Terraform state (`00-infra-backend`)
+- `archived/01-network-stack` applied (VPC, subnets, KMS key, NAT gateway)
+- S3 backend for Terraform state (`archived/00-infra-backend`)
 - AWS CLI configured with appropriate profile
 
 ## How Setup
 
-After the VPC is already set up from `01-network-stack`, modify `0-baseline/backend.config` and `0-baseline/data.tf`. Replace the unique code:
+After the VPC is already set up from `archived/01-network-stack`, modify `0-baseline/backend.config` and `0-baseline/data.tf`. Replace the unique code:
 
 ```terraform
 data "terraform_remote_state" "network" {

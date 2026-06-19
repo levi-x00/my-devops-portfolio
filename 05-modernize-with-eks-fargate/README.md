@@ -1,4 +1,4 @@
-# 10-eks-fargate
+# EKS Fargate
 
 EKS cluster running entirely on AWS Fargate — no EC2 node groups.
 

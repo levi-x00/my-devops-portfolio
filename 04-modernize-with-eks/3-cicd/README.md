@@ -16,7 +16,7 @@ Each service (backend and frontend) has its own:
 ## Prerequisites
 
 - `0-baseline` stack applied — EKS cluster and CodeBuild IAM role must exist
-- `01-network-stack` applied — VPC, KMS key must exist
+- `archived/01-network-stack` applied — VPC, KMS key must exist
 - ECR repositories for backend and frontend must exist
 - `aws-codecommit-credential-helper` installed locally for the initial code push
 
