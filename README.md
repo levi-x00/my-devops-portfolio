@@ -150,3 +150,11 @@ Terraform provider caching in CodeBuild via S3 cache. The `.terraform` directory
 Foundational and supporting projects used as building blocks by the projects above.
 
 → [archived/](./archived/)
+
+---
+
+## Issues & Notes
+
+Real troubleshooting write-ups from production incidents — symptom, investigation, root cause, fix, and prevention.
+
+→ [issues-notes/](./issues-notes/)
